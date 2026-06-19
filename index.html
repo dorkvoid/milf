@@ -13,9 +13,9 @@
             background-color: #0f172a;
             background-image: radial-gradient(circle at top, #1e293b 0%, #020617 100%);
             margin: 0;
-            overflow-x: hidden;
+            overflow: hidden;
+            touch-action: none;
             color: #f8fafc;
-            min-height: 100vh;
         }
 
         .title-font {
@@ -55,8 +55,8 @@
         .reel-column {
             position: relative;
             overflow: hidden;
-            height: 100px;
-            flex: 1; 
+            height: 80px;
+            flex: 1;
         }
 
         .reel-inner {
@@ -66,13 +66,13 @@
         }
 
         .reel-item {
-            height: 100px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             font-weight: 800;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #1e293b;
             padding: 0 0.5rem;
             text-transform: uppercase;
@@ -80,268 +80,200 @@
             line-height: 1.1;
         }
 
-        /* Glassmorphism Adlib Box */
-        .glassy-output {
-            background: rgba(255, 255, 255, 0.05);
+        .glass-output {
+            background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-            transition: opacity 0.4s ease;
-            min-height: 160px; /* Reduced to fit the screen better */
-            display: flex; 
-            flex-direction: column;
-            justify-content: center;
-            color: #f8fafc;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            min-height: 140px;
+            transition: opacity 0.5s ease;
         }
 
-        /* Adjusted text sizes to prevent wrapping and layout shift */
-        #output-sentence p {
-            margin-bottom: 0.5rem; 
+        #three-switch-container {
+        .glass-output {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            min-height: 140px;
+            transition: opacity 0.5s ease;
         }
 
-        /* 3D Canvas Container */
-        #three-lever-container {
+        #three-switch-container {
             position: absolute;
-            right: -130px;
+            left: -120px;
             top: 50%;
             transform: translateY(-50%);
-            width: 160px; 
-            height: 320px; 
+            width: 100px; 
+            height: 220px; 
             z-index: 20;
-            cursor: grab;
+            cursor: pointer;
         }
 
-        #three-lever-container:active {
+        #three-button-container {
+            position: absolute;
+            right: -300px;
+            top: -20px;
+            bottom: -500px;
+            width: 320px; 
+            z-index: 20;
+            cursor: pointer;
+        }
+
+        #three-button-container:active, #three-switch-container:active {
             cursor: grabbing;
         }
 
-        /* Responsive Breakpoints */
         @media (max-width: 1024px) {
-            #three-lever-container { right: -90px; transform: translateY(-50%) scale(0.85); }
+            #three-switch-container { left: -90px; transform: translateY(-50%) scale(0.8); }
+            #three-button-container { right: -200px; top: -20px; bottom: -400px; transform: scale(0.8); transform-origin: top right; }
         }
-
         @media (max-width: 850px) {
-            #three-lever-container { right: -60px; transform: translateY(-50%) scale(0.7); }
-            .reel-item { font-size: 0.75rem; padding: 0 0.25rem; }
+            #three-switch-container { left: -60px; transform: translateY(-50%) scale(0.7); }
+            #three-button-container { right: -150px; top: -20px; bottom: -300px; transform: scale(0.7); transform-origin: top right; }
+            .reel-item { font-size: 0.75rem; }
         }
-
         @media (max-width: 640px) {
-            #three-lever-container { display: none; }
-            .reel-item { font-size: 0.65rem; padding: 0 0.15rem; }
+            #three-switch-container { left: -30px; transform: translateY(-50%) scale(0.45); }
+            #three-button-container { right: -80px; top: -20px; bottom: -200px; transform: scale(0.45); transform-origin: top right; }
+            .reel-item { font-size: 0.65rem; padding: 0 0.2rem; }
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center py-2 px-4 h-screen overflow-hidden m-0">
+<body class="h-screen flex flex-col items-center justify-center p-2 md:p-4">
 
-    <div class="w-full max-w-4xl flex flex-col items-center gap-2 relative">
+    <div class="w-full max-w-4xl flex flex-col items-center gap-3 relative">
         
         <!-- Header -->
-        <div class="flex flex-col items-center gap-0 text-center w-full">
-            <h1 id="main-title" class="title-font text-4xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 drop-shadow-lg transition-all duration-500">
+        <div class="flex flex-col items-center gap-1 text-center w-full min-h-[60px]">
+            <h1 id="main-title" class="title-font text-4xl md:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 drop-shadow-lg transition-all duration-500">
                 THE M.I.L.F. MACHINE
             </h1>
-
-            <!-- Mode Toggle Switch -->
-            <div class="flex items-center justify-center gap-3 mt-2 mb-1 bg-gray-900/50 px-4 py-2 rounded-full border border-gray-700/50 shadow-inner scale-90">
-                <span id="label-milf" class="font-bold text-lg tracking-widest text-red-400 transition-colors duration-300">MILF</span>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="mode-toggle" class="sr-only peer">
-                    <div class="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer shadow-inner transition-colors duration-300 peer-checked:bg-blue-500"></div>
-                    <div class="absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 peer-checked:translate-x-7 shadow-md"></div>
-                </label>
-                <span id="label-dilf" class="font-bold text-lg tracking-widest text-gray-500 transition-colors duration-300">DILF</span>
-            </div>
         </div>
 
         <!-- Slot Machine Wrapper -->
         <div class="relative w-full max-w-3xl mt-1">
             
+            <!-- 3D Switch Container (Left) -->
+            <div id="three-switch-container" class="flex flex-col items-center justify-center">
+                <span id="switch-label-milf" class="font-bold text-2xl tracking-widest text-red-400 transition-colors duration-300 absolute -top-8 z-10 drop-shadow-md">MILF</span>
+                <div id="switch-canvas-holder" class="w-full h-full relative"></div>
+                <span id="switch-label-dilf" class="font-bold text-2xl tracking-widest text-gray-500 transition-colors duration-300 absolute -bottom-8 z-10 drop-shadow-md">DILF</span>
+            </div>
+
             <!-- Machine Body -->
-            <div class="machine-body rounded-3xl p-3 border-4 border-gray-500 relative">
-                
-                <!-- Reel Screen (2 Rows of 3) -->
+            <div class="machine-body rounded-3xl p-3 md:p-6 border-4 border-gray-500 z-10 relative">
                 <div class="machine-screen rounded-xl border-8 border-gray-800 flex flex-col relative overflow-hidden bg-white">
                     
-                    <!-- Top Row -->
+                    <!-- Top Row of Reels -->
                     <div class="reel-row flex relative border-b-4 border-gray-800">
                         <div class="payline absolute top-1/2 left-0 right-0 h-[3px] -translate-y-1/2 z-20 pointer-events-none transition-colors duration-400 bg-red-500/60 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
-                        <!-- Reel 0: Age -->
                         <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-0"></div></div>
-                        <!-- Reel 1: Size -->
                         <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-1"></div></div>
-                        <!-- Reel 2: Personality (Dynamically randomized pair) -->
                         <div class="reel-column"><div class="reel-inner" id="reel-2"></div></div>
                     </div>
 
-                    <!-- Bottom Row -->
+                    <!-- Bottom Row of Reels -->
                     <div class="reel-row flex relative">
                         <div class="payline absolute top-1/2 left-0 right-0 h-[3px] -translate-y-1/2 z-20 pointer-events-none transition-colors duration-400 bg-red-500/60 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
-                        <!-- Reel 3: Clothing -->
                         <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-3"></div></div>
-                        <!-- Reel 4: Accessory (Replaced Acronym) -->
                         <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-4"></div></div>
-                        <!-- Reel 5: Hobby -->
                         <div class="reel-column"><div class="reel-inner" id="reel-5"></div></div>
                     </div>
                 </div>
-
-                <!-- Mobile Spin Button -->
-                <button id="mobile-spin-btn" class="sm:hidden w-full mt-4 bg-gradient-to-b from-red-500 to-red-700 text-white font-bold text-lg py-3 rounded-xl border-b-4 border-red-900 active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg">
-                    Pull Lever!
-                </button>
             </div>
 
-            <!-- The 3D Lever Container -->
-            <div id="three-lever-container"></div>
+            <!-- 3D Arcade Button Container (Right) -->
+            <div id="three-button-container"></div>
         </div>
 
-        <!-- Glassy Output Box (Character Generated Brick) -->
-        <div class="glassy-output rounded-2xl p-4 md:p-6 w-full max-w-2xl mt-3 relative overflow-hidden" id="output-container">
-            <div id="output-sentence" class="text-base md:text-lg font-medium">
-                <p class="opacity-50 italic text-center py-4">Pull the lever to generate your character...</p>
+        <div class="w-full max-w-2xl mt-4 relative z-10">
+            <div class="glass-output rounded-2xl p-4 md:p-6 flex flex-col justify-center relative overflow-hidden" id="output-container">
+                <div id="output-accent" class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-red-400 to-red-600 transition-colors duration-500"></div>
+                <div id="output-sentence" class="text-base md:text-lg text-gray-100 font-semibold leading-relaxed pl-4">
+                    <p class="opacity-50 italic text-center font-normal">Push the button to generate your character...</p>
+                </div>
             </div>
         </div>
-
     </div>
 
     <script>
-        // --- DYNAMIC PERSONALITY MIXER ---
-        // Pairs two adjectives to create exponential, highly cohesive combinations
-        function generateRandomPersonalities(count) {
-            const adj1 = ["warm", "chaotic", "stoic", "sweet", "bold", "organized", "relaxed", "nerdy", "sarcastic", "stern", "bubbly", "brooding", "loud", "shy", "fierce", "gentle", "wild", "sassy", "calm", "dramatic", "pragmatic", "dreamy", "cynical", "goofy", "intense", "lazy", "energetic", "aloof", "clingy", "spiteful", "forgiving", "honest", "secretive", "open", "generous", "vain", "humble", "stubborn", "flexible", "impulsive", "cautious", "whimsical", "grumpy", "anxious", "neurotic", "hyperactive", "tranquil", "optimistic", "pessimistic", "flirty", "reserved", "extravagant", "frugal", "scatterbrained", "meticulous", "chill", "unhinged", "bored", "exhausted", "passionate", "vibrant", "moody"];
-            const adj2 = ["loving", "fun", "observant", "caring", "brash", "driven", "chill", "quirky", "witty", "strict", "bright", "mysterious", "proud", "timid", "loyal", "kind", "free", "snarky", "collected", "extra", "logical", "romantic", "jaded", "silly", "focused", "lethargic", "peppy", "distant", "needy", "petty", "pure", "blunt", "sly", "vulnerable", "giving", "conceited", "modest", "rigid", "adaptable", "rash", "wary", "magical", "tired", "apathetic", "judgmental", "supportive", "passive-aggressive", "overbearing", "protective", "independent", "fierce", "soft-hearted", "ruthless", "gentle", "eccentric", "traditional", "rebellious", "unpredictable", "reliable"];
-            
-            let mixed = [];
-            for(let i=0; i<count; i++) {
-                let a = adj1[Math.floor(Math.random() * adj1.length)];
-                let b = adj2[Math.floor(Math.random() * adj2.length)];
-                let conj = Math.random() > 0.5 ? "yet" : "and";
-                mixed.push(`${a} ${conj} ${b}`);
-            }
-            return mixed;
-        }
+        const milfSizes = ["giant emu", "petite powerhouse", "tall queen", "cozy bear", "statuesque goddess", "tiny terror", "curvy icon", "slender sprite", "voluptuous vixen", "majestic swan", "gym rat", "Amazonian warrior", "pocket-sized powerhouse", "thicc queen", "muscle mommy", "curvy matron", "willowy nymph", "towering titan", "diminutive dynamo", "brickhouse", "lean machine", "literal goddess", "absolute unit", "graceful gazelle", "ferocious lioness", "cuddly panda", "sleek panther", "sturdy oak", "delicate flower", "unmovable mountain"];
+        const milfAges = ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "90s", "early 30s", "late 40s", "prime 50s", "timeless era", "eternal 29", "ageless era", "post-menopausal prime", "roaring 20s", "flirty 40s", "sensational 60s", "golden years", "quarter-life crisis", "mid-life renaissance", "fabulous 50s", "spicy 60s", "elegant 70s", "centennial era", "immortal phase", "newly-divorced 40s", "thriving 30s"];
+        const milfPersonalities = ["messy, anxious, and apathetic", "warm, loving, and fiercely protective", "chaotic, fun, and extremely loud", "stoic, quiet, and highly observant", "sweet, caring, and surprisingly gentle", "bold, brash, and unapologetic", "organized, uptight, and highly driven", "relaxed, chill, and wonderfully breezy", "unhinged, chaotic, and always right", "rich, bored, and highly judgmental", "tired, caffeinated, and holding it together", "intimidating, fierce, and fiercely loyal", "bubbly, bright, and endlessly optimistic", "sarcastic, witty, and deeply cynical", "overbearing, intense, and aggressively helpful", "mysterious, dark, and secretly wealthy", "pragmatic, blunt, and completely unfiltered", "neurotic, frantic, and always late", "zen, grounded, and slightly magical", "petty, vindictive, and holding a grudge"];
+        const milfClothing = ["a sports bra and a long skirt", "a tailored pantsuit", "yoga pants and an oversized tee", "a vintage floral dress", "high-waisted mom jeans and a cozy sweater", "a breezy yellow sundress", "a matching velour tracksuit", "a leather jacket and ripped jeans", "Lululemon leggings and a giant Stanley cup", "a massive messy bun and an exhausted expression", "a silk slip dress", "cargo pants and a crop top", "a sparkly evening gown", "an oversized college hoodie and sweatpants", "a sharply tailored blazer and pencil skirt", "a boho-chic maxi skirt and peasant blouse", "a tactical turtleneck", "a brightly colored retro windbreaker", "a gothic lace corset and skirt", "a completely denim tuxedo"];
+        const milfAccessories = ["fluffy slippers", "sensible heels", "bedazzled crocs", "combat boots", "pristine white sneakers", "strappy sandals", "chunky platform sneakers", "motorcycle boots", "a pearl necklace", "huge designer sunglasses", "a Birkin bag", "a loaded diaper bag", "a massive sun hat", "a bluetooth headset", "several large iced coffees", "a clipboard holding everyone's schedules", "a slightly intimidating riding crop", "a tote bag full of organic snacks", "an expensive smart watch", "a pair of reading glasses on a gold chain"];
+        const milfHobbies = ["intimidating the local PTA", "drinking expensive wine at 3 PM", "collecting massive houseplants", "reorganizing the pantry out of spite", "running half-marathons for fun", "gossiping at brunch", "baking aggressive amounts of sourdough", "doing pilates while judging you", "scrolling TikTok until 2 AM", "managing three different family calendars", "secretly funding a local rebellion", "restoring vintage furniture", "watching true crime documentaries to take notes", "attending pottery classes to smash the clay", "day-trading crypto in the carpool lane", "writing highly explicit fanfiction", "getting banned from the neighborhood Facebook group"];
+        const milfAcronyms = ["Mother I'd Like to Finance!", "Mother I'd Leave Flowers for!", "Mother I'd Listen to Forever!", "Mother I'd Like to Feed!", "Mother I'd Look at Fondly!", "Mother I'd Love to Flatter!", "Mother I'd Lend Funds!", "Mother I'd Love to Follow!", "Mother I'd Let Fly!", "Mother I'd Learn From!"];
 
-        // Acronyms specifically curated to fit "I'd [phrase]"
-        const lfAcronyms = [
-            "Like to Finance", "Listen to Forever", "Leave Flowers for", "Look at Fondly", 
-            "Learn French with", "Laugh with Forever", "Lend Funds to", "Love Fiercely", "Live For", 
-            "Lift Furniture for", "Launch Fireworks with", "Lose Focus over", "Like to Flirt with", "Love to Flatter", 
-            "Lend Favors to", "Look For", "Listen to Frequently", "Leave Fortune to", "Lead Forward", 
-            "Love Faithfully", "Learn Facts from", "Live Freely with", "Like to Follow", "Look Fabulous for"
-        ];
+        const dilfSizes = ["silver fox", "papa bear", "lumberjack", "tech bro", "gym bro", "couch potato", "grill master", "handyman", "scholar", "silverback", "gentle giant", "tiny king", "average joe", "big kahuna", "dad-bod supreme", "lean marathoner", "barrel-chested brute", "compact king", "grizzled veteran", "mountain of a man", "lanky beanpole", "absolute unit", "stout bulldog", "majestic stallion", "tired golden retriever", "lone wolf", "ferocious grizzly", "sturdy brick wall"];
+        const dilfAges = ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "90s", "distinguished 60s", "rugged 40s", "newly-divorced 30s", "timeless era", "absolute prime", "silver-haired 50s", "grizzled 70s", "youthful 40s", "stately 80s", "mid-life crisis", "early retirement", "golden years", "prime 30s", "experienced 50s", "ancient era", "immortal phase", "ageless wonder"];
+        const dilfPersonalities = ["stoic, quiet, and highly observant", "warm, loving, and fiercely protective", "goofy, silly, and always cracking dad jokes", "grumpy, tired, and running on black coffee", "handy, helpful, and always fixing things", "bold, brash, and unapologetic", "organized, uptight, and highly driven", "grumpy, quiet, and hyper-competent", "corny, loud, and completely immune to embarrassment", "stoic, protective, and secretly soft", "obsessed with the thermostat and lawn care", "intense, focused, and slightly intimidating", "relaxed, chill, and wonderfully breezy", "clueless, sweet, and trying his absolute best", "hyper-competitive, loud, and a sore loser", "intellectual, pretentious, and smoking a pipe", "paranoid, prepared, and ready for the apocalypse", "nostalgic, emotional, and crying at car commercials", "slick, charming, and slightly untrustworthy"];
+        const dilfClothing = ["cargo shorts and a tucked-in polo", "a sharp three-piece suit", "flannel and faded jeans", "a tucked-in golf shirt and slacks", "baggy sweatpants and a stained hoodie", "a loud Hawaiian shirt and board shorts", "a Patagonia vest over a plaid shirt", "an old band tee and perfectly worn jeans", "a slightly stained 'Kiss The Cook' grilling apron", "a matching velour tracksuit", "a leather jacket and dark denim", "a crisp button-down and khakis", "a multi-pocket fishing vest", "a full cycling spandex kit", "a massive winter parka regardless of the weather", "a tweed professor jacket with elbow patches", "a perfectly tailored tuxedo", "a vintage football jersey", "a grease-stained mechanic's jumpsuit"];
+        const dilfAccessories = ["crisp white New Balances", "polished oxfords", "scuffed steel-toed boots", "grass-stained cleats", "fuzzy socks with sandals", "leather flip-flops", "chunky orthopedic sneakers", "heavy motorcycle boots", "a massive, complicated smartwatch", "a bluetooth earpiece from 2008", "aviator sunglasses", "a heavily loaded toolbelt", "a personalized golf glove", "a bulky money clip", "a perfectly seasoned cast iron skillet", "a set of jumper cables", "a ridiculously bright tactical flashlight", "a pair of binoculars", "a high-end meat thermometer"];
+        const dilfHobbies = ["explaining World War 2 history to strangers", "smoking various meats for 14 hours", "fixing things that aren't actually broken", "falling asleep in his favorite recliner", "brewing overly-hoppy craft beer in the garage", "mowing the lawn with terrifying geometric precision", "giving unsolicited driving directions", "tinkering with a classic car", "coaching Little League far too aggressively", "watching golf with his eyes closed", "building an unnecessary deck", "investing in extremely volatile crypto", "collecting rare and expensive bourbons", "cleaning the gutters every single weekend", "arguing with the GPS", "buying tools he will only use once", "guarding the thermostat with his life"];
+        const dilfAcronyms = ["Dad I'd Like to Finance!", "Dad I'd Leave Flowers for!", "Dad I'd Listen to Forever!", "Dad I'd Like to Feed!", "Dad I'd Look at Fondly!", "Dad I'd Love to Flatter!", "Dad I'd Lend Funds!", "Dad I'd Love to Follow!", "Dad I'd Let Fly!", "Dad I'd Learn From!"];
 
-        // Refined Options ensuring cohesive ad-libs and flow
         const gameData = {
             MILF: {
                 title: "THE M.I.L.F. MACHINE",
                 noun: "mother",
-                colors: ["from-red-400", "to-red-600", "bg-red-500/60", "border-red-900", "rgba(239,68,68,0.8)", "text-red-400", 0xff4444],
-                reels: [
-                    // Reel 0: Age (Removed "going on" idioms to ensure clean flow)
-                    ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "early 20s", "mid 20s", "late 20s", "early 30s", "mid 30s", "late 30s", "early 40s", "mid 40s", "late 40s", "early 50s", "mid 50s", "late 50s", "early 60s", "mid 60s", "late 60s", "early 70s", "mid 70s", "late 70s", "early 80s", "prime", "golden years", "roaring 20s", "dirty 30s", "fabulous 40s", "nifty 50s"],
-                    
-                    // Reel 1: Size
-                    ["petite powerhouse", "tall queen", "cozy bear", "statuesque goddess", "tiny terror", "curvy icon", "athletic dynamo", "slender sprite", "voluptuous vixen", "majestic swan", "fierce lioness", "gentle doe", "mama bear", "boss lady", "gym rat", "Amazonian warrior", "pocket-sized powerhouse", "thicc queen", "muscle mommy", "curvy matron", "willowy waif", "sturdy farmgirl", "lanky beanpole", "compact dynamo"],
-                    
-                    // Reel 2: Personality
-                    generateRandomPersonalities(40),
-                    
-                    // Reel 3: Clothing
-                    ["a sports bra and a long skirt", "a tailored pantsuit", "yoga pants and an oversized tee", "a vintage floral dress", "high-waisted mom jeans and a cozy sweater", "a breezy yellow sundress", "a matching velour tracksuit", "a leather jacket and ripped jeans", "matching silk pajamas", "denim overalls and a striped shirt", "a classic trench coat", "a flowy maxi skirt", "a sharp blazer", "baggy sweatpants", "a tight pencil skirt", "a bright summer romper", "an oversized flannel", "a chunky knit cardigan"],
-                    
-                    // Reel 4: Accessory
-                    ["a massive sun hat", "a silk scarf", "a sensible cardigan", "a pristine white visor", "a yoga mat strapped to her back", "three different reusable water bottles", "a perfectly organized planner", "way too many shopping bags", "an aggressively large diamond ring", "a small, angry dog in a purse", "a terrifyingly sharp stiletto nail set", "a giant Stanley cup", "sensible heels", "chunky combat boots", "a messy bun and sunglasses", "a designer handbag", "reading glasses on a chain"],
-                    
-                    // Reel 5: Hobby
-                    ["collecting massive houseplants", "drinking expensive wine at 3 PM", "reorganizing the pantry out of spite", "running half-marathons for fun", "intimidating the local PTA", "doomscrolling on the couch", "baking aggressive amounts of sourdough", "gossiping aggressively at brunch", "doing intensive yoga", "managing a very successful MLM", "watching true crime documentaries", "renovating her entire house alone", "reading spicy romance novels", "yelling at referees at youth soccer", "making unnecessarily complex crafts", "fostering too many rescue dogs"]
-                ]
+                colors: ["from-red-400", "to-red-600", "rgba(239, 68, 68, 0.6)", "border-red-900"],
+                paylineClass: "bg-red-500/60 shadow-[0_0_8px_rgba(239,68,68,0.8)]",
+                reels: [milfAges, milfSizes, milfPersonalities, milfClothing, milfAccessories, milfHobbies],
+                acronyms: milfAcronyms
             },
             DILF: {
                 title: "THE D.I.L.F. DEVICE",
                 noun: "father",
-                colors: ["from-blue-400", "to-blue-600", "bg-blue-500/60", "border-blue-900", "rgba(59,130,246,0.8)", "text-blue-400", 0x4444ff],
-                reels: [
-                    // Reel 0: Age (Removed idioms)
-                    ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "early 20s", "mid 20s", "late 20s", "early 30s", "mid 30s", "late 30s", "early 40s", "mid 40s", "late 40s", "early 50s", "mid 50s", "late 50s", "early 60s", "mid 60s", "late 60s", "early 70s", "mid 70s", "late 70s", "early 80s", "prime", "golden years", "roaring 20s", "dirty 30s", "fabulous 40s", "nifty 50s"],
-                    
-                    // Reel 1: Size
-                    ["silver fox", "papa bear", "lumberjack", "tech bro", "gym bro", "couch potato", "grill master", "handyman", "scholar", "silverback", "gentle giant", "tiny king", "average joe", "big kahuna", "lone wolf", "lumberjack build", "dad-bod supreme", "lean marathoner", "barrel-chested brute", "compact king", "grizzled veteran", "hulking bruiser", "wiry scrapper", "broad-shouldered boss"],
-                    
-                    // Reel 2: Personality
-                    generateRandomPersonalities(40),
-                    
-                    // Reel 3: Clothing
-                    ["cargo shorts and a polo", "a sharp three-piece suit", "flannel and jeans", "a tucked-in golf shirt and slacks", "baggy sweatpants and a hoodie", "a loud Hawaiian shirt", "a matching velour tracksuit", "a leather jacket and ripped jeans", "matching flannel pajamas", "denim overalls", "a classic trench coat", "basketball shorts and a tank top", "a sharp blazer", "a black turtleneck", "pleated khakis", "a neon retro ski suit", "a vintage band tee", "a preppy sweater vest"],
-                    
-                    // Reel 4: Accessory
-                    ["white New Balances", "a pristine pair of grilling tongs", "aviator sunglasses", "a fancy smartwatch", "a vintage leather briefcase", "a baseball cap from a hardware store", "a massive key ring", "a golf glove in his back pocket", "a very specific brand of sunglasses", "a leather tool belt", "a freshly polished golf club", "a ridiculously expensive cooler", "a 'World's Greatest Dad' mug", "a perfectly seasoned cast iron pan", "a massive, complicated keychain", "a bluetooth earpiece from 2008"],
-                    
-                    // Reel 5: Hobby
-                    ["explaining World War 2 history to strangers", "smoking various meats for 14 hours", "fixing things that aren't actually broken", "falling asleep in his favorite recliner", "brewing overly-hoppy craft beer in the garage", "mowing the lawn with suspicious enthusiasm", "adjusting the thermostat by one degree", "watching 8-hour documentaries on ancient Rome", "collecting rare vintage guitars", "tinkering with a classic car that never runs", "coaching Little League aggressively", "building complicated model trains", "researching obscure investment strategies", "maintaining a pristine sneaker collection", "golfing every single weekend"]
-                ]
+                colors: ["from-blue-400", "to-blue-600", "rgba(59, 130, 246, 0.6)", "border-blue-900"],
+                paylineClass: "bg-blue-500/60 shadow-[0_0_8px_rgba(59,130,246,0.8)]",
+                reels: [dilfAges, dilfSizes, dilfPersonalities, dilfClothing, dilfAccessories, dilfHobbies],
+                acronyms: dilfAcronyms
             }
         };
 
         let currentMode = 'MILF';
         let isSpinning = false;
-        const itemHeight = 100; // Height of reel item in CSS
-        const spinMultiplier = 4; // Length of the spin runway
+        const itemHeight = 80; 
+        const spinMultiplier = 3; 
 
         const titleEl = document.getElementById('main-title');
-        const toggleEl = document.getElementById('mode-toggle');
-        const labelMilf = document.getElementById('label-milf');
-        const labelDilf = document.getElementById('label-dilf');
-        const mobileSpinBtn = document.getElementById('mobile-spin-btn');
-        const outputContainer = document.getElementById('output-container');
+        const switchLabelMilf = document.getElementById('switch-label-milf');
+        const switchLabelDilf = document.getElementById('switch-label-dilf');
         const outputSentence = document.getElementById('output-sentence');
+        const outputAccent = document.getElementById('output-accent');
         const paylines = document.querySelectorAll('.payline');
         const reelContainers = [
-            document.getElementById('reel-0'), document.getElementById('reel-1'),
-            document.getElementById('reel-2'), document.getElementById('reel-3'),
+            document.getElementById('reel-0'), document.getElementById('reel-1'), 
+            document.getElementById('reel-2'), document.getElementById('reel-3'), 
             document.getElementById('reel-4'), document.getElementById('reel-5')
         ];
-
-        // Three.js State
-        let leverBallMat, leverStickPivot;
-        const RESTING_ROTATION = -0.35; // Leans slightly back like a real machine
-        const PULLED_ROTATION = 1.8;   // Pulls all the way down past 90 degrees
-        let targetLeverRotation = RESTING_ROTATION;
-        let leverRotation = RESTING_ROTATION;
-        let leverVelocity = 0;
-        let isHoldingLever = false;
 
         function initMachine() {
             const data = gameData[currentMode];
             
-            // Update Title & Theme Colors
             titleEl.textContent = data.title;
             titleEl.className = `title-font text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-lg transition-all duration-500`;
-            mobileSpinBtn.className = `sm:hidden w-full mt-6 bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} text-white font-bold text-xl py-4 rounded-xl border-b-4 ${data.colors[3]} active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg`;
+            outputAccent.className = `absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} transition-colors duration-500`;
             
             paylines.forEach(line => {
-                line.className = `payline absolute top-1/2 left-0 right-0 h-[3px] -translate-y-1/2 z-20 pointer-events-none transition-colors duration-400 ${data.colors[2]} shadow-[0_0_8px_${data.colors[4]}]`;
+                line.className = `payline absolute top-1/2 left-0 right-0 h-[3px] -translate-y-1/2 z-20 pointer-events-none transition-colors duration-400 ${data.paylineClass}`;
             });
 
-            // Update 3D Ball Color
-            if (leverBallMat) {
-                if (currentMode === 'MILF') {
-                    leverBallMat.color.setHex(0xff4444);
-                } else {
-                    leverBallMat.color.setHex(0x4444ff);
-                }
-            }
-
-            // Update Toggle text colors
             if (currentMode === 'MILF') {
-                labelMilf.classList.replace('text-gray-500', 'text-red-400');
-                labelDilf.classList.replace('text-blue-400', 'text-gray-500');
+                switchLabelMilf.classList.replace('text-gray-500', 'text-red-400');
+                switchLabelDilf.classList.replace('text-blue-400', 'text-gray-500');
             } else {
-                labelMilf.classList.replace('text-red-400', 'text-gray-500');
-                labelDilf.classList.replace('text-gray-500', 'text-blue-400');
+                switchLabelMilf.classList.replace('text-red-400', 'text-gray-500');
+                switchLabelDilf.classList.replace('text-gray-500', 'text-blue-400');
             }
 
-            // Build Reels
+            if (typeof spinButtonMesh !== 'undefined' && spinButtonMesh) spinButtonMesh.material.color.setHex(currentMode === 'MILF' ? 0xef4444 : 0x3b82f6);
+            if (typeof switchToggleGroup !== 'undefined' && switchToggleGroup) targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
+
             reelContainers.forEach((container, index) => {
                 container.innerHTML = '';
                 container.style.transition = 'none';
@@ -351,7 +283,6 @@
                 const startIndex = Math.floor(Math.random() * items.length);
                 let html = '';
                 
-                // Construct the spin runway by copying array multiple times
                 const fullList = [];
                 for(let i=0; i<spinMultiplier; i++) {
                     fullList.push(...shuffleArray([...items]));
@@ -360,17 +291,15 @@
                 fullList.push(...finalItems);
 
                 fullList.forEach(text => {
-                    // Safe injection of text into DOM
-                    html += `<div class="reel-item" data-text="${text.replace(/"/g, '&quot;')}">${text}</div>`;
+                    html += `<div class="reel-item">${text}</div>`;
                 });
                 
                 container.innerHTML = html;
                 container.style.transform = `translateY(-${startIndex * itemHeight}px)`;
             });
 
-            // Reset Output Box
-            outputSentence.innerHTML = '<p class="opacity-50 italic text-center py-8">Pull the lever to generate your character...</p>';
-            outputContainer.style.opacity = '1';
+            outputSentence.innerHTML = '<p class="opacity-50 italic text-center font-normal">Push the button to generate your character...</p>';
+            document.getElementById('output-container').style.opacity = '1';
         }
 
         function shuffleArray(array) {
@@ -384,8 +313,19 @@
         function handleSpin() {
             if (isSpinning) return;
             isSpinning = true;
+
+            // Depress button Y
+            targetButtonY = BUTTON_PRESSED_Y;
             
-            outputContainer.style.opacity = '0.3';
+            setTimeout(() => {
+                targetButtonY = BUTTON_RESTING_Y; 
+                executeSpin();
+            }, 150);
+        }
+
+        function executeSpin() {
+            document.getElementById('output-container').style.opacity = '0.3';
+            
             const data = gameData[currentMode];
             let results = [];
             let completedReels = 0;
@@ -396,14 +336,13 @@
                 const totalItemsInDOM = (itemsCount * spinMultiplier) + itemsCount;
                 const stopIndex = totalItemsInDOM - itemsCount + targetFinalIndex;
                 
-                // Stagger stop times slightly per reel
-                const duration = 2 + (i * 0.4); 
+                const duration = 1.5 + (i * 0.4); 
                 
                 container.style.transition = `transform ${duration}s cubic-bezier(0.25, 0.1, 0.1, 1)`;
                 container.style.transform = `translateY(-${stopIndex * itemHeight}px)`;
 
                 setTimeout(() => {
-                    results[i] = container.children[stopIndex].dataset.text;
+                    results[i] = container.children[stopIndex].innerText;
                     completedReels++;
 
                     if (completedReels === reelContainers.length) {
@@ -416,164 +355,220 @@
         function finishSpin(results) {
             isSpinning = false;
             const data = gameData[currentMode];
-            const c = data.colors[5]; 
-            const capTarget = currentMode === 'MILF' ? 'Mother' : 'Dad';
             
-            const randomAcronym = lfAcronyms[Math.floor(Math.random() * lfAcronyms.length)];
-
-            // Ensures proper grammatical flow by dynamically adjusting the preposition for Age
-            const ageText = results[0];
-            const isEra = ageText.includes("prime") || ageText.includes("years") || ageText.includes("era");
-            const agePreposition = isEra ? "during their" : "in their";
+            const acronymArray = data.acronyms;
+            const finalAcronym = acronymArray[Math.floor(Math.random() * acronymArray.length)];
+            
+            const hl = `font-bold text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-sm`;
 
             const sentenceHtml = `
-                <div class="space-y-2">
-                    <p class="text-base md:text-lg leading-snug">
-                        This <span class="font-bold ${c}">${data.noun}</span> is a <span class="font-bold ${c}">${results[1]}</span> ${agePreposition} <span class="font-bold ${c}">${ageText}</span>. 
-                        They're known for being <span class="font-bold ${c}">${results[2]}</span>. 
-                        You can usually find them wearing <span class="font-bold ${c}">${results[3]}</span> paired with <span class="font-bold ${c}">${results[4]}</span> while <span class="font-bold ${c}">${results[5]}</span>.
-                    </p>
-                    <div class="mt-3 pt-3 border-t border-white/20">
-                        <p class="text-xl md:text-2xl font-black ${c} text-center tracking-widest uppercase drop-shadow-md">
-                            ${capTarget} I'd <span class="underline decoration-4 underline-offset-4">${randomAcronym}!</span>
-                        </p>
-                    </div>
-                </div>
+                <p class="mb-1 text-sm md:text-base">This ${data.noun} is a <span class="${hl}">${results[1]}</span> in their <span class="${hl}">${results[0]}</span>.</p>
+                <p class="mb-1 text-sm md:text-base">They're known for being <span class="${hl}">${results[2]}</span>.</p>
+                <p class="mb-2 text-sm md:text-base">You can usually find them wearing <span class="${hl}">${results[3]}</span> paired with <span class="${hl}">${results[4]}</span> while <span class="${hl}">${results[5]}</span>.</p>
+                <p class="text-base md:text-lg text-center italic mt-3 opacity-80">Now that is one...</p>
+                <p class="text-3xl md:text-4xl text-center title-font tracking-wide text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} mt-1 drop-shadow-md">${finalAcronym}</p>
             `;
 
             outputSentence.innerHTML = sentenceHtml;
-            outputContainer.style.opacity = '1';
+            document.getElementById('output-container').style.opacity = '1';
         }
 
-        function initThreeJSLever() {
-            const container = document.getElementById('three-lever-container');
-            if(!container) return;
+        let rendererBtn, sceneBtn, cameraBtn;
+        let buttonGroup, spinButtonMesh;
+        const BUTTON_RESTING_Y = 3.8;
+        const BUTTON_PRESSED_Y = 1.2;
+        let targetButtonY = BUTTON_RESTING_Y;
 
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        function initThreeButton() {
+            const container = document.getElementById('three-button-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            sceneBtn = new THREE.Scene();
+            cameraBtn = new THREE.PerspectiveCamera(35, width / height, 0.1, 1000);
+            cameraBtn.position.set(0, 18, 30); // Pulled back and up for a wider view
+            cameraBtn.lookAt(0, 2, 0);
+
+            rendererBtn = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            rendererBtn.setSize(width, height);
+            container.appendChild(rendererBtn.domElement);
+
+            // Softer, more natural lighting
+            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+            sceneBtn.add(ambient);
             
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            container.appendChild(renderer.domElement);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            dirLight.position.set(5, 10, 8);
+            sceneBtn.add(dirLight);
+            
+            const spotLight = new THREE.SpotLight(0xffffff, 1.2); // Halved the brightness
+            spotLight.position.set(-5, 15, 10);
+            spotLight.lookAt(0, 3, 0);
+            spotLight.angle = Math.PI / 5;
+            spotLight.penumbra = 0.6;
+            sceneBtn.add(spotLight);
 
-            // Dynamic Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            dirLight.position.set(5, 5, 5);
-            scene.add(dirLight);
+            buttonGroup = new THREE.Group();
+            sceneBtn.add(buttonGroup);
 
-            const leverGroup = new THREE.Group();
-            scene.add(leverGroup);
-
-            // Metal Base (Made chunkier)
-            const baseGeo = new THREE.BoxGeometry(2, 6, 3);
-            const baseMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.2 });
+            // The Long Pillar (Extended massively to prevent bottom clipping)
+            const baseGeo = new THREE.CylinderGeometry(4.0, 4.0, 400.0, 64);
+            const baseMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.4 });
             const base = new THREE.Mesh(baseGeo, baseMat);
-            base.position.set(0, -2, 0);
-            leverGroup.add(base);
+            base.position.y = -198.0; // Pushed deep down 
+            buttonGroup.add(base);
 
-            // Lever Pivot point
-            leverStickPivot = new THREE.Group();
-            leverStickPivot.position.set(0, -0.5, 0);
-            leverGroup.add(leverStickPivot);
+            // Glossy Black Bezel Ring
+            const ringGeo = new THREE.TorusGeometry(3.5, 0.7, 32, 64);
+            const ringMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.1, metalness: 0.8 });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.rotation.x = Math.PI / 2;
+            ring.position.y = 2.0;
+            buttonGroup.add(ring);
 
-            // Metal Stick (Thicker and longer)
-            const stickGeo = new THREE.CylinderGeometry(0.4, 0.4, 7);
-            const stickMat = new THREE.MeshStandardMaterial({ color: 0x999999, metalness: 0.9, roughness: 0.1 });
-            const stick = new THREE.Mesh(stickGeo, stickMat);
-            stick.position.set(0, 3.5, 0);
-            leverStickPivot.add(stick);
-
-            // Glossy Interactive Ball (Bigger)
-            const ballGeo = new THREE.SphereGeometry(1.4, 32, 32);
-            leverBallMat = new THREE.MeshStandardMaterial({ color: 0xff4444, metalness: 0.3, roughness: 0.1 });
-            const ball = new THREE.Mesh(ballGeo, leverBallMat);
-            ball.position.set(0, 7.5, 0);
-            leverStickPivot.add(ball);
-
-            // Set Initial Resting Position
-            leverStickPivot.rotation.x = RESTING_ROTATION;
-
-            // Adjusted Camera to fit larger lever
-            camera.position.z = 22; 
-            camera.position.x = -4; // Shifted to see side profile
-            camera.position.y = 3; 
-            camera.lookAt(0, 1, 0);
-
-            // True Spring Physics Render Loop
-            function animate() {
-                requestAnimationFrame(animate);
-                
-                const tension = 0.12; // Snap back force
-                const dampening = 0.82; // Bounciness/friction
-                
-                leverVelocity += (targetLeverRotation - leverRotation) * tension;
-                leverVelocity *= dampening;
-                leverRotation += leverVelocity;
-
-                if (leverStickPivot) {
-                    leverStickPivot.rotation.x = leverRotation;
-                }
-                renderer.render(scene, camera);
-            }
-            animate();
-
-            // Interactive Drag Physics
-            container.addEventListener('mousedown', () => {
-                if(isSpinning) return;
-                isHoldingLever = true;
-                targetLeverRotation = PULLED_ROTATION; 
+            // High Gloss Arcade Button
+            const btnGeo = new THREE.CylinderGeometry(3.0, 3.0, 4.0, 64);
+            const initialColor = currentMode === 'MILF' ? 0xef4444 : 0x3b82f6;
+            
+            // Toned down reflection properties
+            const buttonMat = new THREE.MeshPhysicalMaterial({ 
+                color: initialColor, 
+                metalness: 0.1, 
+                roughness: 0.15, 
+                clearcoat: 0.6, 
+                clearcoatRoughness: 0.1,
+                reflectivity: 0.5
             });
+            
+            spinButtonMesh = new THREE.Mesh(btnGeo, buttonMat);
+            spinButtonMesh.position.y = BUTTON_RESTING_Y; 
+            buttonGroup.add(spinButtonMesh);
 
-            window.addEventListener('mouseup', () => {
-                if (isHoldingLever) {
-                    isHoldingLever = false;
-                    targetLeverRotation = RESTING_ROTATION; 
-                    handleSpin();
-                }
-            });
-
-            // Touch support
-            container.addEventListener('touchstart', (e) => {
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            
+            rendererBtn.domElement.addEventListener('pointerdown', (e) => {
                 if(isSpinning) return;
-                e.preventDefault();
-                isHoldingLever = true;
-                targetLeverRotation = PULLED_ROTATION;
-            }, {passive: false});
+                const rect = rendererBtn.domElement.getBoundingClientRect();
+                mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+                raycaster.setFromCamera(mouse, cameraBtn);
+                
+                const intersects = raycaster.intersectObject(buttonGroup, true);
+                if (intersects.length > 0) handleSpin();
+            });
+        }
 
-            window.addEventListener('touchend', () => {
-                if (isHoldingLever) {
-                    isHoldingLever = false;
-                    targetLeverRotation = RESTING_ROTATION;
-                    handleSpin();
+        let rendererSw, sceneSw, cameraSw;
+        let switchGroup, switchToggleGroup;
+        const SWITCH_MILF_ROT = -0.55; 
+        const SWITCH_DILF_ROT = 0.55;  
+        let targetSwitchRot = SWITCH_MILF_ROT;
+
+        function initThreeSwitch() {
+            // Fix: Mount correctly inside the specific holder, NOT the parent container
+            const container = document.getElementById('switch-canvas-holder');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            sceneSw = new THREE.Scene();
+            cameraSw = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+            cameraSw.position.set(0, 0, 7); // Straight-on
+            cameraSw.lookAt(0, 0, 0);
+
+            rendererSw = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            rendererSw.setSize(width, height);
+            container.appendChild(rendererSw.domElement);
+
+            // Toned down the lighting to make it look less blown out/bright
+            const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+            sceneSw.add(ambient);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            dirLight.position.set(2, 5, 8);
+            sceneSw.add(dirLight);
+
+            switchGroup = new THREE.Group();
+            sceneSw.add(switchGroup);
+
+            // Tall Slim Wall Plate (Darker slate color matching the reel panel shadows)
+            const plateGeo = new THREE.BoxGeometry(2.0, 4.0, 0.2);
+            const plateMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.8, metalness: 0.2 });
+            const plate = new THREE.Mesh(plateGeo, plateMat);
+            switchGroup.add(plate);
+
+            // Dark Recess Hole
+            const holeGeo = new THREE.BoxGeometry(0.6, 1.4, 0.25);
+            const holeMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
+            const hole = new THREE.Mesh(holeGeo, holeMat);
+            hole.position.z = 0.05;
+            switchGroup.add(hole);
+
+            // Switch Toggle Mechanism
+            switchToggleGroup = new THREE.Group();
+            switchToggleGroup.position.z = 0.1; 
+            switchGroup.add(switchToggleGroup);
+
+            // White Flickable Nub
+            const toggleGeo = new THREE.BoxGeometry(0.5, 1.2, 0.6);
+            const toggleMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
+            const toggleMesh = new THREE.Mesh(toggleGeo, toggleMat);
+            toggleMesh.position.z = 0.3; 
+            switchToggleGroup.add(toggleMesh);
+
+            targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
+            switchToggleGroup.rotation.x = targetSwitchRot;
+
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            
+            rendererSw.domElement.addEventListener('pointerdown', (e) => {
+                if(isSpinning) return;
+                const rect = rendererSw.domElement.getBoundingClientRect();
+                mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+                raycaster.setFromCamera(mouse, cameraSw);
+                const intersects = raycaster.intersectObject(plate, true);
+                if (intersects.length > 0) {
+                    currentMode = currentMode === 'MILF' ? 'DILF' : 'MILF';
+                    initMachine();
                 }
             });
         }
 
-        // Mode Toggle Listener
-        toggleEl.addEventListener('change', (e) => {
-            if(isSpinning) {
-                e.preventDefault();
-                toggleEl.checked = !toggleEl.checked;
-                return;
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (spinButtonMesh) {
+                spinButtonMesh.position.y += (targetButtonY - spinButtonMesh.position.y) * 0.3;
+                rendererBtn.render(sceneBtn, cameraBtn);
             }
-            currentMode = toggleEl.checked ? 'DILF' : 'MILF';
-            initMachine();
+
+            if (switchToggleGroup) {
+                switchToggleGroup.rotation.x += (targetSwitchRot - switchToggleGroup.rotation.x) * 0.2;
+                rendererSw.render(sceneSw, cameraSw);
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            if(cameraBtn && rendererBtn) {
+                const cBtn = document.getElementById('three-button-container');
+                cameraBtn.aspect = cBtn.clientWidth / cBtn.clientHeight;
+                cameraBtn.updateProjectionMatrix();
+                rendererBtn.setSize(cBtn.clientWidth, cBtn.clientHeight);
+            }
+            if(cameraSw && rendererSw) {
+                const cSw = document.getElementById('switch-canvas-holder');
+                cameraSw.aspect = cSw.clientWidth / cSw.clientHeight;
+                cameraSw.updateProjectionMatrix();
+                rendererSw.setSize(cSw.clientWidth, cSw.clientHeight);
+            }
         });
 
-        // Mobile Spin Hook
-        mobileSpinBtn.addEventListener('click', () => {
-            if(!isSpinning) {
-                targetLeverRotation = PULLED_ROTATION;
-                setTimeout(() => { targetLeverRotation = RESTING_ROTATION; handleSpin(); }, 150);
-            }
-        });
-
-        // Initialize App
         window.onload = () => {
+            initThreeButton();
+            initThreeSwitch();
             initMachine();
-            setTimeout(initThreeJSLever, 100); 
+            animate();
         };
     </script>
 </body>
