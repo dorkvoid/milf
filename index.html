@@ -55,7 +55,7 @@
         .reel-column {
             position: relative;
             overflow: hidden;
-            height: 120px;
+            height: 100px;
             flex: 1; 
         }
 
@@ -66,17 +66,18 @@
         }
 
         .reel-item {
-            height: 120px;
+            height: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             font-weight: 800;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #1e293b;
             padding: 0 0.5rem;
             text-transform: uppercase;
             word-break: break-word;
+            line-height: 1.1;
         }
 
         /* Glassmorphism Adlib Box */
@@ -87,21 +88,26 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
             transition: opacity 0.4s ease;
-            min-height: 320px; /* Increased to hold the final text without expanding */
-            display: flex; /* Centers the default placeholder text beautifully */
+            min-height: 160px; /* Reduced to fit the screen better */
+            display: flex; 
             flex-direction: column;
             justify-content: center;
             color: #f8fafc;
         }
 
+        /* Adjusted text sizes to prevent wrapping and layout shift */
+        #output-sentence p {
+            margin-bottom: 0.5rem; 
+        }
+
         /* 3D Canvas Container */
         #three-lever-container {
             position: absolute;
-            right: -100px;
+            right: -130px;
             top: 50%;
             transform: translateY(-50%);
-            width: 140px; /* Widened the invisible canvas to prevent clipping */
-            height: 320px; /* Taller canvas for a smooth swing */
+            width: 160px; 
+            height: 320px; 
             z-index: 20;
             cursor: grab;
         }
@@ -110,48 +116,49 @@
             cursor: grabbing;
         }
 
-        /* Adjusted breakpoints so the lever stays visible in the split-screen preview! */
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            #three-lever-container { right: -90px; transform: translateY(-50%) scale(0.85); }
+        }
+
         @media (max-width: 850px) {
-            #three-lever-container { 
-                right: -40px;
-                transform: translateY(-50%) scale(0.7); /* Scale it down to fit smaller screens */
-            }
+            #three-lever-container { right: -60px; transform: translateY(-50%) scale(0.7); }
             .reel-item { font-size: 0.75rem; padding: 0 0.25rem; }
         }
 
         @media (max-width: 640px) {
-            #three-lever-container { display: none; } /* Only hide on actual mobile phones */
+            #three-lever-container { display: none; }
             .reel-item { font-size: 0.65rem; padding: 0 0.15rem; }
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center py-10 px-4">
+<body class="flex flex-col items-center justify-center py-2 px-4 h-screen overflow-hidden m-0">
 
-    <div class="w-full max-w-4xl flex flex-col items-center gap-6 relative">
+    <div class="w-full max-w-4xl flex flex-col items-center gap-2 relative">
         
         <!-- Header -->
-        <div class="flex flex-col items-center gap-2 text-center w-full">
-            <h1 id="main-title" class="title-font text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 drop-shadow-lg transition-all duration-500">
+        <div class="flex flex-col items-center gap-0 text-center w-full">
+            <h1 id="main-title" class="title-font text-4xl md:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 drop-shadow-lg transition-all duration-500">
                 THE M.I.L.F. MACHINE
             </h1>
 
             <!-- Mode Toggle Switch -->
-            <div class="flex items-center justify-center gap-4 mt-4 mb-2 bg-gray-900/50 px-6 py-3 rounded-full border border-gray-700/50 shadow-inner">
-                <span id="label-milf" class="font-bold text-xl tracking-widest text-red-400 transition-colors duration-300">MILF</span>
+            <div class="flex items-center justify-center gap-3 mt-2 mb-1 bg-gray-900/50 px-4 py-2 rounded-full border border-gray-700/50 shadow-inner scale-90">
+                <span id="label-milf" class="font-bold text-lg tracking-widest text-red-400 transition-colors duration-300">MILF</span>
                 <label class="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="mode-toggle" class="sr-only peer">
-                    <div class="w-16 h-8 bg-red-500 peer-focus:outline-none rounded-full peer shadow-inner transition-colors duration-300 peer-checked:bg-blue-500"></div>
-                    <div class="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300 peer-checked:translate-x-8 shadow-md"></div>
+                    <div class="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer shadow-inner transition-colors duration-300 peer-checked:bg-blue-500"></div>
+                    <div class="absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 peer-checked:translate-x-7 shadow-md"></div>
                 </label>
-                <span id="label-dilf" class="font-bold text-xl tracking-widest text-gray-500 transition-colors duration-300">DILF</span>
+                <span id="label-dilf" class="font-bold text-lg tracking-widest text-gray-500 transition-colors duration-300">DILF</span>
             </div>
         </div>
 
         <!-- Slot Machine Wrapper -->
-        <div class="relative w-full max-w-3xl mt-2">
+        <div class="relative w-full max-w-3xl mt-1">
             
             <!-- Machine Body -->
-            <div class="machine-body rounded-3xl p-3 md:p-6 border-4 border-gray-500 relative">
+            <div class="machine-body rounded-3xl p-3 border-4 border-gray-500 relative">
                 
                 <!-- Reel Screen (2 Rows of 3) -->
                 <div class="machine-screen rounded-xl border-8 border-gray-800 flex flex-col relative overflow-hidden bg-white">
@@ -180,7 +187,7 @@
                 </div>
 
                 <!-- Mobile Spin Button -->
-                <button id="mobile-spin-btn" class="sm:hidden w-full mt-6 bg-gradient-to-b from-red-500 to-red-700 text-white font-bold text-xl py-4 rounded-xl border-b-4 border-red-900 active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg">
+                <button id="mobile-spin-btn" class="sm:hidden w-full mt-4 bg-gradient-to-b from-red-500 to-red-700 text-white font-bold text-lg py-3 rounded-xl border-b-4 border-red-900 active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg">
                     Pull Lever!
                 </button>
             </div>
@@ -190,9 +197,9 @@
         </div>
 
         <!-- Glassy Output Box (Character Generated Brick) -->
-        <div class="glassy-output rounded-2xl p-6 md:p-10 w-full max-w-2xl mt-6 relative overflow-hidden" id="output-container">
-            <div id="output-sentence" class="text-lg md:text-xl font-medium">
-                <p class="opacity-50 italic text-center py-8">Pull the lever to generate your character...</p>
+        <div class="glassy-output rounded-2xl p-4 md:p-6 w-full max-w-2xl mt-3 relative overflow-hidden" id="output-container">
+            <div id="output-sentence" class="text-base md:text-lg font-medium">
+                <p class="opacity-50 italic text-center py-4">Pull the lever to generate your character...</p>
             </div>
         </div>
 
@@ -209,50 +216,45 @@
             for(let i=0; i<count; i++) {
                 let a = adj1[Math.floor(Math.random() * adj1.length)];
                 let b = adj2[Math.floor(Math.random() * adj2.length)];
-                let conj = Math.random() > 0.6 ? "yet" : "and"; // Adds natural flow
+                let conj = Math.random() > 0.5 ? "yet" : "and";
                 mixed.push(`${a} ${conj} ${b}`);
             }
             return mixed;
         }
 
-        // Hidden L... F... Acronym endings for sentence generation (must fit "I'd [verb phrase]")
+        // Acronyms specifically curated to fit "I'd [phrase]"
         const lfAcronyms = [
             "Like to Finance", "Listen to Forever", "Leave Flowers for", "Look at Fondly", 
             "Learn French with", "Laugh with Forever", "Lend Funds to", "Love Fiercely", "Live For", 
             "Lift Furniture for", "Launch Fireworks with", "Lose Focus over", "Like to Flirt with", "Love to Flatter", 
             "Lend Favors to", "Look For", "Listen to Frequently", "Leave Fortune to", "Lead Forward", 
-            "Love Faithfully", "Learn Facts from", "Live Freely with", "Like to Follow", "Look Fabulous for", 
-            "Launch Fleets for", "Light Fires with", "Lose Fear for", "Linger For", 
-            "Long For", "Lure Foxes with", "Leave Feedback for", "Like to Freestyle with", 
-            "Lounge Forever with", "Love Fall with", "Live Fearlessly for", "Lift Friends with", "Love Fridays with", 
-            "Look Fierce for", "Leap Forward for", "Listen to Flutes with", "Leave For", "Love Felines with",
-            "Leave Fast for", "Lose Fights for", "Love Forever", "Learn From", "Linger Fondly for", "Lose Feelings for"
+            "Love Faithfully", "Learn Facts from", "Live Freely with", "Like to Follow", "Look Fabulous for"
         ];
 
-        // Massive Data Library (80+ specific choices per reel)
+        // Refined Options ensuring cohesive ad-libs and flow
         const gameData = {
             MILF: {
                 title: "THE M.I.L.F. MACHINE",
                 noun: "mother",
                 colors: ["from-red-400", "to-red-600", "bg-red-500/60", "border-red-900", "rgba(239,68,68,0.8)", "text-red-400", 0xff4444],
                 reels: [
-                    // Reel 0: Age
-                    ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "90s", "early 20s", "mid 20s", "late 20s", "early 30s", "mid 30s", "late 30s", "early 40s", "mid 40s", "late 40s", "early 50s", "mid 50s", "late 50s", "early 60s", "mid 60s", "late 60s", "early 70s", "mid 70s", "late 70s", "early 80s", "mid 80s", "late 80s", "early 90s", "mid 90s", "late 90s", "ancient era", "absolute prime", "golden years", "twilight years", "extended youth", "roaring 20s", "dirty 30s", "fabulous 40s", "nifty 50s", "swinging 60s", "sensational 70s", "elegant 80s", "noble 90s", "timeless era", "ageless state", "eternal youth", "immortal phase", "post-menopausal prime", "prime 40s", "late 50s but looks 30", "mid 30s going on 20", "ageless 40s", "late 30s prime", "early 50s prime", "mid 40s perfection", "late 60s royalty", "ageless 50s", "forever 29", "post-divorce 40s", "thriving 50s", "newly single 30s", "unbothered 60s", "radiant 40s", "peak 30s", "vintage era", "renaissance era", "boss-tier 50s", "untouchable 40s", "seasoned 30s", "flourishing 50s", "majestic 60s", "fountain-of-youth 40s", "golden 50s", "spectacular 30s", "glorious 40s", "unapologetic 50s"],
+                    // Reel 0: Age (Removed "going on" idioms to ensure clean flow)
+                    ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "early 20s", "mid 20s", "late 20s", "early 30s", "mid 30s", "late 30s", "early 40s", "mid 40s", "late 40s", "early 50s", "mid 50s", "late 50s", "early 60s", "mid 60s", "late 60s", "early 70s", "mid 70s", "late 70s", "early 80s", "prime", "golden years", "roaring 20s", "dirty 30s", "fabulous 40s", "nifty 50s"],
                     
-                    // Reel 1: Size/Archetype
-                    ["giant emu", "petite powerhouse", "tall queen", "cozy bear", "statuesque goddess", "tiny terror", "curvy icon", "athletic dynamo", "slender sprite", "voluptuous vixen", "majestic swan", "fierce lioness", "gentle doe", "mama bear", "boss lady", "gym rat", "Amazonian warrior", "pocket-sized powerhouse", "thicc queen", "statuesque model", "muscle mommy", "curvy matron", "willowy waif", "sturdy farmgirl", "lanky beanpole", "compact dynamo", "hulking bruiser", "lithe dancer", "barrel-chested powerhouse", "pint-sized pixie", "towering giantess", "soft marshmallow", "wiry scrapper", "broad-shouldered boss", "dainty flower", "heavyweight champ", "featherweight fighter", "solid oak", "bendy gymnast", "squishy plushie", "gawky teen-spirit", "imposing monolith", "svelte fashionista", "chunky monkey", "spindly spider", "robust matriarch", "delicate porcelain", "strapping lass", "brawny titan", "slight whisper", "hefty matron", "spry elf", "lumbering giant", "nimble acrobat", "stocky bulldog", "graceful gazelle", "burly lumberjane", "wispy ghost", "stout tavern-keeper", "rangy wanderer", "gymnast build", "soft pillow", "brick house", "slender reed", "curvy bombshell", "petite fairy", "tall glass of water", "sturdy pillar", "lithe panther", "cuddly bear", "ferocious tiger", "regal queen", "bouncy cheerleader", "gothic queen", "cottagecore sprite", "cyberpunk hacker", "soccer mom supreme", "wine aunt", "corporate overlord", "yoga instructor", "spin class warrior", "pilates princess", "marathon runner"],
+                    // Reel 1: Size
+                    ["petite powerhouse", "tall queen", "cozy bear", "statuesque goddess", "tiny terror", "curvy icon", "athletic dynamo", "slender sprite", "voluptuous vixen", "majestic swan", "fierce lioness", "gentle doe", "mama bear", "boss lady", "gym rat", "Amazonian warrior", "pocket-sized powerhouse", "thicc queen", "muscle mommy", "curvy matron", "willowy waif", "sturdy farmgirl", "lanky beanpole", "compact dynamo"],
                     
-                    // Reel 2: Personality (Generated dynamically on load)
-                    generateRandomPersonalities(85),
+                    // Reel 2: Personality
+                    generateRandomPersonalities(40),
                     
-                    // Reel 3: Main Clothing
-                    ["a sports bra and a long skirt", "a tailored pantsuit", "yoga pants and an oversized tee", "a vintage floral dress", "high-waisted mom jeans and a cozy sweater", "a breezy yellow sundress", "a matching velour tracksuit", "a leather jacket and ripped jeans", "matching silk pajamas", "denim overalls and a striped shirt", "a classic trench coat over a cocktail dress", "a flowy maxi skirt and a crop top", "a sharp blazer and skinny jeans", "baggy sweatpants and a hoodie", "a tight pencil skirt and a silk blouse", "a bright summer romper", "a sweeping evening gown", "an oversized flannel and leggings", "a chunky knit cardigan over a dress", "a string bikini and a sheer cover-up", "a black turtleneck and slacks", "cargo pants and a tight tank top", "a flattering wrap dress", "a sleek bodysuit and wide-leg trousers", "Lululemon leggings and a giant tee", "a messy bun, oversized tee, and exhaustion", "a vintage sundress and combat boots", "a silk kimono and nothing else", "a neon retro ski suit", "a vintage band tee and cut-off shorts", "a preppy sweater vest and collared shirt", "a woven poncho and flares", "a sparkly tube top and low-rise jeans", "a laced corset and a mini skirt", "a plush terrycloth robe", "a utilitarian boiler suit", "a literal pink tutu and a leotard", "a bright yellow slicker", "a neon 80s windbreaker and biker shorts", "a makeshift bedsheet toga", "medical scrubs", "a stained chef's coat and houndstooth pants", "a half-zipped neoprene wetsuit", "a velvet gothic gown", "a glittery dress and strap-on fairy wings", "khakis and a button-down", "a blindingly sparkly sequin dress", "a snarky graphic tee and sweatshorts", "a power-suit with bold shoulder pads", "a sequined jumpsuit", "a modest pioneer dress", "a leather corset and studded pants", "a pastel goth ensemble", "a cyberpunk tactical vest", "a cottagecore apron dress", "a 1920s flapper dress", "a 70s disco outfit", "a futuristic latex bodysuit", "a pristine white tennis skirt and polo", "a heavily distressed denim jacket over a slip dress", "a cozy oversized cashmere sweater and tights", "a fiercely tight leopard print dress", "a conservative twinset and pearls", "a bohemian maxi dress with bell sleeves", "a sharp tuxedo with no shirt underneath", "a cozy onesie pajama set", "a chic monochromatic beige linen outfit", "a brightly colored rain poncho", "a highly technical hiking outfit", "a vintage bowling shirt and capri pants", "a glamorous faux fur coat over lingerie", "a simple black slip dress", "a chunky turtleneck and pleated skirt", "a bold neon two-piece set", "a relaxed fit linen button down and shorts", "a dramatically sweeping black cape", "a cozy sherpa pullover and leggings", "a sparkly figure-skating outfit", "a severe high-collared Victorian blouse", "a breezy tie-dye kaftan", "a perfectly tailored pencil skirt and blazer"],
+                    // Reel 3: Clothing
+                    ["a sports bra and a long skirt", "a tailored pantsuit", "yoga pants and an oversized tee", "a vintage floral dress", "high-waisted mom jeans and a cozy sweater", "a breezy yellow sundress", "a matching velour tracksuit", "a leather jacket and ripped jeans", "matching silk pajamas", "denim overalls and a striped shirt", "a classic trench coat", "a flowy maxi skirt", "a sharp blazer", "baggy sweatpants", "a tight pencil skirt", "a bright summer romper", "an oversized flannel", "a chunky knit cardigan"],
                     
-                    // Reel 4: Accessories / Shoes
-                    ["a venti iced coffee", "a massive sun hat", "a silk scarf", "a sensible cardigan", "a pristine white visor", "a yoga mat strapped to her back", "three different reusable water bottles", "a perfectly organized planner", "way too many shopping bags", "an aggressively large diamond ring", "a small, angry dog in a purse", "a terrifyingly sharp stiletto nail set", "a giant Stanley cup", "sensible heels", "chunky combat boots", "a messy bun and sunglasses", "a designer handbag", "a seemingly bottomless tote bag", "reading glasses on a chain", "way too much gold jewelry", "a pristine tennis visor", "a chunky knit beanie", "a pair of incredibly tall platform boots", "a delicate pearl necklace", "a pair of oversized aviator sunglasses", "a fanny pack worn across the chest", "a pair of fluffy pink slippers", "a remarkably heavy keychain", "a clipboard containing people's secrets", "a glass of red wine she carries everywhere", "a pair of fingerless leather gloves", "a dramatic parasol", "a pair of bright red lipstick and nothing else", "a vintage film camera", "a very expensive looking watch", "a pair of noise-canceling headphones", "a brightly colored scrunchie", "a pair of classic white Converse", "a very intimidating stare", "a perfectly manicured set of acrylics", "a pair of reading glasses perched on her head", "a very fluffy scarf", "a pair of knee-high leather boots", "a highly organized diaper bag", "a pair of bedazzled Crocs", "a chunky statement necklace", "a pair of elegant silk gloves", "a very large, very hot coffee", "a pair of completely impractical stilettos", "a vintage brooch", "a pair of extremely comfortable orthopedic shoes", "a sleek leather briefcase", "a pair of tiny, trendy sunglasses", "a very large umbrella", "a pair of chunky dad sneakers", "a very fuzzy bucket hat", "a pair of sparkling chandelier earrings", "a highly practical canvas tote", "a pair of fishnet tights", "a very dramatic sweeping scarf", "a pair of well-worn hiking boots", "a very fancy silk eye mask", "a pair of finger-less lace gloves", "a very shiny lip gloss", "a pair of classic Ray-Bans", "a completely transparent plastic purse", "a pair of heavily spiked bracelets", "a very soft pashmina shawl", "a pair of brightly colored rain boots", "a very large, very heavy book", "a pair of delicate ankle bracelets", "a very expensive looking fountain pen", "a pair of cat-eye glasses", "a very fluffy boa", "a pair of pristine white tennis shoes", "a very large, floppy straw hat", "a pair of thigh-high socks", "a very shiny tiara"],
+                    // Reel 4: Accessory
+                    ["a massive sun hat", "a silk scarf", "a sensible cardigan", "a pristine white visor", "a yoga mat strapped to her back", "three different reusable water bottles", "a perfectly organized planner", "way too many shopping bags", "an aggressively large diamond ring", "a small, angry dog in a purse", "a terrifyingly sharp stiletto nail set", "a giant Stanley cup", "sensible heels", "chunky combat boots", "a messy bun and sunglasses", "a designer handbag", "reading glasses on a chain"],
                     
                     // Reel 5: Hobby
-                    ["collecting massive houseplants", "drinking expensive wine at 3 PM", "reorganizing the pantry out of spite", "running half-marathons for fun", "intimidating the local PTA", "doomscrolling on the couch", "baking aggressive amounts of sourdough", "gossiping aggressively at brunch", "doing intensive yoga", "managing a very successful MLM", "watching true crime documentaries", "renovating her entire house alone", "reading spicy romance novels", "yelling at referees at youth soccer", "making unnecessarily complex crafts", "shopping online for things she doesn't need", "ignoring text messages", "planning overly elaborate vacations", "complaining to the manager", "fostering too many rescue dogs", "getting really into astrology", "hyper-fixating on obscure historical events", "brewing artisanal kombucha", "aggressively couponing", "doing crossfit", "attending pottery classes", "writing scathing Yelp reviews", "meditating forcefully", "organizing perfectly color-coded spreadsheets", "binge-watching reality TV", "knitting tiny sweaters for cats", "learning conversational French on Duolingo", "playing aggressively competitive tennis", "collecting vintage teacups", "listening to podcasts at 2x speed", "doing tarot readings for strangers", "meal-prepping intensely on Sundays", "gardening with a vengeance", "upcycling trash into 'art'", "practicing amateur taxidermy", "attending silent retreats", "going to bottomless brunch", "arguing with strangers online", "collecting rare succulents", "making elaborate charcuterie boards", "doing aerial silks", "attending wine tasting seminars", "playing Dungeons and Dragons", "writing fanfiction", "restoring antique furniture", "bird watching", "ghost hunting", "metal detecting", "foraging for mushrooms", "brewing craft beer", "competing in dog shows", "building mechanical keyboards", "speedrunning vintage video games", "collecting fountain pens", "practicing calligraphy", "doomscrolling Zillow", "making very passive-aggressive Facebook posts", "organizing community bake sales with an iron fist", "attending pole dancing classes", "writing a memoir nobody asked for", "collecting expensive crystals", "doing very intense jigsaw puzzles", "watching QVC for hours", "learning to code to hack her ex's email", "doing competitive flower arranging", "attending very loud Zumba classes", "making terrifyingly realistic cakes", "collecting porcelain dolls that stare at you", "doing amateur stand-up comedy", "attending slam poetry readings", "making artisanal goat cheese", "collecting vintage Pyrex bowls", "doing competitive dog grooming", "attending ghost tours in historic cities", "making elaborate haunted houses in her garage"]
+                    ["collecting massive houseplants", "drinking expensive wine at 3 PM", "reorganizing the pantry out of spite", "running half-marathons for fun", "intimidating the local PTA", "doomscrolling on the couch", "baking aggressive amounts of sourdough", "gossiping aggressively at brunch", "doing intensive yoga", "managing a very successful MLM", "watching true crime documentaries", "renovating her entire house alone", "reading spicy romance novels", "yelling at referees at youth soccer", "making unnecessarily complex crafts", "fostering too many rescue dogs"]
                 ]
             },
             DILF: {
@@ -260,30 +262,30 @@
                 noun: "father",
                 colors: ["from-blue-400", "to-blue-600", "bg-blue-500/60", "border-blue-900", "rgba(59,130,246,0.8)", "text-blue-400", 0x4444ff],
                 reels: [
-                    // Reel 0: Age
-                    ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "90s", "early 20s", "mid 20s", "late 20s", "early 30s", "mid 30s", "late 30s", "early 40s", "mid 40s", "late 40s", "early 50s", "mid 50s", "late 50s", "early 60s", "mid 60s", "late 60s", "early 70s", "mid 70s", "late 70s", "early 80s", "mid 80s", "late 80s", "early 90s", "mid 90s", "late 90s", "ancient era", "absolute prime", "golden years", "twilight years", "extended youth", "roaring 20s", "dirty 30s", "fabulous 40s", "nifty 50s", "swinging 60s", "sensational 70s", "elegant 80s", "noble 90s", "timeless era", "ageless state", "eternal youth", "immortal phase", "silver fox 50s", "distinguished 60s", "rugged 40s", "newly-divorced 30s", "prime 40s", "late 50s but looks 30", "mid 30s going on 20", "ageless 40s", "late 30s prime", "early 50s prime", "mid 40s perfection", "seasoned 50s", "weathered 40s", "refined 60s", "energetic 30s", "wise 70s", "unstoppable 40s", "classic 50s", "vintage 60s", "peak physical 30s", "distinguished 50s", "rugged 50s", "sophisticated 40s", "youthful 50s", "timeless 40s", "legendary 60s", "mythical 70s"],
+                    // Reel 0: Age (Removed idioms)
+                    ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "early 20s", "mid 20s", "late 20s", "early 30s", "mid 30s", "late 30s", "early 40s", "mid 40s", "late 40s", "early 50s", "mid 50s", "late 50s", "early 60s", "mid 60s", "late 60s", "early 70s", "mid 70s", "late 70s", "early 80s", "prime", "golden years", "roaring 20s", "dirty 30s", "fabulous 40s", "nifty 50s"],
                     
-                    // Reel 1: Size/Archetype
-                    ["silver fox", "papa bear", "lumberjack", "tech bro", "gym bro", "couch potato", "grill master", "handyman", "scholar", "silverback", "gentle giant", "tiny king", "average joe", "big kahuna", "lone wolf", "lumberjack build", "dad-bod supreme", "lean marathoner", "barrel-chested brute", "compact king", "grizzled veteran", "hulking bruiser", "wiry scrapper", "broad-shouldered boss", "heavyweight champ", "solid oak", "squishy plushie", "imposing monolith", "svelte fashionista", "chunky monkey", "robust patriarch", "strapping lad", "brawny titan", "hefty patron", "lumbering giant", "stocky bulldog", "burly lumberjack", "stout tavern-keeper", "rangy wanderer", "muscle mountain", "lean bean", "sturdy farmer", "thick brick", "towering inferno", "petite prince", "beefy beefcake", "string bean", "roly-poly", "jacked scholar", "svelte CEO", "rugged mountain man", "polished academic", "scruffy artist", "sleek panther", "pudgy penguin", "lithe ninja", "brawny blacksmith", "wiry wizard", "stout dwarf", "majestic eagle", "grizzly bear", "sleek greyhound", "sturdy ox", "agile monkey", "wise owl", "stubborn mule", "loyal golden retriever", "fierce wolf", "stealthy cat", "loud rooster", "proud peacock", "heavy rhino", "speedy cheetah", "calm turtle", "bouncing kangaroo", "sneaky fox", "majestic lion", "strong gorilla", "friendly dolphin", "mysterious octopus"],
+                    // Reel 1: Size
+                    ["silver fox", "papa bear", "lumberjack", "tech bro", "gym bro", "couch potato", "grill master", "handyman", "scholar", "silverback", "gentle giant", "tiny king", "average joe", "big kahuna", "lone wolf", "lumberjack build", "dad-bod supreme", "lean marathoner", "barrel-chested brute", "compact king", "grizzled veteran", "hulking bruiser", "wiry scrapper", "broad-shouldered boss"],
                     
-                    // Reel 2: Personality (Generated dynamically on load)
-                    generateRandomPersonalities(85),
+                    // Reel 2: Personality
+                    generateRandomPersonalities(40),
                     
-                    // Reel 3: Main Clothing
-                    ["cargo shorts and a polo", "a sharp three-piece suit", "flannel and jeans", "a tucked-in golf shirt and slacks", "baggy sweatpants and a hoodie", "a loud Hawaiian shirt and board shorts", "a matching velour tracksuit", "a leather jacket and ripped jeans", "matching flannel pajamas", "denim overalls and a striped shirt", "a classic trench coat over a suit", "basketball shorts and a tank top", "a sharp blazer and skinny jeans", "a black turtleneck and slacks", "pleated khakis and a polo", "a neon retro ski suit", "a vintage band tee and cut-off shorts", "a preppy sweater vest and collared shirt", "a woven poncho and flares", "a plush terrycloth robe", "a utilitarian boiler suit", "a bright yellow slicker", "a neon 80s windbreaker and biker shorts", "a makeshift bedsheet toga", "white New Balances and cargo shorts", "a Patagonia vest over a plaid shirt", "an old band tee and perfectly worn jeans", "a sharp three-piece suit with no tie", "a slightly stained 'Kiss The Cook' grilling apron", "medical scrubs", "a stained chef's coat and houndstooth pants", "a half-zipped neoprene wetsuit", "a velvet gothic coat", "khakis and a button-down", "a snarky graphic tee and sweatshorts", "a Canadian tuxedo", "suspenders over a button-up", "a multi-pocket fishing vest", "a chunky knit cardigan over a tee", "a perfectly tailored tuxedo", "spandex running tights", "full motorcycle leathers", "a massive puffer jacket", "a breezy linen suit", "a deep v-neck sweater and chinos", "a tight waffle-knit henley and raw denim", "head-to-toe camouflage", "a retro bowling shirt", "a vintage varsity letterman jacket", "a heavy wool peacoat", "a crisp guayabera shirt", "a colorful dashiki", "a traditional tartan kilt", "a tight wrestling singlet", "a high-vis construction vest", "a tailored tweed suit", "a silk smoking jacket", "a faded denim jacket", "a pristine white chef's uniform", "a tactical combat uniform", "a severely oversized graphic tee and gym shorts", "a carefully ironed button-down shirt with the sleeves rolled up exactly twice", "a cable knit sweater that makes him look like a sea captain", "a completely mismatched tracksuit", "a highly technical moisture-wicking golf outfit", "a vintage leather bomber jacket and aviators", "a soft corduroy blazer with elbow patches", "a brightly colored 90s windbreaker", "a very tight compression shirt and athletic shorts", "a completely plain grey t-shirt and perfectly fitted jeans", "a ridiculously expensive bespoke suit", "a very worn-in college sweatshirt", "a crisp white dress shirt with the collar unbuttoned", "a very practical rain jacket with too many pockets", "a cozy looking fleece pullover", "a boldly patterned silk shirt", "a very stiff, brand new pair of raw denim jeans", "a heavily patched punk rock vest", "a very soft, worn-in chambray shirt", "a very tight, brightly colored cycling jersey"],
+                    // Reel 3: Clothing
+                    ["cargo shorts and a polo", "a sharp three-piece suit", "flannel and jeans", "a tucked-in golf shirt and slacks", "baggy sweatpants and a hoodie", "a loud Hawaiian shirt", "a matching velour tracksuit", "a leather jacket and ripped jeans", "matching flannel pajamas", "denim overalls", "a classic trench coat", "basketball shorts and a tank top", "a sharp blazer", "a black turtleneck", "pleated khakis", "a neon retro ski suit", "a vintage band tee", "a preppy sweater vest"],
                     
-                    // Reel 4: Accessories / Shoes 
-                    ["white New Balances", "a pristine pair of grilling tongs", "aviator sunglasses", "a fancy smartwatch", "a vintage leather briefcase", "a baseball cap from a hardware store", "a massive key ring", "a golf glove in his back pocket", "a very specific brand of sunglasses", "a leather tool belt", "a freshly polished golf club", "a ridiculously expensive cooler", "a 'World's Greatest Dad' mug", "a perfectly seasoned cast iron pan", "a massive, complicated keychain", "a bluetooth earpiece from 2008", "a meticulously groomed mustache", "a pair of incredibly sensible walking shoes", "a highly technical smartwatch", "a pocket knife he uses for everything", "a pair of Crocs in 'sport mode'", "a very expensive cigar", "a pair of driving moccasins", "a thoroughly read newspaper", "a remarkably clean set of golf clubs", "a slightly battered Yeti tumbler", "a perfectly rolled cigar", "a pair of very dirty work boots", "a highly organized tackle box", "a shiny new power drill", "a very worn-in baseball glove", "a pair of incredibly shiny dress shoes", "a neatly trimmed beard", "a pair of reading glasses pushed up on his forehead", "a very large, very heavy analog watch", "a pair of Birkenstocks with socks", "a completely unnecessary flashlight", "a pair of very dark, wrap-around sunglasses", "a remarkably clean white towel draped over his shoulder", "a pair of very squeaky basketball shoes", "a heavily worn leather wallet attached to a chain", "a pristine set of barbecue tools", "a pair of very bright, neon running shoes", "a remarkably heavy, seemingly indestructible phone case", "a pair of incredibly fuzzy slippers", "a remarkably well-maintained classic car key", "a pair of very stiff cowboy boots", "a seemingly endless supply of dad jokes", "a pair of very practical, multi-purpose sandals", "a perfectly tied necktie", "a very large, very complicated camera", "a pair of very thick, woolen socks", "a remarkably shiny bald head", "a pair of very delicate, wire-rimmed glasses", "a seemingly bottomless cup of black coffee", "a pair of incredibly heavy steel-toed boots", "a very expensive, very confusing bottle of wine", "a pair of very flashy, very expensive cufflinks", "a remarkably clean, very sharp pocket knife", "a pair of very brightly colored socks", "a incredibly detailed map", "a pair of very expensive noise-canceling headphones", "a remarkably well-groomed goatee", "a pair of very practical, all-weather floor mats", "a incredibly large, incredibly loud whistle", "a pair of very dark, very mysterious sunglasses", "a remarkably well-maintained set of tools", "a pair of incredibly soft, very expensive leather gloves", "a very large, very complicated grill", "a pair of very sturdy, very practical hiking boots", "a remarkably well-read copy of a history book", "a pair of incredibly bright, very loud golf pants", "a remarkably clean, very shiny sports car", "a pair of very comfortable, very worn-in sweatpants", "a remarkably large, very heavy toolbox", "a pair of incredibly expensive, very shiny dress shoes", "a remarkably well-trained, very obedient dog", "a pair of incredibly soft, very comfortable slippers", "a incredibly large, incredibly complicated remote control", "a pair of remarkably sturdy, incredibly practical boots", "a remarkably well-stocked, incredibly organized garage"],
+                    // Reel 4: Accessory
+                    ["white New Balances", "a pristine pair of grilling tongs", "aviator sunglasses", "a fancy smartwatch", "a vintage leather briefcase", "a baseball cap from a hardware store", "a massive key ring", "a golf glove in his back pocket", "a very specific brand of sunglasses", "a leather tool belt", "a freshly polished golf club", "a ridiculously expensive cooler", "a 'World's Greatest Dad' mug", "a perfectly seasoned cast iron pan", "a massive, complicated keychain", "a bluetooth earpiece from 2008"],
                     
                     // Reel 5: Hobby
-                    ["explaining World War 2 history to strangers", "smoking various meats for 14 hours", "fixing things that aren't actually broken", "falling asleep in his favorite recliner", "brewing overly-hoppy craft beer in the garage", "mowing the lawn with suspicious enthusiasm", "adjusting the thermostat by one degree", "watching 8-hour documentaries on ancient Rome", "collecting rare vintage guitars", "tinkering with a classic car that never runs", "coaching Little League aggressively", "building complicated model trains", "researching obscure investment strategies", "maintaining a pristine sneaker collection", "golfing every single weekend", "arguing with umpires at youth sports", "upgrading his computer rig constantly", "reading thick biographies of presidents", "organizing his tool shed by size", "making artisanal espresso shots", "watching military history videos on YouTube", "buying unnecessary camping gear", "attending niche comic conventions", "flying expensive drones", "baking competitive sourdough bread", "collecting expensive whiskey", "running ultramarathons", "doing amateur woodworking", "investing in cryptocurrency", "playing overly complex board games", "painting Warhammer miniatures", "restoring antique clocks", "practicing martial arts", "listening to audiophile vinyl setups", "doing historical reenactments", "building intricate Lego sets", "watching obscure foreign films", "studying genealogy", "foraging for wild mushrooms", "doing amateur astronomy", "participating in fantasy football leagues", "collecting rare coins", "doing extreme couponing", "attending car shows", "playing bass in a dad band", "doing competitive barbecue", "collecting vintage comic books", "building arcade cabinets", "doing amateur radio", "studying military tactics", "collecting pocket knives", "doing archery", "building terrariums", "studying stoic philosophy", "collecting vinyl records", "doing homebrewing", "practicing sleight of hand magic", "collecting vintage watches", "doing leatherworking", "studying local history", "watching incredibly loud action movies", "falling asleep during incredibly loud action movies", "reading the entire instruction manual before opening the box", "insisting on driving the scenic route", "giving unprompted financial advice", "spending three hours washing his car on a Sunday", "researching the best possible lawn fertilizer", "listening to very obscure jazz records", "buying entirely too much meat at Costco", "building entirely unnecessary shelves in the garage", "watching golf on TV with his eyes closed", "perfecting his chili recipe", "collecting different types of hot sauce", "arguing with the GPS", "refusing to ask for directions", "wearing a headlamp to fix minor household issues", "buying specialized tools he will use exactly once", "getting extremely competitive at family board game night", "telling you the exact mileage he gets on the highway", "complaining about the music they play in stores now", "watching Youtube videos of people power washing driveways"]
+                    ["explaining World War 2 history to strangers", "smoking various meats for 14 hours", "fixing things that aren't actually broken", "falling asleep in his favorite recliner", "brewing overly-hoppy craft beer in the garage", "mowing the lawn with suspicious enthusiasm", "adjusting the thermostat by one degree", "watching 8-hour documentaries on ancient Rome", "collecting rare vintage guitars", "tinkering with a classic car that never runs", "coaching Little League aggressively", "building complicated model trains", "researching obscure investment strategies", "maintaining a pristine sneaker collection", "golfing every single weekend"]
                 ]
             }
         };
 
         let currentMode = 'MILF';
         let isSpinning = false;
-        const itemHeight = 120; // Height of reel item in CSS
+        const itemHeight = 100; // Height of reel item in CSS
         const spinMultiplier = 4; // Length of the spin runway
 
         const titleEl = document.getElementById('main-title');
@@ -302,8 +304,10 @@
 
         // Three.js State
         let leverBallMat, leverStickPivot;
-        let targetLeverRotation = 0;
-        let leverRotation = 0;
+        const RESTING_ROTATION = -0.35; // Leans slightly back like a real machine
+        const PULLED_ROTATION = 1.8;   // Pulls all the way down past 90 degrees
+        let targetLeverRotation = RESTING_ROTATION;
+        let leverRotation = RESTING_ROTATION;
         let leverVelocity = 0;
         let isHoldingLever = false;
 
@@ -412,23 +416,26 @@
         function finishSpin(results) {
             isSpinning = false;
             const data = gameData[currentMode];
-            const c = data.colors[5]; // Uses text-red-400 or text-blue-400
+            const c = data.colors[5]; 
             const capTarget = currentMode === 'MILF' ? 'Mother' : 'Dad';
             
-            // Fetch a cohesive random Acronym from the hidden array!
             const randomAcronym = lfAcronyms[Math.floor(Math.random() * lfAcronyms.length)];
 
-            // Cohesive Ad-Lib Brick Generation
+            // Ensures proper grammatical flow by dynamically adjusting the preposition for Age
+            const ageText = results[0];
+            const isEra = ageText.includes("prime") || ageText.includes("years") || ageText.includes("era");
+            const agePreposition = isEra ? "during their" : "in their";
+
             const sentenceHtml = `
-                <div class="space-y-4">
-                    <p class="text-xl md:text-2xl leading-relaxed">
-                        This <span class="font-bold ${c}">${data.noun}</span> is a <span class="font-bold ${c}">${results[1]}</span> in their <span class="font-bold ${c}">${results[0]}</span>. 
+                <div class="space-y-2">
+                    <p class="text-base md:text-lg leading-snug">
+                        This <span class="font-bold ${c}">${data.noun}</span> is a <span class="font-bold ${c}">${results[1]}</span> ${agePreposition} <span class="font-bold ${c}">${ageText}</span>. 
                         They're known for being <span class="font-bold ${c}">${results[2]}</span>. 
                         You can usually find them wearing <span class="font-bold ${c}">${results[3]}</span> paired with <span class="font-bold ${c}">${results[4]}</span> while <span class="font-bold ${c}">${results[5]}</span>.
                     </p>
-                    <div class="mt-6 pt-6 border-t border-white/20">
-                        <p class="text-3xl md:text-4xl font-black ${c} text-center tracking-widest uppercase drop-shadow-md">
-                            ${capTarget} I'd <br class="md:hidden"/><span class="underline decoration-4 underline-offset-4">${randomAcronym}!</span>
+                    <div class="mt-3 pt-3 border-t border-white/20">
+                        <p class="text-xl md:text-2xl font-black ${c} text-center tracking-widest uppercase drop-shadow-md">
+                            ${capTarget} I'd <span class="underline decoration-4 underline-offset-4">${randomAcronym}!</span>
                         </p>
                     </div>
                 </div>
@@ -459,8 +466,8 @@
             const leverGroup = new THREE.Group();
             scene.add(leverGroup);
 
-            // Metal Base
-            const baseGeo = new THREE.BoxGeometry(1.5, 5, 2);
+            // Metal Base (Made chunkier)
+            const baseGeo = new THREE.BoxGeometry(2, 6, 3);
             const baseMat = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.8, roughness: 0.2 });
             const base = new THREE.Mesh(baseGeo, baseMat);
             base.position.set(0, -2, 0);
@@ -468,26 +475,30 @@
 
             // Lever Pivot point
             leverStickPivot = new THREE.Group();
-            leverStickPivot.position.set(0, -1, 0);
+            leverStickPivot.position.set(0, -0.5, 0);
             leverGroup.add(leverStickPivot);
 
-            // Metal Stick
-            const stickGeo = new THREE.CylinderGeometry(0.3, 0.3, 6);
+            // Metal Stick (Thicker and longer)
+            const stickGeo = new THREE.CylinderGeometry(0.4, 0.4, 7);
             const stickMat = new THREE.MeshStandardMaterial({ color: 0x999999, metalness: 0.9, roughness: 0.1 });
             const stick = new THREE.Mesh(stickGeo, stickMat);
-            stick.position.set(0, 3, 0);
+            stick.position.set(0, 3.5, 0);
             leverStickPivot.add(stick);
 
-            // Glossy Interactive Ball
-            const ballGeo = new THREE.SphereGeometry(1.2, 32, 32);
+            // Glossy Interactive Ball (Bigger)
+            const ballGeo = new THREE.SphereGeometry(1.4, 32, 32);
             leverBallMat = new THREE.MeshStandardMaterial({ color: 0xff4444, metalness: 0.3, roughness: 0.1 });
             const ball = new THREE.Mesh(ballGeo, leverBallMat);
-            ball.position.set(0, 6.5, 0);
+            ball.position.set(0, 7.5, 0);
             leverStickPivot.add(ball);
 
-            camera.position.z = 18; // Pulled the camera back slightly to keep the ball in frame
-            camera.position.x = -2;
-            camera.position.y = 2; // Shifted up slightly to center the animation
+            // Set Initial Resting Position
+            leverStickPivot.rotation.x = RESTING_ROTATION;
+
+            // Adjusted Camera to fit larger lever
+            camera.position.z = 22; 
+            camera.position.x = -4; // Shifted to see side profile
+            camera.position.y = 3; 
             camera.lookAt(0, 1, 0);
 
             // True Spring Physics Render Loop
@@ -512,13 +523,13 @@
             container.addEventListener('mousedown', () => {
                 if(isSpinning) return;
                 isHoldingLever = true;
-                targetLeverRotation = Math.PI / 2.5; 
+                targetLeverRotation = PULLED_ROTATION; 
             });
 
             window.addEventListener('mouseup', () => {
                 if (isHoldingLever) {
                     isHoldingLever = false;
-                    targetLeverRotation = 0; 
+                    targetLeverRotation = RESTING_ROTATION; 
                     handleSpin();
                 }
             });
@@ -528,13 +539,13 @@
                 if(isSpinning) return;
                 e.preventDefault();
                 isHoldingLever = true;
-                targetLeverRotation = Math.PI / 2.5;
+                targetLeverRotation = PULLED_ROTATION;
             }, {passive: false});
 
             window.addEventListener('touchend', () => {
                 if (isHoldingLever) {
                     isHoldingLever = false;
-                    targetLeverRotation = 0;
+                    targetLeverRotation = RESTING_ROTATION;
                     handleSpin();
                 }
             });
@@ -554,8 +565,8 @@
         // Mobile Spin Hook
         mobileSpinBtn.addEventListener('click', () => {
             if(!isSpinning) {
-                targetLeverRotation = Math.PI / 2.5;
-                setTimeout(() => { targetLeverRotation = 0; handleSpin(); }, 150);
+                targetLeverRotation = PULLED_ROTATION;
+                setTimeout(() => { targetLeverRotation = RESTING_ROTATION; handleSpin(); }, 150);
             }
         });
 
