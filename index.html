@@ -87,18 +87,21 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
             transition: opacity 0.4s ease;
-            min-height: 120px;
+            min-height: 320px; /* Increased to hold the final text without expanding */
+            display: flex; /* Centers the default placeholder text beautifully */
+            flex-direction: column;
+            justify-content: center;
             color: #f8fafc;
         }
 
         /* 3D Canvas Container */
         #three-lever-container {
             position: absolute;
-            right: -90px;
+            right: -100px;
             top: 50%;
             transform: translateY(-50%);
-            width: 100px;
-            height: 300px;
+            width: 140px; /* Widened the invisible canvas to prevent clipping */
+            height: 320px; /* Taller canvas for a smooth swing */
             z-index: 20;
             cursor: grab;
         }
@@ -482,9 +485,9 @@
             ball.position.set(0, 6.5, 0);
             leverStickPivot.add(ball);
 
-            camera.position.z = 15;
+            camera.position.z = 18; // Pulled the camera back slightly to keep the ball in frame
             camera.position.x = -2;
-            camera.position.y = 1;
+            camera.position.y = 2; // Shifted up slightly to center the animation
             camera.lookAt(0, 1, 0);
 
             // True Spring Physics Render Loop
