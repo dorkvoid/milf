@@ -104,10 +104,10 @@
 
         #three-button-container {
             position: absolute;
-            right: -320px;
-            top: -20px;
+            right: -420px;
+            top: -400px;
             bottom: -500px;
-            width: 380px; 
+            width: 420px; 
             z-index: 20;
             cursor: pointer;
         }
@@ -118,16 +118,16 @@
 
         @media (max-width: 1024px) {
             #three-switch-container { left: -90px; transform: translateY(-50%) scale(0.8); }
-            #three-button-container { right: -240px; top: -20px; bottom: -400px; transform: scale(0.8); transform-origin: top right; }
+            #three-button-container { right: -300px; top: -300px; bottom: -400px; transform: scale(0.8); transform-origin: top right; }
         }
         @media (max-width: 850px) {
             #three-switch-container { left: -60px; transform: translateY(-50%) scale(0.7); }
-            #three-button-container { right: -150px; top: -20px; bottom: -300px; transform: scale(0.7); transform-origin: top right; }
+            #three-button-container { right: -200px; top: -250px; bottom: -310px; transform: scale(0.7); transform-origin: top right; }
             .reel-item { font-size: 0.75rem; }
         }
         @media (max-width: 640px) {
             #three-switch-container { left: -30px; transform: translateY(-50%) scale(0.45); }
-            #three-button-container { right: -80px; top: -20px; bottom: -200px; transform: scale(0.45); transform-origin: top right; }
+            #three-button-container { right: -80px; top: -160px; bottom: -200px; transform: scale(0.45); transform-origin: top right; }
             .reel-item { font-size: 0.65rem; padding: 0 0.2rem; }
         }
     </style>
@@ -157,9 +157,15 @@
             <div class="machine-body rounded-3xl p-3 md:p-6 border-4 border-gray-500 z-10 relative">
                 <div class="machine-screen rounded-xl border-8 border-gray-800 flex flex-col relative overflow-hidden bg-white">
                     
+                    <!-- The Metal Shutter -->
+                    <div id="reel-shutter" class="absolute inset-0 z-30 bg-gradient-to-b from-slate-700 to-slate-900 border-b-8 border-gray-950 flex items-center justify-center transition-transform duration-1000 ease-in-out shadow-[0_20px_50px_rgba(0,0,0,0.9)]">
+                        <div class="px-8 py-3 border-4 border-gray-600 rounded-lg bg-black/60 shadow-inner">
+                            <span id="shutter-text" class="title-font text-3xl md:text-4xl tracking-widest animate-pulse">AWAITING PULL</span>
+                        </div>
+                    </div>
+
                     <!-- Top Row of Reels -->
                     <div class="reel-row flex relative border-b-4 border-gray-800">
-                        <div class="payline absolute top-1/2 left-0 right-0 h-[3px] -translate-y-1/2 z-20 pointer-events-none transition-colors duration-400 bg-red-500/60 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
                         <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-0"></div></div>
                         <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-1"></div></div>
                         <div class="reel-column"><div class="reel-inner" id="reel-2"></div></div>
@@ -167,30 +173,27 @@
 
                     <!-- Bottom Row of Reels -->
                     <div class="reel-row flex relative">
-                        <div class="payline absolute top-1/2 left-0 right-0 h-[3px] -translate-y-1/2 z-20 pointer-events-none transition-colors duration-400 bg-red-500/60 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
                         <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-3"></div></div>
                         <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-4"></div></div>
                         <div class="reel-column"><div class="reel-inner" id="reel-5"></div></div>
                     </div>
                 </div>
+
+                <button id="mobile-spin-btn" class="md:hidden w-full mt-6 bg-gradient-to-b from-red-500 to-red-700 text-white font-bold text-xl py-4 rounded-xl border-b-4 border-red-900 active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg">
+                    Push To Spin!
+                </button>
             </div>
 
-            <!-- Mobile Spin Button -->
-            <button id="mobile-spin-btn" class="md:hidden w-full mt-4 bg-gradient-to-b from-red-400 to-red-600 text-white font-bold text-xl py-3 rounded-xl border-b-4 border-red-900 active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg">
-                Pull Lever!
-            </button>
-
-            <!-- 3D Arcade Button Container (Right) -->
-            <div id="three-button-container"></div>
-        </div>
-
-        <div class="w-full max-w-2xl mt-6 relative z-10">
-            <div class="glass-output rounded-2xl p-6 md:p-8 flex flex-col justify-center relative overflow-hidden" id="output-container">
+            <!-- Glassy Output Container -->
+            <div id="output-container" class="glass-output mt-6 w-full rounded-xl p-4 md:p-6 relative overflow-hidden flex flex-col items-center justify-center">
                 <div id="output-accent" class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-red-400 to-red-600 transition-colors duration-500"></div>
-                <div id="output-sentence" class="text-lg md:text-xl text-gray-100 font-semibold leading-relaxed pl-4">
+                <div id="output-sentence" class="text-lg md:text-xl text-gray-100 font-semibold leading-relaxed pl-4 w-full">
                     <p class="opacity-50 italic text-center font-normal">Push the button to generate your character...</p>
                 </div>
             </div>
+
+            <!-- 3D Button Container (Right) -->
+            <div id="three-button-container"></div>
         </div>
     </div>
 
@@ -236,14 +239,12 @@
         const spinMultiplier = 3; 
 
         const titleEl = document.getElementById('main-title');
-        const toggleEl = document.getElementById('mode-toggle');
-        const labelMilf = document.getElementById('label-milf');
-        const switchLabelMilf = document.getElementById('switch-label-milf');
-        const switchLabelDilf = document.getElementById('switch-label-dilf');
+        const mobileSpinBtn = document.getElementById('mobile-spin-btn');
         const outputSentence = document.getElementById('output-sentence');
         const outputAccent = document.getElementById('output-accent');
-        const mobileSpinBtn = document.getElementById('mobile-spin-btn');
-        const paylines = document.querySelectorAll('.payline');
+        const shutterEl = document.getElementById('reel-shutter');
+        const shutterText = document.getElementById('shutter-text');
+        
         const reelContainers = [
             document.getElementById('reel-0'), document.getElementById('reel-1'), 
             document.getElementById('reel-2'), document.getElementById('reel-3'), 
@@ -256,25 +257,32 @@
             // Update Title & Theme Colors
             titleEl.textContent = data.title;
             titleEl.className = `title-font text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-lg transition-all duration-500`;
-            mobileSpinBtn.className = `md:hidden w-full mt-4 bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} text-white font-bold text-xl py-3 rounded-xl border-b-4 ${data.colors[3]} active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg`;
+            if (mobileSpinBtn) {
+                mobileSpinBtn.className = `md:hidden w-full mt-6 bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} text-white font-bold text-xl py-4 rounded-xl border-b-4 ${data.colors[3]} active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg`;
+            }
             outputAccent.className = `absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} transition-colors duration-500`;
             
-            paylines.forEach(line => {
-                line.className = `payline absolute top-1/2 left-0 right-0 h-[3px] -translate-y-1/2 z-20 pointer-events-none transition-colors duration-400 ${data.paylineClass}`;
-            });
+            // Reset and theme the metal shutter
+            shutterText.className = `title-font text-3xl md:text-4xl tracking-widest animate-pulse text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]}`;
+            shutterEl.style.transform = 'translateY(0%)';
+
+            const switchLabelMilf = document.getElementById('switch-label-milf');
+            const switchLabelDilf = document.getElementById('switch-label-dilf');
 
             if (currentMode === 'MILF') {
-                switchLabelMilf.classList.replace('text-gray-500', 'text-red-400');
-                switchLabelDilf.classList.replace('text-blue-400', 'text-gray-500');
+                if (switchLabelMilf) switchLabelMilf.className = 'font-bold text-2xl tracking-widest text-red-400 transition-colors duration-300 absolute -top-8 z-10 drop-shadow-md';
+                if (switchLabelDilf) switchLabelDilf.className = 'font-bold text-2xl tracking-widest text-gray-500 transition-colors duration-300 absolute -bottom-8 z-10 drop-shadow-md';
             } else {
-                switchLabelMilf.classList.replace('text-red-400', 'text-gray-500');
-                switchLabelDilf.classList.replace('text-gray-500', 'text-blue-400');
+                if (switchLabelMilf) switchLabelMilf.className = 'font-bold text-2xl tracking-widest text-gray-500 transition-colors duration-300 absolute -top-8 z-10 drop-shadow-md';
+                if (switchLabelDilf) switchLabelDilf.className = 'font-bold text-2xl tracking-widest text-blue-400 transition-colors duration-300 absolute -bottom-8 z-10 drop-shadow-md';
             }
 
+            // Update 3D Button Color and Switch Rotation
             if (typeof spinButtonMesh !== 'undefined' && spinButtonMesh) spinButtonMesh.material.color.setHex(currentMode === 'MILF' ? 0xef4444 : 0x3b82f6);
             if (typeof switchToggleGroup !== 'undefined' && switchToggleGroup) targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
 
             reelContainers.forEach((container, index) => {
+                if(!container) return;
                 container.innerHTML = '';
                 container.style.transition = 'none';
                 container.style.transform = `translateY(0px)`;
@@ -314,7 +322,7 @@
             if (isSpinning) return;
             isSpinning = true;
 
-            // Depress button Y
+            // Target the 3D button depression animation
             targetButtonY = BUTTON_PRESSED_Y;
             
             setTimeout(() => {
@@ -324,13 +332,19 @@
         }
 
         function executeSpin() {
+            // Failsafe in case executeSpin is called directly
+            isSpinning = true; 
+            
             document.getElementById('output-container').style.opacity = '0.3';
+            shutterEl.style.transform = 'translateY(-100%)';
             
             const data = gameData[currentMode];
             let results = [];
             let completedReels = 0;
 
             reelContainers.forEach((container, i) => {
+                if(!container) return;
+                
                 const itemsCount = data.reels[i].length;
                 const targetFinalIndex = Math.floor(Math.random() * itemsCount);
                 const totalItemsInDOM = (itemsCount * spinMultiplier) + itemsCount;
@@ -342,7 +356,10 @@
                 container.style.transform = `translateY(-${stopIndex * itemHeight}px)`;
 
                 setTimeout(() => {
-                    results[i] = container.children[stopIndex].innerText;
+                    // Safe access check
+                    if(container.children[stopIndex]) {
+                        results[i] = container.children[stopIndex].innerText;
+                    }
                     completedReels++;
 
                     if (completedReels === reelContainers.length) {
@@ -357,16 +374,18 @@
             const data = gameData[currentMode];
             
             const hl = `font-bold text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-sm`;
-            const traitClass = "font-bold text-white tracking-wide";
+            const traitClass = `font-bold text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-sm tracking-wide`;
             const acronymStart = currentMode === 'MILF' ? "Mom I'd" : "Dad I'd";
 
+            const randomAcronym = data.acronyms[Math.floor(Math.random() * data.acronyms.length)];
+
             const sentenceHtml = `
-                <p class="mb-1 text-sm md:text-base">This ${data.noun} is a <span class="${traitClass}">${results[1]}</span> in their <span class="${traitClass}">${results[0]}</span>.</p>
-                <p class="mb-1 text-sm md:text-base">They're known for being <span class="${traitClass}">${results[2]}</span>.</p>
-                <p class="mb-2 text-sm md:text-base">You can usually find them wearing <span class="${traitClass}">${results[3]}</span> paired with <span class="${traitClass}">${results[4]}</span> while <span class="${traitClass}">${results[5]}</span>.</p>
+                <p class="mb-1 text-sm md:text-base">This ${data.noun} is a <span class="${traitClass}">${results[1] || ''}</span> in their <span class="${traitClass}">${results[0] || ''}</span>.</p>
+                <p class="mb-1 text-sm md:text-base">They're known for being <span class="${traitClass}">${results[2] || ''}</span>.</p>
+                <p class="mb-2 text-sm md:text-base">You can usually find them wearing <span class="${traitClass}">${results[3] || ''}</span> paired with <span class="${traitClass}">${results[4] || ''}</span> while <span class="${traitClass}">${results[5] || ''}</span>.</p>
                 <div class="text-center mt-3 flex items-center justify-center flex-wrap gap-x-1">
-                    <span class="text-gray-300 italic font-medium text-lg md:text-xl">"Now that is a</span>
-                    <span class="title-font tracking-widest text-2xl md:text-3xl ${hl} align-middle">${acronymStart} ${results[6]}!"</span>
+                    <span class="text-gray-300 italic font-medium text-lg md:text-xl">Now that is a</span>
+                    <span class="title-font tracking-widest text-2xl md:text-3xl ${hl} align-middle">${acronymStart} ${randomAcronym}</span>
                 </div>
             `;
 
@@ -383,100 +402,101 @@
         let isHolding = false;
 
         function initThreeButton() {
-            const container = document.getElementById('three-button-container');
-            const width = container.clientWidth;
-            const height = container.clientHeight;
-
-            sceneBtn = new THREE.Scene();
-            cameraBtn = new THREE.PerspectiveCamera(35, width / height, 0.1, 1000);
-            cameraBtn.position.set(0, 12, 45); // Lowered and pulled back to face straight-on
-            cameraBtn.lookAt(0, 5, 0);
-
-            rendererBtn = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            rendererBtn.setSize(width, height);
-            container.appendChild(rendererBtn.domElement);
-
-            // Softer, more natural lighting
-            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-            sceneBtn.add(ambient);
-            
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
-            dirLight.position.set(5, 10, 8);
-            sceneBtn.add(dirLight);
-            
-            const spotLight = new THREE.SpotLight(0xffffff, 1.2); // Halved the brightness
-            spotLight.position.set(-5, 15, 10);
-            spotLight.lookAt(0, 3, 0);
-            spotLight.angle = Math.PI / 5;
-            spotLight.penumbra = 0.6;
-            sceneBtn.add(spotLight);
-
-            buttonGroup = new THREE.Group();
-            sceneBtn.add(buttonGroup);
-
-            // The Long Pillar (Larger Base)
-            const baseGeo = new THREE.CylinderGeometry(5.5, 5.5, 400.0, 64);
-            const baseMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.4 });
-            const base = new THREE.Mesh(baseGeo, baseMat);
-            base.position.y = -198.0; 
-            buttonGroup.add(base);
-
-            // Glossy Black Bezel Ring
-            const ringGeo = new THREE.TorusGeometry(4.2, 1.0, 32, 64);
-            const ringMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.1, metalness: 0.8 });
-            const ring = new THREE.Mesh(ringGeo, ringMat);
-            ring.rotation.x = Math.PI / 2;
-            ring.position.y = 2.0;
-            buttonGroup.add(ring);
-
-            // High Gloss Arcade Button
-            const btnGeo = new THREE.CylinderGeometry(3.0, 3.0, 4.0, 64);
-            const initialColor = currentMode === 'MILF' ? 0xef4444 : 0x3b82f6;
-            
-            // Toned down reflection properties
-            const buttonMat = new THREE.MeshPhysicalMaterial({ 
-                color: initialColor, 
-                metalness: 0.1, 
-                roughness: 0.15, 
-                clearcoat: 0.6, 
-                clearcoatRoughness: 0.1,
-                reflectivity: 0.5
-            });
-            
-            spinButtonMesh = new THREE.Mesh(btnGeo, buttonMat);
-            spinButtonMesh.position.y = BUTTON_RESTING_Y; 
-            buttonGroup.add(spinButtonMesh);
-
-            const raycaster = new THREE.Raycaster();
-            const mouse = new THREE.Vector2();
-            
-            rendererBtn.domElement.addEventListener('pointerdown', (e) => {
-                if(isSpinning) return;
-                const rect = rendererBtn.domElement.getBoundingClientRect();
-                mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-                mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-                raycaster.setFromCamera(mouse, cameraBtn);
+            try {
+                const container = document.getElementById('three-button-container');
+                if(!container) return;
                 
-                const intersects = raycaster.intersectObject(buttonGroup, true);
-                if (intersects.length > 0) {
-                    isHolding = true;
-                    targetButtonY = BUTTON_PRESSED_Y;
-                }
-            });
+                // Fallbacks to prevent NaN errors
+                const width = container.clientWidth || 420;
+                const height = container.clientHeight || 500;
 
-            const releaseButton = () => {
-                if (isHolding) {
-                    isHolding = false;
-                    targetButtonY = BUTTON_RESTING_Y;
-                    if (!isSpinning) {
-                        isSpinning = true;
-                        executeSpin();
+                sceneBtn = new THREE.Scene();
+                cameraBtn = new THREE.PerspectiveCamera(35, width / height, 0.1, 1000);
+                cameraBtn.position.set(0, 24, 75); 
+                cameraBtn.lookAt(0, 4, 0);
+
+                rendererBtn = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                rendererBtn.setSize(width, height);
+                container.appendChild(rendererBtn.domElement);
+
+                const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+                sceneBtn.add(ambient);
+                
+                const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+                dirLight.position.set(5, 10, 8);
+                sceneBtn.add(dirLight);
+                
+                const spotLight = new THREE.SpotLight(0xffffff, 1.2); 
+                spotLight.position.set(-5, 15, 10);
+                spotLight.lookAt(new THREE.Vector3(0, 3, 0));
+                spotLight.angle = Math.PI / 5;
+                spotLight.penumbra = 0.6;
+                sceneBtn.add(spotLight);
+
+                buttonGroup = new THREE.Group();
+                sceneBtn.add(buttonGroup);
+
+                const baseGeo = new THREE.CylinderGeometry(5.5, 5.5, 400.0, 64);
+                const baseMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.4 });
+                const base = new THREE.Mesh(baseGeo, baseMat);
+                base.position.y = -198.0; 
+                buttonGroup.add(base);
+
+                const ringGeo = new THREE.TorusGeometry(4.2, 1.0, 32, 64);
+                const ringMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.1, metalness: 0.8 });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.x = Math.PI / 2;
+                ring.position.y = 2.0;
+                buttonGroup.add(ring);
+
+                const btnGeo = new THREE.CylinderGeometry(3.0, 3.0, 4.0, 64);
+                const initialColor = currentMode === 'MILF' ? 0xef4444 : 0x3b82f6;
+                
+                const buttonMat = new THREE.MeshPhysicalMaterial({ 
+                    color: initialColor, 
+                    metalness: 0.1, 
+                    roughness: 0.15, 
+                    clearcoat: 0.6, 
+                    clearcoatRoughness: 0.1,
+                    reflectivity: 0.5
+                });
+                
+                spinButtonMesh = new THREE.Mesh(btnGeo, buttonMat);
+                spinButtonMesh.position.y = BUTTON_RESTING_Y; 
+                buttonGroup.add(spinButtonMesh);
+
+                const raycaster = new THREE.Raycaster();
+                const mouse = new THREE.Vector2();
+                
+                rendererBtn.domElement.addEventListener('pointerdown', (e) => {
+                    if(isSpinning) return;
+                    const rect = rendererBtn.domElement.getBoundingClientRect();
+                    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+                    raycaster.setFromCamera(mouse, cameraBtn);
+                    
+                    const intersects = raycaster.intersectObject(buttonGroup, true);
+                    if (intersects.length > 0) {
+                        isHolding = true;
+                        targetButtonY = BUTTON_PRESSED_Y;
                     }
-                }
-            };
-            
-            rendererBtn.domElement.addEventListener('pointerup', releaseButton);
-            rendererBtn.domElement.addEventListener('pointerleave', releaseButton);
+                });
+
+                const releaseButton = () => {
+                    if (isHolding) {
+                        isHolding = false;
+                        targetButtonY = BUTTON_RESTING_Y;
+                        if (!isSpinning) {
+                            executeSpin();
+                        }
+                    }
+                };
+                
+                rendererBtn.domElement.addEventListener('pointerup', releaseButton);
+                rendererBtn.domElement.addEventListener('pointerleave', releaseButton);
+            } catch (err) {
+                console.error("ThreeJS Button Initialization Error: ", err);
+            }
         }
 
         let rendererSw, sceneSw, cameraSw;
@@ -486,86 +506,87 @@
         let targetSwitchRot = SWITCH_MILF_ROT;
 
         function initThreeSwitch() {
-            const container = document.getElementById('switch-canvas-holder');
-            const width = container.clientWidth;
-            const height = container.clientHeight;
+            try {
+                const container = document.getElementById('switch-canvas-holder');
+                if(!container) return;
+                
+                const width = container.clientWidth || 100;
+                const height = container.clientHeight || 220;
 
-            sceneSw = new THREE.Scene();
-            cameraSw = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-            cameraSw.position.set(0, 0, 8); 
-            cameraSw.lookAt(0, 0, 0);
+                sceneSw = new THREE.Scene();
+                cameraSw = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+                cameraSw.position.set(0, 0, 8); 
+                cameraSw.lookAt(0, 0, 0);
 
-            rendererSw = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            rendererSw.setSize(width, height);
-            container.appendChild(rendererSw.domElement);
+                rendererSw = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+                rendererSw.setSize(width, height);
+                container.appendChild(rendererSw.domElement);
 
-            const ambient = new THREE.AmbientLight(0xffffff, 0.4);
-            sceneSw.add(ambient);
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            dirLight.position.set(2, 5, 8);
-            sceneSw.add(dirLight);
+                const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+                sceneSw.add(ambient);
+                const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                dirLight.position.set(2, 5, 8);
+                sceneSw.add(dirLight);
 
-            switchGroup = new THREE.Group();
-            sceneSw.add(switchGroup);
+                switchGroup = new THREE.Group();
+                sceneSw.add(switchGroup);
 
-            // Metal Mounting Plate
-            const plateGeo = new THREE.BoxGeometry(2.2, 4.0, 0.2);
-            const plateMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.6, metalness: 0.5 });
-            const plate = new THREE.Mesh(plateGeo, plateMat);
-            switchGroup.add(plate);
+                const plateGeo = new THREE.BoxGeometry(2.2, 4.0, 0.2);
+                const plateMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.6, metalness: 0.5 });
+                const plate = new THREE.Mesh(plateGeo, plateMat);
+                switchGroup.add(plate);
 
-            // Threaded Metal Collar (Base of the toggle)
-            const collarGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.4, 32);
-            const collarMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.4, metalness: 0.9 });
-            const collar = new THREE.Mesh(collarGeo, collarMat);
-            collar.rotation.x = Math.PI / 2;
-            collar.position.z = 0.2;
-            switchGroup.add(collar);
+                const collarGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.4, 32);
+                const collarMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.4, metalness: 0.9 });
+                const collar = new THREE.Mesh(collarGeo, collarMat);
+                collar.rotation.x = Math.PI / 2;
+                collar.position.z = 0.2;
+                switchGroup.add(collar);
 
-            // Switch Toggle Mechanism (The Lever Handle)
-            switchToggleGroup = new THREE.Group();
-            switchToggleGroup.position.z = 0.3; // Sit just inside the collar
-            switchGroup.add(switchToggleGroup);
+                switchToggleGroup = new THREE.Group();
+                switchToggleGroup.position.z = 0.3; 
+                switchGroup.add(switchToggleGroup);
 
-            // Long industrial rod
-            const toggleGeo = new THREE.CylinderGeometry(0.15, 0.25, 2.0, 32);
-            const toggleMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.3, metalness: 0.8 });
-            const toggleMesh = new THREE.Mesh(toggleGeo, toggleMat);
-            toggleMesh.rotation.x = Math.PI / 2; // Point it outward
-            toggleMesh.position.z = 1.0; // extend out
-            switchToggleGroup.add(toggleMesh);
+                const toggleGeo = new THREE.CylinderGeometry(0.15, 0.25, 2.0, 32);
+                const toggleMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.3, metalness: 0.8 });
+                const toggleMesh = new THREE.Mesh(toggleGeo, toggleMat);
+                toggleMesh.rotation.x = Math.PI / 2; 
+                toggleMesh.position.z = 1.0; 
+                switchToggleGroup.add(toggleMesh);
 
-            // Grip ball at the end of the lever
-            const ballGeo = new THREE.SphereGeometry(0.35, 32, 32);
-            const ballMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.2, metalness: 0.6 });
-            const ballMesh = new THREE.Mesh(ballGeo, ballMat);
-            ballMesh.position.y = 1.0; // Top of the cylinder
-            toggleMesh.add(ballMesh);
+                const ballGeo = new THREE.SphereGeometry(0.35, 32, 32);
+                const ballMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.2, metalness: 0.6 });
+                const ballMesh = new THREE.Mesh(ballGeo, ballMat);
+                ballMesh.position.y = 1.0; 
+                toggleMesh.add(ballMesh);
 
-            targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
-            switchToggleGroup.rotation.x = targetSwitchRot;
+                targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
+                switchToggleGroup.rotation.x = targetSwitchRot;
 
-            const raycaster = new THREE.Raycaster();
-            const mouse = new THREE.Vector2();
-            
-            rendererSw.domElement.addEventListener('pointerdown', (e) => {
-                if(isSpinning) return;
-                const rect = rendererSw.domElement.getBoundingClientRect();
-                mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-                mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-                raycaster.setFromCamera(mouse, cameraSw);
-                const intersects = raycaster.intersectObject(plate, true);
-                if (intersects.length > 0) {
-                    currentMode = currentMode === 'MILF' ? 'DILF' : 'MILF';
-                    initMachine();
-                }
-            });
+                const raycaster = new THREE.Raycaster();
+                const mouse = new THREE.Vector2();
+                
+                rendererSw.domElement.addEventListener('pointerdown', (e) => {
+                    if(isSpinning) return;
+                    const rect = rendererSw.domElement.getBoundingClientRect();
+                    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+                    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+                    raycaster.setFromCamera(mouse, cameraSw);
+                    const intersects = raycaster.intersectObject(plate, true);
+                    if (intersects.length > 0) {
+                        currentMode = currentMode === 'MILF' ? 'DILF' : 'MILF';
+                        initMachine();
+                    }
+                });
+            } catch (err) {
+                console.error("ThreeJS Switch Initialization Error: ", err);
+            }
         }
 
         function animate() {
             requestAnimationFrame(animate);
 
-            if (spinButtonMesh) {
+            if (spinButtonMesh && rendererBtn) {
                 const displacement = targetButtonY - spinButtonMesh.position.y;
                 buttonVelocity += displacement * 0.4;
                 buttonVelocity *= 0.7;
@@ -573,7 +594,7 @@
                 rendererBtn.render(sceneBtn, cameraBtn);
             }
 
-            if (switchToggleGroup) {
+            if (switchToggleGroup && rendererSw) {
                 switchToggleGroup.rotation.x += (targetSwitchRot - switchToggleGroup.rotation.x) * 0.2;
                 rendererSw.render(sceneSw, cameraSw);
             }
@@ -582,24 +603,25 @@
         window.addEventListener('resize', () => {
             if(cameraBtn && rendererBtn) {
                 const cBtn = document.getElementById('three-button-container');
-                cameraBtn.aspect = cBtn.clientWidth / cBtn.clientHeight;
-                cameraBtn.updateProjectionMatrix();
-                rendererBtn.setSize(cBtn.clientWidth, cBtn.clientHeight);
+                if(cBtn && cBtn.clientHeight > 0) {
+                    cameraBtn.aspect = cBtn.clientWidth / cBtn.clientHeight;
+                    cameraBtn.updateProjectionMatrix();
+                    rendererBtn.setSize(cBtn.clientWidth, cBtn.clientHeight);
+                }
             }
             if(cameraSw && rendererSw) {
                 const cSw = document.getElementById('switch-canvas-holder');
-                cameraSw.aspect = cSw.clientWidth / cSw.clientHeight;
-                cameraSw.updateProjectionMatrix();
-                rendererSw.setSize(cSw.clientWidth, cSw.clientHeight);
+                if(cSw && cSw.clientHeight > 0) {
+                    cameraSw.aspect = cSw.clientWidth / cSw.clientHeight;
+                    cameraSw.updateProjectionMatrix();
+                    rendererSw.setSize(cSw.clientWidth, cSw.clientHeight);
+                }
             }
         });
 
+        // Ensure mobile button click utilizes strict handleSpin logic
         if (mobileSpinBtn) {
-            mobileSpinBtn.addEventListener('click', () => {
-                 if (!isSpinning) {
-                     executeSpin();
-                 }
-            });
+            mobileSpinBtn.addEventListener('click', handleSpin);
         }
 
         window.onload = () => {
