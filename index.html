@@ -125,43 +125,54 @@
             #three-button-container { right: -200px; top: -250px; bottom: -310px; transform: scale(0.7); transform-origin: top right; }
             .reel-item { font-size: 0.75rem; }
         }
+        @media (max-width: 768px) {
+            #three-switch-container { display: none !important; }
+            #three-button-container { display: none !important; }
+            .glass-output { height: auto; min-height: 200px; padding: 1rem; margin-top: 1rem; }
+            .machine-body { padding: 0.75rem; }
+            #main-title { font-size: 3.5rem; line-height: 1; }
+            .reel-item { font-size: 0.65rem; padding: 0 0.15rem; }
+        }
         @media (max-width: 640px) {
-            #three-switch-container { left: -30px; transform: translateY(-50%) scale(0.45); }
-            #three-button-container { right: -80px; top: -160px; bottom: -200px; transform: scale(0.45); transform-origin: top right; }
-            .reel-item { font-size: 0.65rem; padding: 0 0.2rem; }
+            #main-title { font-size: 3rem; }
+            .reel-item { font-size: 0.55rem; padding: 0 0.1rem; }
         }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col items-center justify-center p-2 md:p-4 box-border">
+<body class="h-screen w-screen flex flex-col items-center justify-center p-2 md:p-4 box-border overflow-hidden">
 
-    <div class="w-full max-w-4xl flex flex-col items-center gap-4 relative">
+    <div class="w-full max-w-4xl flex flex-col items-center gap-2 md:gap-4 relative h-full max-h-[900px] justify-center">
         
         <!-- Header -->
-        <div class="flex flex-col items-center gap-2 text-center w-full min-h-[60px]">
+        <div class="flex flex-col items-center gap-1 text-center w-full">
             <h1 id="main-title" class="title-font text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 drop-shadow-lg transition-all duration-500">
                 THE M.I.L.F. MACHINE
             </h1>
+
+            <!-- Mobile Only Mode Toggle -->
+            <div id="mobile-mode-toggle" class="md:hidden flex items-center justify-center gap-3 mt-1 bg-gray-900/80 px-5 py-2 rounded-full border border-gray-700 shadow-inner cursor-pointer" onclick="toggleModeMobile()">
+                <span id="mobile-label-milf" class="font-bold text-sm tracking-widest text-red-400 transition-colors duration-300">MILF</span>
+                <div class="relative w-12 h-6 bg-gray-800 rounded-full shadow-inner border border-gray-600">
+                    <div id="mobile-toggle-knob" class="absolute left-1 top-1 w-4 h-4 bg-red-500 rounded-full transition-transform duration-300"></div>
+                </div>
+                <span id="mobile-label-dilf" class="font-bold text-sm tracking-widest text-gray-500 transition-colors duration-300">DILF</span>
+            </div>
         </div>
 
         <!-- Slot Machine Wrapper -->
-        <div class="relative w-full max-w-3xl mt-2">
-            
-            <!-- 3D Switch Container (Left) -->
-            <div id="three-switch-container" class="flex flex-col items-center justify-center">
-                <span id="switch-label-milf" class="font-bold text-2xl tracking-widest text-red-400 transition-colors duration-300 absolute -top-8 z-10 drop-shadow-md">MILF</span>
-                <div id="switch-canvas-holder" class="w-full h-full relative"></div>
-                <span id="switch-label-dilf" class="font-bold text-2xl tracking-widest text-gray-500 transition-colors duration-300 absolute -bottom-8 z-10 drop-shadow-md">DILF</span>
-            </div>
-
+        <div class="relative w-full max-w-3xl mt-1 md:mt-2">
             <!-- Machine Body -->
-            <div class="machine-body rounded-3xl p-3 md:p-6 border-4 border-gray-500 z-10 relative">
+            <div class="machine-body rounded-3xl p-3 md:p-6 border-4 border-gray-500 relative">
+                
+                <!-- Reel Screen -->
                 <div class="machine-screen rounded-xl border-8 border-gray-800 flex flex-col relative overflow-hidden bg-white">
                     
-                    <!-- The Metal Shutter -->
-                    <div id="reel-shutter" class="absolute inset-0 z-30 bg-gradient-to-b from-slate-700 to-slate-900 border-b-8 border-gray-950 flex items-center justify-center transition-transform duration-1000 ease-in-out shadow-[0_20px_50px_rgba(0,0,0,0.9)]">
-                        <div class="px-8 py-3 border-4 border-gray-600 rounded-lg bg-black/60 shadow-inner">
-                            <span id="shutter-text" class="title-font text-3xl md:text-4xl tracking-widest animate-pulse">AWAITING PUSH</span>
-                        </div>
+                    <!-- Metal Shutter -->
+                    <div id="reel-shutter" class="absolute inset-0 bg-slate-800 z-30 flex items-center justify-center transition-transform duration-700 ease-in-out origin-top border-b-8 border-slate-900 shadow-[inset_0_-10px_20px_rgba(0,0,0,0.8)]">
+                        <div class="w-full h-full absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.2)_50%)] bg-[length:100%_4px] opacity-30 pointer-events-none"></div>
+                        <span id="shutter-text" class="title-font text-3xl md:text-4xl tracking-widest animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600">
+                            AWAITING PUSH
+                        </span>
                     </div>
 
                     <!-- Top Row of Reels -->
@@ -190,6 +201,12 @@
                 <div id="output-sentence" class="text-lg md:text-xl text-gray-100 font-semibold leading-relaxed pl-4 w-full">
                     <p class="opacity-50 italic text-center font-normal">Push the button to generate your character...</p>
                 </div>
+            </div>
+
+            <!-- 3D Switch Container (Left) -->
+            <div id="three-switch-container" class="flex flex-col items-center justify-center">
+                <span id="switch-label-milf" class="font-bold text-2xl tracking-widest text-red-400 transition-colors duration-300 absolute -top-8 z-10 drop-shadow-md">MILF</span>
+                <span id="switch-label-dilf" class="font-bold text-2xl tracking-widest text-gray-500 transition-colors duration-300 absolute -bottom-8 z-10 drop-shadow-md">DILF</span>
             </div>
 
             <!-- 3D Button Container (Right) -->
@@ -245,6 +262,12 @@
         const shutterEl = document.getElementById('reel-shutter');
         const shutterText = document.getElementById('shutter-text');
         
+        function toggleModeMobile() {
+            if (isSpinning) return;
+            currentMode = currentMode === 'MILF' ? 'DILF' : 'MILF';
+            initMachine();
+        }
+
         const reelContainers = [
             document.getElementById('reel-0'), document.getElementById('reel-1'), 
             document.getElementById('reel-2'), document.getElementById('reel-3'), 
@@ -280,6 +303,24 @@
             // Update 3D Button Color and Switch Rotation
             if (typeof spinButtonMesh !== 'undefined' && spinButtonMesh) spinButtonMesh.material.color.setHex(currentMode === 'MILF' ? 0xef4444 : 0x3b82f6);
             if (typeof switchToggleGroup !== 'undefined' && switchToggleGroup) targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
+
+            // Update Mobile HTML Toggle
+            const mKnob = document.getElementById('mobile-toggle-knob');
+            const mMilf = document.getElementById('mobile-label-milf');
+            const mDilf = document.getElementById('mobile-label-dilf');
+            if(mKnob && mMilf && mDilf) {
+                if (currentMode === 'MILF') {
+                    mKnob.classList.remove('translate-x-6', 'bg-blue-500');
+                    mKnob.classList.add('translate-x-0', 'bg-red-500');
+                    mMilf.classList.replace('text-gray-500', 'text-red-400');
+                    mDilf.classList.replace('text-blue-400', 'text-gray-500');
+                } else {
+                    mKnob.classList.remove('translate-x-0', 'bg-red-500');
+                    mKnob.classList.add('translate-x-6', 'bg-blue-500');
+                    mMilf.classList.replace('text-red-400', 'text-gray-500');
+                    mDilf.classList.replace('text-gray-500', 'text-blue-400');
+                }
+            }
 
             reelContainers.forEach((container, index) => {
                 if(!container) return;
@@ -507,7 +548,7 @@
 
         function initThreeSwitch() {
             try {
-                const container = document.getElementById('switch-canvas-holder');
+                const container = document.getElementById('three-switch-container');
                 if(!container) return;
                 
                 const containerWidth = container.clientWidth || 100;
@@ -640,7 +681,7 @@
                 }
             }
             if(cameraSw && rendererSw) {
-                const cSw = document.getElementById('switch-canvas-holder');
+                const cSw = document.getElementById('three-switch-container');
                 if(cSw && cSw.clientHeight > 0) {
                     cameraSw.aspect = cSw.clientWidth / cSw.clientHeight;
                     cameraSw.updateProjectionMatrix();
