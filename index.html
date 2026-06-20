@@ -160,7 +160,7 @@
                     <!-- The Metal Shutter -->
                     <div id="reel-shutter" class="absolute inset-0 z-30 bg-gradient-to-b from-slate-700 to-slate-900 border-b-8 border-gray-950 flex items-center justify-center transition-transform duration-1000 ease-in-out shadow-[0_20px_50px_rgba(0,0,0,0.9)]">
                         <div class="px-8 py-3 border-4 border-gray-600 rounded-lg bg-black/60 shadow-inner">
-                            <span id="shutter-text" class="title-font text-3xl md:text-4xl tracking-widest animate-pulse">AWAITING PULL</span>
+                            <span id="shutter-text" class="title-font text-3xl md:text-4xl tracking-widest animate-pulse">AWAITING PUSH</span>
                         </div>
                     </div>
 
@@ -510,16 +510,16 @@
                 const container = document.getElementById('switch-canvas-holder');
                 if(!container) return;
                 
-                const width = container.clientWidth || 100;
-                const height = container.clientHeight || 220;
+                const containerWidth = container.clientWidth || 100;
+                const containerHeight = container.clientHeight || 220;
 
                 sceneSw = new THREE.Scene();
-                cameraSw = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+                cameraSw = new THREE.PerspectiveCamera(40, containerWidth / containerHeight, 0.1, 100);
                 cameraSw.position.set(0, 0, 8); 
                 cameraSw.lookAt(0, 0, 0);
 
                 rendererSw = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                rendererSw.setSize(width, height);
+                rendererSw.setSize(containerWidth, containerHeight);
                 container.appendChild(rendererSw.domElement);
 
                 const ambient = new THREE.AmbientLight(0xffffff, 0.4);
@@ -531,37 +531,67 @@
                 switchGroup = new THREE.Group();
                 sceneSw.add(switchGroup);
 
-                const plateGeo = new THREE.BoxGeometry(2.2, 4.0, 0.2);
-                const plateMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.6, metalness: 0.5 });
+                // Replace flat BoxGeometry with a custom shape to simulate a bevel
+                const shape = new THREE.Shape();
+                const pWidth = 2.4, pHeight = 4.2, radius = 0.2;
+                
+                // Draw rounded rectangle
+                shape.moveTo(-pWidth/2 + radius, pHeight/2);
+                shape.lineTo(pWidth/2 - radius, pHeight/2);
+                shape.quadraticCurveTo(pWidth/2, pHeight/2, pWidth/2, pHeight/2 - radius);
+                shape.lineTo(pWidth/2, -pHeight/2 + radius);
+                shape.quadraticCurveTo(pWidth/2, -pHeight/2, pWidth/2 - radius, -pHeight/2);
+                shape.lineTo(-pWidth/2 + radius, -pHeight/2);
+                shape.quadraticCurveTo(-pWidth/2, -pHeight/2, -pWidth/2, -pHeight/2 + radius);
+                shape.lineTo(-pWidth/2, pHeight/2 - radius);
+                shape.quadraticCurveTo(-pWidth/2, pHeight/2, -pWidth/2 + radius, pHeight/2);
+
+                const extrudeSettings = {
+                    steps: 1,
+                    depth: 0.2,
+                    bevelEnabled: true,
+                    bevelThickness: 0.1,
+                    bevelSize: 0.1,
+                    bevelOffset: 0,
+                    bevelSegments: 3
+                };
+
+                const plateGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+                // Adjust position since ExtrudeGeometry builds from the bottom left by default if not centered carefully, 
+                // but our shape uses center coordinates.
+                const plateMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.8, metalness: 0.2 });
                 const plate = new THREE.Mesh(plateGeo, plateMat);
                 switchGroup.add(plate);
 
-                const collarGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.4, 32);
-                const collarMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.4, metalness: 0.9 });
+                // Collar
+                const collarGeo = new THREE.CylinderGeometry(0.5, 0.6, 0.6, 32);
+                collarGeo.rotateX(Math.PI / 2);
+                const collarMat = new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8, roughness: 0.2 });
                 const collar = new THREE.Mesh(collarGeo, collarMat);
-                collar.rotation.x = Math.PI / 2;
-                collar.position.z = 0.2;
+                collar.position.z = 0.16;
                 switchGroup.add(collar);
 
+                // Switch Toggle Group
                 switchToggleGroup = new THREE.Group();
-                switchToggleGroup.position.z = 0.3; 
+                switchToggleGroup.position.z = 0.3;
                 switchGroup.add(switchToggleGroup);
 
-                const toggleGeo = new THREE.CylinderGeometry(0.15, 0.25, 2.0, 32);
-                const toggleMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.3, metalness: 0.8 });
-                const toggleMesh = new THREE.Mesh(toggleGeo, toggleMat);
-                toggleMesh.rotation.x = Math.PI / 2; 
-                toggleMesh.position.z = 1.0; 
-                switchToggleGroup.add(toggleMesh);
+                // Rod
+                const rodGeo = new THREE.CylinderGeometry(0.15, 0.15, 2.0, 16);
+                rodGeo.rotateX(Math.PI / 2);
+                const rodMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.1 });
+                const rod = new THREE.Mesh(rodGeo, rodMat);
+                rod.position.z = 1.0;
+                switchToggleGroup.add(rod);
 
-                const ballGeo = new THREE.SphereGeometry(0.35, 32, 32);
-                const ballMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.2, metalness: 0.6 });
-                const ballMesh = new THREE.Mesh(ballGeo, ballMat);
-                ballMesh.position.y = 1.0; 
-                toggleMesh.add(ballMesh);
+                // Ball
+                const ballGeo = new THREE.SphereGeometry(0.4, 32, 32);
+                const ballMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.2, roughness: 0.6 });
+                const ball = new THREE.Mesh(ballGeo, ballMat);
+                ball.position.z = 2.0;
+                switchToggleGroup.add(ball);
 
                 targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
-                switchToggleGroup.rotation.x = targetSwitchRot;
 
                 const raycaster = new THREE.Raycaster();
                 const mouse = new THREE.Vector2();
@@ -572,7 +602,7 @@
                     mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
                     mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
                     raycaster.setFromCamera(mouse, cameraSw);
-                    const intersects = raycaster.intersectObject(plate, true);
+                    const intersects = raycaster.intersectObject(switchGroup, true);
                     if (intersects.length > 0) {
                         currentMode = currentMode === 'MILF' ? 'DILF' : 'MILF';
                         initMachine();
