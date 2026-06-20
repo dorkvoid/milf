@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Character Machine</title>
+    <title>The Milf Machine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Bebas+Neue&display=swap" rel="stylesheet">
@@ -13,7 +13,9 @@
             background-color: #0f172a;
             background-image: radial-gradient(circle at top, #1e293b 0%, #020617 100%);
             margin: 0;
-            overflow-x: hidden;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
             color: #f8fafc;
         }
 
@@ -54,7 +56,7 @@
         .reel-column {
             position: relative;
             overflow: hidden;
-            height: 100px;
+            height: 80px;
             flex: 1;
         }
 
@@ -65,13 +67,13 @@
         }
 
         .reel-item {
-            height: 100px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             font-weight: 800;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #1e293b;
             padding: 0 0.5rem;
             text-transform: uppercase;
@@ -85,7 +87,7 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            min-height: 180px;
+            height: 280px;
             transition: opacity 0.5s ease;
         }
 
@@ -102,10 +104,10 @@
 
         #three-button-container {
             position: absolute;
-            right: -260px;
+            right: -320px;
             top: -20px;
             bottom: -500px;
-            width: 320px; 
+            width: 380px; 
             z-index: 20;
             cursor: pointer;
         }
@@ -116,7 +118,7 @@
 
         @media (max-width: 1024px) {
             #three-switch-container { left: -90px; transform: translateY(-50%) scale(0.8); }
-            #three-button-container { right: -200px; top: -20px; bottom: -400px; transform: scale(0.8); transform-origin: top right; }
+            #three-button-container { right: -240px; top: -20px; bottom: -400px; transform: scale(0.8); transform-origin: top right; }
         }
         @media (max-width: 850px) {
             #three-switch-container { left: -60px; transform: translateY(-50%) scale(0.7); }
@@ -130,12 +132,12 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center py-10 px-4">
+<body class="h-screen w-screen flex flex-col items-center justify-center p-2 md:p-4 box-border">
 
-    <div class="w-full max-w-4xl flex flex-col items-center gap-6 relative">
+    <div class="w-full max-w-4xl flex flex-col items-center gap-4 relative">
         
         <!-- Header -->
-        <div class="flex flex-col items-center gap-2 text-center w-full min-h-[80px]">
+        <div class="flex flex-col items-center gap-2 text-center w-full min-h-[60px]">
             <h1 id="main-title" class="title-font text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 drop-shadow-lg transition-all duration-500">
                 THE M.I.L.F. MACHINE
             </h1>
@@ -173,6 +175,11 @@
                 </div>
             </div>
 
+            <!-- Mobile Spin Button -->
+            <button id="mobile-spin-btn" class="md:hidden w-full mt-4 bg-gradient-to-b from-red-400 to-red-600 text-white font-bold text-xl py-3 rounded-xl border-b-4 border-red-900 active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg">
+                Pull Lever!
+            </button>
+
             <!-- 3D Arcade Button Container (Right) -->
             <div id="three-button-container"></div>
         </div>
@@ -194,7 +201,7 @@
         const milfClothing = ["a sports bra and a long skirt", "a tailored pantsuit", "yoga pants and an oversized tee", "a vintage floral dress", "high-waisted mom jeans and a cozy sweater", "a breezy yellow sundress", "a matching velour tracksuit", "a leather jacket and ripped jeans", "Lululemon leggings and a giant Stanley cup", "a massive messy bun and an exhausted expression", "a silk slip dress", "cargo pants and a crop top", "a sparkly evening gown", "an oversized college hoodie and sweatpants", "a sharply tailored blazer and pencil skirt", "a boho-chic maxi skirt and peasant blouse", "a tactical turtleneck", "a brightly colored retro windbreaker", "a gothic lace corset and skirt", "a completely denim tuxedo"];
         const milfAccessories = ["fluffy slippers", "sensible heels", "bedazzled crocs", "combat boots", "pristine white sneakers", "strappy sandals", "chunky platform sneakers", "motorcycle boots", "a pearl necklace", "huge designer sunglasses", "a Birkin bag", "a loaded diaper bag", "a massive sun hat", "a bluetooth headset", "several large iced coffees", "a clipboard holding everyone's schedules", "a slightly intimidating riding crop", "a tote bag full of organic snacks", "an expensive smart watch", "a pair of reading glasses on a gold chain"];
         const milfHobbies = ["intimidating the local PTA", "drinking expensive wine at 3 PM", "collecting massive houseplants", "reorganizing the pantry out of spite", "running half-marathons for fun", "gossiping at brunch", "baking aggressive amounts of sourdough", "doing pilates while judging you", "scrolling TikTok until 2 AM", "managing three different family calendars", "secretly funding a local rebellion", "restoring vintage furniture", "watching true crime documentaries to take notes", "attending pottery classes to smash the clay", "day-trading crypto in the carpool lane", "writing highly explicit fanfiction", "getting banned from the neighborhood Facebook group"];
-        const milfAcronyms = ["Mother I'd Like to Finance!", "Mother I'd Leave Flowers for!", "Mother I'd Listen to Forever!", "Mother I'd Like to Feed!", "Mother I'd Look at Fondly!", "Mother I'd Love to Flatter!", "Mother I'd Lend Funds!", "Mother I'd Love to Follow!", "Mother I'd Let Fly!", "Mother I'd Learn From!"];
+        const milfAcronyms = ["Love to Finance!", "Listen to Forever!", "Live For!", "Look For!", "Love Fiercely!", "Leave Flowers for!", "Lend Funds to!", "Learn From!", "Launch Fireworks for!", "Locate First!", "Lend Favors to!", "Laugh with Forever!", "Leave a Fortune to!", "Love to Feed!", "Listen to Facts from!", "Learn to Forgive!", "Leave Feedback for!", "Look at Fondly!", "Loan my Ferrari to!", "Lose Focus over!", "Line up For!", "Live Fabulously with!", "Learn French for!", "Listen to Fleetwood Mac with!", "Lament Failures with!", "Look Flawless for!", "Lobby For!", "Linger Forever with!", "Leap Fences for!", "Lose my Fortune over!", "Leave my Family for!"];
 
         const dilfSizes = ["silver fox", "papa bear", "lumberjack", "tech bro", "gym bro", "couch potato", "grill master", "handyman", "scholar", "silverback", "gentle giant", "tiny king", "average joe", "big kahuna", "dad-bod supreme", "lean marathoner", "barrel-chested brute", "compact king", "grizzled veteran", "mountain of a man", "lanky beanpole", "absolute unit", "stout bulldog", "majestic stallion", "tired golden retriever", "lone wolf", "ferocious grizzly", "sturdy brick wall"];
         const dilfAges = ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "90s", "distinguished 60s", "rugged 40s", "newly-divorced 30s", "timeless era", "absolute prime", "silver-haired 50s", "grizzled 70s", "youthful 40s", "stately 80s", "mid-life crisis", "early retirement", "golden years", "prime 30s", "experienced 50s", "ancient era", "immortal phase", "ageless wonder"];
@@ -202,7 +209,7 @@
         const dilfClothing = ["cargo shorts and a tucked-in polo", "a sharp three-piece suit", "flannel and faded jeans", "a tucked-in golf shirt and slacks", "baggy sweatpants and a stained hoodie", "a loud Hawaiian shirt and board shorts", "a Patagonia vest over a plaid shirt", "an old band tee and perfectly worn jeans", "a slightly stained 'Kiss The Cook' grilling apron", "a matching velour tracksuit", "a leather jacket and dark denim", "a crisp button-down and khakis", "a multi-pocket fishing vest", "a full cycling spandex kit", "a massive winter parka regardless of the weather", "a tweed professor jacket with elbow patches", "a perfectly tailored tuxedo", "a vintage football jersey", "a grease-stained mechanic's jumpsuit"];
         const dilfAccessories = ["crisp white New Balances", "polished oxfords", "scuffed steel-toed boots", "grass-stained cleats", "fuzzy socks with sandals", "leather flip-flops", "chunky orthopedic sneakers", "heavy motorcycle boots", "a massive, complicated smartwatch", "a bluetooth earpiece from 2008", "aviator sunglasses", "a heavily loaded toolbelt", "a personalized golf glove", "a bulky money clip", "a perfectly seasoned cast iron skillet", "a set of jumper cables", "a ridiculously bright tactical flashlight", "a pair of binoculars", "a high-end meat thermometer"];
         const dilfHobbies = ["explaining World War 2 history to strangers", "smoking various meats for 14 hours", "fixing things that aren't actually broken", "falling asleep in his favorite recliner", "brewing overly-hoppy craft beer in the garage", "mowing the lawn with terrifying geometric precision", "giving unsolicited driving directions", "tinkering with a classic car", "coaching Little League far too aggressively", "watching golf with his eyes closed", "building an unnecessary deck", "investing in extremely volatile crypto", "collecting rare and expensive bourbons", "cleaning the gutters every single weekend", "arguing with the GPS", "buying tools he will only use once", "guarding the thermostat with his life"];
-        const dilfAcronyms = ["Dad I'd Like to Finance!", "Dad I'd Leave Flowers for!", "Dad I'd Listen to Forever!", "Dad I'd Like to Feed!", "Dad I'd Look at Fondly!", "Dad I'd Love to Flatter!", "Dad I'd Lend Funds!", "Dad I'd Love to Follow!", "Dad I'd Let Fly!", "Dad I'd Learn From!"];
+        const dilfAcronyms = ["Love to Finance!", "Listen to Forever!", "Live For!", "Look For!", "Love Fiercely!", "Leave Flowers for!", "Lend Funds to!", "Learn From!", "Launch Fireworks for!", "Locate First!", "Lend Favors to!", "Laugh with Forever!", "Leave a Fortune to!", "Let Fix things!", "Listen to Facts from!", "Learn to Forgive!", "Look at Fondly!", "Loan my Ferrari to!", "Lose Focus over!", "Line up For!", "Let Fix the sink!", "Look Forward to!", "Learn Finance from!", "Leave the Foundation to!", "Light Fires with!", "Load Freight with!", "Lift Furniture with!", "Lend my Fishing rod to!", "Learn Farming from!", "Leave the Finances to!", "Let Flip the burgers!", "Lay Flooring with!"];
 
         const gameData = {
             MILF: {
@@ -225,14 +232,17 @@
 
         let currentMode = 'MILF';
         let isSpinning = false;
-        const itemHeight = 100; 
+        const itemHeight = 80; 
         const spinMultiplier = 3; 
 
         const titleEl = document.getElementById('main-title');
+        const toggleEl = document.getElementById('mode-toggle');
+        const labelMilf = document.getElementById('label-milf');
         const switchLabelMilf = document.getElementById('switch-label-milf');
         const switchLabelDilf = document.getElementById('switch-label-dilf');
         const outputSentence = document.getElementById('output-sentence');
         const outputAccent = document.getElementById('output-accent');
+        const mobileSpinBtn = document.getElementById('mobile-spin-btn');
         const paylines = document.querySelectorAll('.payline');
         const reelContainers = [
             document.getElementById('reel-0'), document.getElementById('reel-1'), 
@@ -243,8 +253,10 @@
         function initMachine() {
             const data = gameData[currentMode];
             
+            // Update Title & Theme Colors
             titleEl.textContent = data.title;
             titleEl.className = `title-font text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-lg transition-all duration-500`;
+            mobileSpinBtn.className = `md:hidden w-full mt-4 bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} text-white font-bold text-xl py-3 rounded-xl border-b-4 ${data.colors[3]} active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg`;
             outputAccent.className = `absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} transition-colors duration-500`;
             
             paylines.forEach(line => {
@@ -344,18 +356,18 @@
             isSpinning = false;
             const data = gameData[currentMode];
             
-            const acronymArray = data.acronyms;
-            const finalAcronym = acronymArray[Math.floor(Math.random() * acronymArray.length)];
-            
             const hl = `font-bold text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-sm`;
+            const traitClass = "font-bold text-white tracking-wide";
+            const acronymStart = currentMode === 'MILF' ? "Mom I'd" : "Dad I'd";
 
             const sentenceHtml = `
-                <p class="mb-3">This ${data.noun} is a <span class="${hl}">${results[1]}</span> in their <span class="${hl}">${results[0]}</span>.</p>
-                <p class="mb-3">They're known for being <span class="${hl}">${results[2]}</span>.</p>
-                <p class="mb-4">You can usually find them wearing <span class="${hl}">${results[3]}</span> paired with <span class="${hl}">${results[4]}</span> while <span class="${hl}">${results[5]}</span>.</p>
-                <p class="text-xl md:text-2xl text-center italic mt-6 opacity-80">Now that is one...</p>
-                <p class="text-5xl md:text-6xl text-center title-font tracking-widest text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} mt-2 drop-shadow-md">${currentMode}!</p>
-                <p class="text-lg md:text-xl text-center font-bold text-gray-300 mt-2">(${finalAcronym})</p>
+                <p class="mb-1 text-sm md:text-base">This ${data.noun} is a <span class="${traitClass}">${results[1]}</span> in their <span class="${traitClass}">${results[0]}</span>.</p>
+                <p class="mb-1 text-sm md:text-base">They're known for being <span class="${traitClass}">${results[2]}</span>.</p>
+                <p class="mb-2 text-sm md:text-base">You can usually find them wearing <span class="${traitClass}">${results[3]}</span> paired with <span class="${traitClass}">${results[4]}</span> while <span class="${traitClass}">${results[5]}</span>.</p>
+                <div class="text-center mt-3 flex items-center justify-center flex-wrap gap-x-1">
+                    <span class="text-gray-300 italic font-medium text-lg md:text-xl">"Now that is a</span>
+                    <span class="title-font tracking-widest text-2xl md:text-3xl ${hl} align-middle">${acronymStart} ${results[6]}!"</span>
+                </div>
             `;
 
             outputSentence.innerHTML = sentenceHtml;
@@ -367,6 +379,8 @@
         const BUTTON_RESTING_Y = 3.8;
         const BUTTON_PRESSED_Y = 1.2;
         let targetButtonY = BUTTON_RESTING_Y;
+        let buttonVelocity = 0;
+        let isHolding = false;
 
         function initThreeButton() {
             const container = document.getElementById('three-button-container');
@@ -375,8 +389,8 @@
 
             sceneBtn = new THREE.Scene();
             cameraBtn = new THREE.PerspectiveCamera(35, width / height, 0.1, 1000);
-            cameraBtn.position.set(0, 18, 30); // Pulled back and up for a wider view
-            cameraBtn.lookAt(0, 2, 0);
+            cameraBtn.position.set(0, 12, 45); // Lowered and pulled back to face straight-on
+            cameraBtn.lookAt(0, 5, 0);
 
             rendererBtn = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             rendererBtn.setSize(width, height);
@@ -400,15 +414,15 @@
             buttonGroup = new THREE.Group();
             sceneBtn.add(buttonGroup);
 
-            // The Long Pillar (Extended massively to prevent bottom clipping)
-            const baseGeo = new THREE.CylinderGeometry(4.0, 4.0, 400.0, 64);
+            // The Long Pillar (Larger Base)
+            const baseGeo = new THREE.CylinderGeometry(5.5, 5.5, 400.0, 64);
             const baseMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.4 });
             const base = new THREE.Mesh(baseGeo, baseMat);
-            base.position.y = -198.0; // Pushed deep down 
+            base.position.y = -198.0; 
             buttonGroup.add(base);
 
             // Glossy Black Bezel Ring
-            const ringGeo = new THREE.TorusGeometry(3.5, 0.7, 32, 64);
+            const ringGeo = new THREE.TorusGeometry(4.2, 1.0, 32, 64);
             const ringMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.1, metalness: 0.8 });
             const ring = new THREE.Mesh(ringGeo, ringMat);
             ring.rotation.x = Math.PI / 2;
@@ -444,8 +458,25 @@
                 raycaster.setFromCamera(mouse, cameraBtn);
                 
                 const intersects = raycaster.intersectObject(buttonGroup, true);
-                if (intersects.length > 0) handleSpin();
+                if (intersects.length > 0) {
+                    isHolding = true;
+                    targetButtonY = BUTTON_PRESSED_Y;
+                }
             });
+
+            const releaseButton = () => {
+                if (isHolding) {
+                    isHolding = false;
+                    targetButtonY = BUTTON_RESTING_Y;
+                    if (!isSpinning) {
+                        isSpinning = true;
+                        executeSpin();
+                    }
+                }
+            };
+            
+            rendererBtn.domElement.addEventListener('pointerup', releaseButton);
+            rendererBtn.domElement.addEventListener('pointerleave', releaseButton);
         }
 
         let rendererSw, sceneSw, cameraSw;
@@ -455,54 +486,61 @@
         let targetSwitchRot = SWITCH_MILF_ROT;
 
         function initThreeSwitch() {
-            // Fix: Mount correctly inside the specific holder, NOT the parent container
             const container = document.getElementById('switch-canvas-holder');
             const width = container.clientWidth;
             const height = container.clientHeight;
 
             sceneSw = new THREE.Scene();
             cameraSw = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-            cameraSw.position.set(0, 0, 7); // Straight-on
+            cameraSw.position.set(0, 0, 8); 
             cameraSw.lookAt(0, 0, 0);
 
             rendererSw = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             rendererSw.setSize(width, height);
             container.appendChild(rendererSw.domElement);
 
-            // Toned down the lighting to make it look less blown out/bright
             const ambient = new THREE.AmbientLight(0xffffff, 0.4);
             sceneSw.add(ambient);
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
             dirLight.position.set(2, 5, 8);
             sceneSw.add(dirLight);
 
             switchGroup = new THREE.Group();
             sceneSw.add(switchGroup);
 
-            // Tall Slim Wall Plate (Darker slate color matching the reel panel shadows)
-            const plateGeo = new THREE.BoxGeometry(2.0, 4.0, 0.2);
-            const plateMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.8, metalness: 0.2 });
+            // Metal Mounting Plate
+            const plateGeo = new THREE.BoxGeometry(2.2, 4.0, 0.2);
+            const plateMat = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.6, metalness: 0.5 });
             const plate = new THREE.Mesh(plateGeo, plateMat);
             switchGroup.add(plate);
 
-            // Dark Recess Hole
-            const holeGeo = new THREE.BoxGeometry(0.6, 1.4, 0.25);
-            const holeMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.8 });
-            const hole = new THREE.Mesh(holeGeo, holeMat);
-            hole.position.z = 0.05;
-            switchGroup.add(hole);
+            // Threaded Metal Collar (Base of the toggle)
+            const collarGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.4, 32);
+            const collarMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.4, metalness: 0.9 });
+            const collar = new THREE.Mesh(collarGeo, collarMat);
+            collar.rotation.x = Math.PI / 2;
+            collar.position.z = 0.2;
+            switchGroup.add(collar);
 
-            // Switch Toggle Mechanism
+            // Switch Toggle Mechanism (The Lever Handle)
             switchToggleGroup = new THREE.Group();
-            switchToggleGroup.position.z = 0.1; 
+            switchToggleGroup.position.z = 0.3; // Sit just inside the collar
             switchGroup.add(switchToggleGroup);
 
-            // White Flickable Nub
-            const toggleGeo = new THREE.BoxGeometry(0.5, 1.2, 0.6);
-            const toggleMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
+            // Long industrial rod
+            const toggleGeo = new THREE.CylinderGeometry(0.15, 0.25, 2.0, 32);
+            const toggleMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.3, metalness: 0.8 });
             const toggleMesh = new THREE.Mesh(toggleGeo, toggleMat);
-            toggleMesh.position.z = 0.3; 
+            toggleMesh.rotation.x = Math.PI / 2; // Point it outward
+            toggleMesh.position.z = 1.0; // extend out
             switchToggleGroup.add(toggleMesh);
+
+            // Grip ball at the end of the lever
+            const ballGeo = new THREE.SphereGeometry(0.35, 32, 32);
+            const ballMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.2, metalness: 0.6 });
+            const ballMesh = new THREE.Mesh(ballGeo, ballMat);
+            ballMesh.position.y = 1.0; // Top of the cylinder
+            toggleMesh.add(ballMesh);
 
             targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
             switchToggleGroup.rotation.x = targetSwitchRot;
@@ -528,7 +566,10 @@
             requestAnimationFrame(animate);
 
             if (spinButtonMesh) {
-                spinButtonMesh.position.y += (targetButtonY - spinButtonMesh.position.y) * 0.3;
+                const displacement = targetButtonY - spinButtonMesh.position.y;
+                buttonVelocity += displacement * 0.4;
+                buttonVelocity *= 0.7;
+                spinButtonMesh.position.y += buttonVelocity;
                 rendererBtn.render(sceneBtn, cameraBtn);
             }
 
@@ -552,6 +593,14 @@
                 rendererSw.setSize(cSw.clientWidth, cSw.clientHeight);
             }
         });
+
+        if (mobileSpinBtn) {
+            mobileSpinBtn.addEventListener('click', () => {
+                 if (!isSpinning) {
+                     executeSpin();
+                 }
+            });
+        }
 
         window.onload = () => {
             initThreeButton();
