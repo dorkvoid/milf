@@ -58,6 +58,12 @@
             overflow: hidden;
             height: 80px;
             flex: 1;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .reel-column:hover {
+            background-color: rgba(0, 0, 0, 0.05);
         }
 
         .reel-inner {
@@ -87,21 +93,9 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            height: 280px;
+            height: 180px;
             transition: opacity 0.5s ease;
-            overflow-y: auto;
-        }
-
-        /* Custom Scrollbar for Output Box */
-        .glass-output::-webkit-scrollbar {
-            width: 6px;
-        }
-        .glass-output::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .glass-output::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            overflow: hidden;
         }
 
         #three-switch-container {
@@ -141,7 +135,7 @@
         @media (max-width: 768px) {
             #three-switch-container { display: none !important; }
             #three-button-container { display: none !important; }
-            .glass-output { height: auto; max-height: 240px; padding: 1rem; margin-top: 1rem; }
+            .glass-output { height: 160px; padding: 1rem; margin-top: 1rem; }
             .machine-body { padding: 0.75rem; }
             #main-title { font-size: 3.2rem; line-height: 1; margin-bottom: 0.5rem; }
             .reel-item { font-size: 0.65rem; padding: 0 0.15rem; }
@@ -149,6 +143,25 @@
         @media (max-width: 640px) {
             #main-title { font-size: 2.6rem; }
             .reel-item { font-size: 0.55rem; padding: 0 0.1rem; }
+        }
+
+        /* Particle Burst Animation */
+        .burst-line {
+            position: absolute;
+            width: 4px;
+            height: 16px;
+            background-color: #ffffff;
+            border-radius: 2px;
+            transform-origin: center bottom;
+            animation: burstOut 0.4s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
+            left: -2px; /* Center perfectly on click */
+            bottom: 0;
+        }
+
+        @keyframes burstOut {
+            0% { opacity: 1; transform: rotate(var(--rot)) translateY(-15px) scaleY(0.5); }
+            100% { opacity: 0; transform: rotate(var(--rot)) translateY(-60px) scaleY(1.2); }
         }
     </style>
 </head>
@@ -159,8 +172,9 @@
         <!-- Header -->
         <div class="flex flex-col items-center gap-1 text-center w-full">
             <h1 id="main-title" class="title-font text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 drop-shadow-lg transition-all duration-500">
-                THE M.I.L.F. MACHINE
+                THE MILF MACHINE
             </h1>
+            <p class="text-sm md:text-base text-slate-300 italic tracking-wide mt-1 md:mt-0 mb-1 drop-shadow-sm">The randomized character generator for making the perfect parent!</p>
 
             <!-- Mobile Only Mode Toggle -->
             <div id="mobile-mode-toggle" class="md:hidden flex items-center justify-center gap-3 mt-1 bg-gray-900/80 px-5 py-2 rounded-full border border-gray-700 shadow-inner cursor-pointer" onclick="toggleModeMobile()">
@@ -246,7 +260,7 @@
 
         const gameData = {
             MILF: {
-                title: "THE M.I.L.F. MACHINE",
+                title: "THE MILF MACHINE",
                 noun: "mother",
                 colors: ["from-red-400", "to-red-600", "rgba(239, 68, 68, 0.6)", "border-red-900"],
                 paylineClass: "bg-red-500/60 shadow-[0_0_8px_rgba(239,68,68,0.8)]",
@@ -254,7 +268,7 @@
                 acronyms: milfAcronyms
             },
             DILF: {
-                title: "THE D.I.L.F. DEVICE",
+                title: "THE DILF DEVICE",
                 noun: "father",
                 colors: ["from-blue-400", "to-blue-600", "rgba(59, 130, 246, 0.6)", "border-blue-900"],
                 paylineClass: "bg-blue-500/60 shadow-[0_0_8px_rgba(59,130,246,0.8)]",
@@ -265,6 +279,8 @@
 
         let currentMode = 'MILF';
         let isSpinning = false;
+        let hasSpun = false; // Tracks if the initial spin has occurred
+        let currentResults = ["", "", "", "", "", ""]; // Tracks the exact current traits
         const itemHeight = 80; 
         const spinMultiplier = 3; 
 
@@ -275,6 +291,27 @@
         const shutterEl = document.getElementById('reel-shutter');
         const shutterText = document.getElementById('shutter-text');
         
+        function showBurst(x, y) {
+            const burstContainer = document.createElement('div');
+            burstContainer.style.position = 'fixed';
+            burstContainer.style.left = `${x}px`;
+            burstContainer.style.top = `${y}px`;
+            burstContainer.style.zIndex = '9999';
+            burstContainer.style.pointerEvents = 'none';
+            document.body.appendChild(burstContainer);
+
+            // Create 8 outward shooting lines
+            for(let i=0; i<8; i++) {
+                const line = document.createElement('div');
+                line.className = 'burst-line';
+                line.style.setProperty('--rot', `${i * 45}deg`);
+                burstContainer.appendChild(line);
+            }
+
+            // Clean up elements after animation finishes
+            setTimeout(() => burstContainer.remove(), 500);
+        }
+
         function toggleModeMobile() {
             if (isSpinning) return;
             currentMode = currentMode === 'MILF' ? 'DILF' : 'MILF';
@@ -315,49 +352,26 @@
 
             // Update 3D Button Color and Switch Rotation
             if (typeof spinButtonMesh !== 'undefined' && spinButtonMesh) spinButtonMesh.material.color.setHex(currentMode === 'MILF' ? 0xef4444 : 0x3b82f6);
+            if (typeof switchBallMesh !== 'undefined' && switchBallMesh) switchBallMesh.material.color.setHex(currentMode === 'MILF' ? 0xef4444 : 0x3b82f6);
             if (typeof switchToggleGroup !== 'undefined' && switchToggleGroup) targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
 
-            // Update Mobile HTML Toggle
-            const mKnob = document.getElementById('mobile-toggle-knob');
-            const mMilf = document.getElementById('mobile-label-milf');
-            const mDilf = document.getElementById('mobile-label-dilf');
-            if(mKnob && mMilf && mDilf) {
-                if (currentMode === 'MILF') {
-                    mKnob.classList.remove('translate-x-6', 'bg-blue-500');
-                    mKnob.classList.add('translate-x-0', 'bg-red-500');
-                    mMilf.classList.replace('text-gray-500', 'text-red-400');
-                    mDilf.classList.replace('text-blue-400', 'text-gray-500');
-                } else {
-                    mKnob.classList.remove('translate-x-0', 'bg-red-500');
-                    mKnob.classList.add('translate-x-6', 'bg-blue-500');
-                    mMilf.classList.replace('text-red-400', 'text-gray-500');
-                    mDilf.classList.replace('text-gray-500', 'text-blue-400');
-                }
-            }
+            hasSpun = false;
 
             reelContainers.forEach((container, index) => {
                 if(!container) return;
-                container.innerHTML = '';
-                container.style.transition = 'none';
-                container.style.transform = `translateY(0px)`;
                 
+                // Add click listener to the parent column for single rerolls
+                container.parentElement.onclick = () => spinSingleReel(index);
+                container.parentElement.title = "Click to reroll this trait";
+
                 const items = data.reels[index];
                 const startIndex = Math.floor(Math.random() * items.length);
-                let html = '';
+                const initialText = items[startIndex];
+                currentResults[index] = initialText; // Pre-fill results
                 
-                const fullList = [];
-                for(let i=0; i<spinMultiplier; i++) {
-                    fullList.push(...shuffleArray([...items]));
-                }
-                const finalItems = shuffleArray([...items]);
-                fullList.push(...finalItems);
-
-                fullList.forEach(text => {
-                    html += `<div class="reel-item">${text}</div>`;
-                });
-                
-                container.innerHTML = html;
-                container.style.transform = `translateY(-${startIndex * itemHeight}px)`;
+                container.innerHTML = `<div class="reel-item" data-text="${initialText.replace(/"/g, '&quot;')}">${initialText}</div>`;
+                container.style.transition = 'none';
+                container.style.transform = `translateY(0px)`;
             });
 
             outputSentence.innerHTML = '<p class="opacity-50 italic text-center font-normal">Push the button to generate your character...</p>';
@@ -388,36 +402,53 @@
         function executeSpin() {
             // Failsafe in case executeSpin is called directly
             isSpinning = true; 
+            hasSpun = true;
             
             document.getElementById('output-container').style.opacity = '0.3';
             shutterEl.style.transform = 'translateY(-100%)';
             
             const data = gameData[currentMode];
-            let results = [];
             let completedReels = 0;
 
             reelContainers.forEach((container, i) => {
                 if(!container) return;
                 
-                const itemsCount = data.reels[i].length;
-                const targetFinalIndex = Math.floor(Math.random() * itemsCount);
-                const totalItemsInDOM = (itemsCount * spinMultiplier) + itemsCount;
-                const stopIndex = totalItemsInDOM - itemsCount + targetFinalIndex;
+                const currentText = currentResults[i] || data.reels[i][0];
+                const items = data.reels[i];
                 
+                // Build a fresh runway so the slots can be spun infinitely
+                let html = `<div class="reel-item" data-text="${currentText.replace(/"/g, '&quot;')}">${currentText}</div>`;
+                const fullList = [];
+                for(let j=0; j<spinMultiplier; j++) {
+                    fullList.push(...shuffleArray([...items]));
+                }
+                
+                fullList.forEach(text => {
+                    html += `<div class="reel-item" data-text="${text.replace(/"/g, '&quot;')}">${text}</div>`;
+                });
+
+                container.style.transition = 'none';
+                container.style.transform = `translateY(0px)`;
+                container.innerHTML = html;
+
+                // Force CSS reflow
+                void container.offsetWidth;
+
                 const duration = 1.5 + (i * 0.4); 
+                const targetFinalIndex = Math.floor(Math.random() * items.length);
+                const stopIndex = fullList.length - items.length + targetFinalIndex + 1;
                 
                 container.style.transition = `transform ${duration}s cubic-bezier(0.25, 0.1, 0.1, 1)`;
                 container.style.transform = `translateY(-${stopIndex * itemHeight}px)`;
 
                 setTimeout(() => {
-                    // Safe access check
                     if(container.children[stopIndex]) {
-                        results[i] = container.children[stopIndex].innerText;
+                        currentResults[i] = container.children[stopIndex].dataset.text;
                     }
                     completedReels++;
 
                     if (completedReels === reelContainers.length) {
-                        finishSpin(results);
+                        finishSpin(currentResults);
                     }
                 }, duration * 1000);
             });
@@ -428,23 +459,62 @@
             const data = gameData[currentMode];
             
             const hl = `font-bold text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-sm`;
-            const traitClass = `font-bold text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-sm tracking-wide`;
-            const acronymStart = currentMode === 'MILF' ? "Mom I'd" : "Dad I'd";
 
-            const randomAcronym = data.acronyms[Math.floor(Math.random() * data.acronyms.length)];
-
+            // Cleanly formatted, non-scrolling full sentence paragraph with proper spacing
             const sentenceHtml = `
-                <p class="mb-1 text-sm md:text-base">This ${data.noun} is a <span class="${traitClass}">${results[1] || ''}</span> in their <span class="${traitClass}">${results[0] || ''}</span>.</p>
-                <p class="mb-1 text-sm md:text-base">They're known for being <span class="${traitClass}">${results[2] || ''}</span>.</p>
-                <p class="mb-2 text-sm md:text-base">You can usually find them wearing <span class="${traitClass}">${results[3] || ''}</span> paired with <span class="${traitClass}">${results[4] || ''}</span> while <span class="${traitClass}">${results[5] || ''}</span>.</p>
-                <div class="text-center mt-3 flex items-center justify-center flex-wrap gap-x-1">
-                    <span class="text-gray-300 italic font-medium text-lg md:text-xl">Now that is a</span>
-                    <span class="title-font tracking-widest text-2xl md:text-3xl ${hl} align-middle">${acronymStart} ${randomAcronym}</span>
+                <div class="text-left w-full h-full flex flex-col justify-center gap-1.5 md:gap-2 text-xs sm:text-sm md:text-base leading-tight md:leading-snug">
+                    <p>This ${data.noun} is a <span class="${hl}">${results[1]}</span> in their <span class="${hl}">${results[0]}</span>.</p>
+                    <p>They're known for being <span class="${hl}">${results[2]}</span>.</p>
+                    <p>You can usually find them wearing <span class="${hl}">${results[3]}</span> paired with <span class="${hl}">${results[4]}</span> while <span class="${hl}">${results[5]}</span>.</p>
                 </div>
             `;
 
             outputSentence.innerHTML = sentenceHtml;
             document.getElementById('output-container').style.opacity = '1';
+        }
+
+        function spinSingleReel(i) {
+            if (isSpinning || !hasSpun) return; // Prevent clicking before the shutter is open
+            isSpinning = true;
+            
+            document.getElementById('output-container').style.opacity = '0.3';
+            
+            const data = gameData[currentMode];
+            const container = reelContainers[i];
+            
+            const currentText = currentResults[i];
+            const items = data.reels[i];
+            
+            // Build a short runway for a fast, snappy single spin
+            let html = `<div class="reel-item" data-text="${currentText.replace(/"/g, '&quot;')}">${currentText}</div>`;
+            const fullList = [];
+            for(let j=0; j<2; j++) {
+                fullList.push(...shuffleArray([...items]));
+            }
+            
+            fullList.forEach(text => {
+                html += `<div class="reel-item" data-text="${text.replace(/"/g, '&quot;')}">${text}</div>`;
+            });
+
+            container.style.transition = 'none';
+            container.style.transform = `translateY(0px)`;
+            container.innerHTML = html;
+
+            void container.offsetWidth; // Force CSS reflow
+
+            const duration = 0.8; // Fast duration
+            const targetFinalIndex = Math.floor(Math.random() * items.length);
+            const stopIndex = fullList.length - items.length + targetFinalIndex + 1;
+            
+            container.style.transition = `transform ${duration}s cubic-bezier(0.25, 0.1, 0.1, 1)`;
+            container.style.transform = `translateY(-${stopIndex * itemHeight}px)`;
+
+            setTimeout(() => {
+                if(container.children[stopIndex]) {
+                    currentResults[i] = container.children[stopIndex].dataset.text;
+                }
+                finishSpin(currentResults); // Update sentence with the newly rerolled trait
+            }, duration * 1000);
         }
 
         let rendererBtn, sceneBtn, cameraBtn;
@@ -490,7 +560,7 @@
                 buttonGroup = new THREE.Group();
                 sceneBtn.add(buttonGroup);
 
-                const baseGeo = new THREE.CylinderGeometry(5.5, 5.5, 400.0, 64);
+                const baseGeo = new THREE.BoxGeometry(11.0, 400.0, 11.0);
                 const baseMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.4 });
                 const base = new THREE.Mesh(baseGeo, baseMat);
                 base.position.y = -198.0; 
@@ -533,6 +603,7 @@
                     if (intersects.length > 0) {
                         isHolding = true;
                         targetButtonY = BUTTON_PRESSED_Y;
+                        showBurst(e.clientX, e.clientY);
                     }
                 });
 
@@ -554,7 +625,7 @@
         }
 
         let rendererSw, sceneSw, cameraSw;
-        let switchGroup, switchToggleGroup;
+        let switchGroup, switchToggleGroup, switchBallMesh;
         const SWITCH_MILF_ROT = -0.55; 
         const SWITCH_DILF_ROT = 0.55;  
         let targetSwitchRot = SWITCH_MILF_ROT;
@@ -613,37 +684,56 @@
                 const plateGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
                 // Adjust position since ExtrudeGeometry builds from the bottom left by default if not centered carefully, 
                 // but our shape uses center coordinates.
-                const plateMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, roughness: 0.8, metalness: 0.2 });
+                const plateMat = new THREE.MeshStandardMaterial({ color: 0x5c6b7d, roughness: 0.8, metalness: 0.2 });
                 const plate = new THREE.Mesh(plateGeo, plateMat);
                 switchGroup.add(plate);
 
-                // Collar
-                const collarGeo = new THREE.CylinderGeometry(0.5, 0.6, 0.6, 32);
+                // Screws
+                const screwGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.1, 16);
+                screwGeo.rotateX(Math.PI / 2);
+                const screwMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9, metalness: 0.5 });
+                const topScrew = new THREE.Mesh(screwGeo, screwMat);
+                topScrew.position.set(0, 1.4, 0.25);
+                switchGroup.add(topScrew);
+                const bottomScrew = new THREE.Mesh(screwGeo, screwMat);
+                bottomScrew.position.set(0, -1.4, 0.25);
+                switchGroup.add(bottomScrew);
+
+                // Pronounced Collar (Large dark circle base matching the photo)
+                const collarGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.15, 32);
                 collarGeo.rotateX(Math.PI / 2);
-                const collarMat = new THREE.MeshStandardMaterial({ color: 0x64748b, metalness: 0.8, roughness: 0.2 });
+                const collarMat = new THREE.MeshStandardMaterial({ color: 0x1a1d20, roughness: 0.9, metalness: 0.2 });
                 const collar = new THREE.Mesh(collarGeo, collarMat);
-                collar.position.z = 0.16;
+                collar.position.z = 0.25;
                 switchGroup.add(collar);
 
                 // Switch Toggle Group
                 switchToggleGroup = new THREE.Group();
-                switchToggleGroup.position.z = 0.3;
+                switchToggleGroup.position.z = 0.2;
                 switchGroup.add(switchToggleGroup);
 
-                // Rod
-                const rodGeo = new THREE.CylinderGeometry(0.15, 0.15, 2.0, 16);
+                // Rod (Thin black stick)
+                const rodGeo = new THREE.CylinderGeometry(0.1, 0.1, 1.5, 16);
                 rodGeo.rotateX(Math.PI / 2);
-                const rodMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.9, roughness: 0.1 });
+                const rodMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8, roughness: 0.3 });
                 const rod = new THREE.Mesh(rodGeo, rodMat);
-                rod.position.z = 1.0;
+                rod.position.z = 0.75;
                 switchToggleGroup.add(rod);
 
-                // Ball
-                const ballGeo = new THREE.SphereGeometry(0.4, 32, 32);
-                const ballMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.2, roughness: 0.6 });
-                const ball = new THREE.Mesh(ballGeo, ballMat);
-                ball.position.z = 2.0;
-                switchToggleGroup.add(ball);
+                // Ball (Glossy red/blue)
+                const ballGeo = new THREE.SphereGeometry(0.35, 32, 32);
+                const initialBallColor = currentMode === 'MILF' ? 0xef4444 : 0x3b82f6;
+                const ballMat = new THREE.MeshPhysicalMaterial({ 
+                    color: initialBallColor, 
+                    metalness: 0.1, 
+                    roughness: 0.1, 
+                    clearcoat: 0.8, 
+                    clearcoatRoughness: 0.1,
+                    reflectivity: 0.5
+                });
+                switchBallMesh = new THREE.Mesh(ballGeo, ballMat);
+                switchBallMesh.position.z = 1.5;
+                switchToggleGroup.add(switchBallMesh);
 
                 targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
 
@@ -705,7 +795,12 @@
 
         // Ensure mobile button click utilizes strict handleSpin logic
         if (mobileSpinBtn) {
-            mobileSpinBtn.addEventListener('click', handleSpin);
+            mobileSpinBtn.addEventListener('click', (e) => {
+                if (!isSpinning) {
+                    showBurst(e.clientX, e.clientY);
+                }
+                handleSpin();
+            });
         }
 
         window.onload = () => {
