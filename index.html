@@ -167,6 +167,25 @@
 </head>
 <body class="h-screen w-screen flex flex-col items-center justify-center p-2 md:p-4 box-border overflow-hidden">
 
+    <!-- Help Button -->
+    <button id="help-btn" onclick="startTutorial()" class="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-600 text-white font-bold text-xl flex items-center justify-center hover:bg-slate-700 shadow-lg cursor-pointer transition-colors" title="How to play">
+        ?
+    </button>
+
+    <!-- Tutorial Overlay -->
+    <div id="tutorial-overlay" class="fixed inset-0 z-[100] bg-slate-900/40 hidden opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div id="tutorial-tooltip" class="absolute bg-white text-slate-900 p-5 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] w-[280px] border-4 border-slate-800 transition-all duration-300 pointer-events-auto">
+            <h3 class="font-black text-lg mb-1 uppercase tracking-wider text-slate-800" id="tutorial-title">Step 1</h3>
+            <p id="tutorial-text" class="text-sm font-semibold mb-4 text-slate-600 leading-tight"></p>
+            <div class="flex justify-between items-center mt-2">
+                <button id="tutorial-skip" onclick="endTutorial()" class="text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-wider">Skip</button>
+                <button id="tutorial-next" onclick="nextTutorialStep()" class="bg-red-500 hover:bg-red-600 text-white text-sm font-bold py-2 px-5 rounded-lg transition-colors uppercase tracking-wider border-b-4 border-red-700 active:border-b-0 active:translate-y-1">Next</button>
+            </div>
+            <!-- Pointer Arrow -->
+            <div id="tutorial-arrow" class="absolute w-5 h-5 bg-white border-slate-800 transform rotate-45 pointer-events-none"></div>
+        </div>
+    </div>
+
     <div class="w-full max-w-4xl flex flex-col items-center gap-2 md:gap-4 relative h-full max-h-[900px] justify-center">
         
         <!-- Header -->
@@ -774,6 +793,106 @@
             }
         }
 
+        // --- TUTORIAL LOGIC ---
+        let currentTutorialStep = 0;
+        
+        function startTutorial() {
+            currentTutorialStep = 0;
+            const overlay = document.getElementById('tutorial-overlay');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            showTutorialStep();
+        }
+
+        function endTutorial() {
+            const overlay = document.getElementById('tutorial-overlay');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+            localStorage.setItem('milfMachineTutorialActive', 'seen');
+        }
+
+        function nextTutorialStep() {
+            currentTutorialStep++;
+            if (currentTutorialStep >= 3) {
+                endTutorial();
+            } else {
+                showTutorialStep();
+            }
+        }
+
+        function showTutorialStep() {
+            const tooltip = document.getElementById('tutorial-tooltip');
+            const arrow = document.getElementById('tutorial-arrow');
+            const titleEl = document.getElementById('tutorial-title');
+            const textEl = document.getElementById('tutorial-text');
+            const nextBtn = document.getElementById('tutorial-next');
+            
+            const isMobile = window.innerWidth <= 768;
+            
+            const steps = [
+                {
+                    title: "1. The Lever",
+                    text: "Push the big lever (or tap Spin on mobile) to randomly generate your character!",
+                    targetId: isMobile ? 'mobile-spin-btn' : 'three-button-container',
+                    placement: isMobile ? 'top' : 'left'
+                },
+                {
+                    title: "2. Precision Rerolls",
+                    text: "Don't like an outfit or hobby? Click any individual slot to quickly reroll just that specific trait!",
+                    targetId: 'reel-4', // Middle bottom reel
+                    placement: 'bottom'
+                },
+                {
+                    title: "3. Swap Modes",
+                    text: "Flick the switch to swap between creating Mother or Father characters!",
+                    targetId: isMobile ? 'mobile-mode-toggle' : 'three-switch-container',
+                    placement: isMobile ? 'bottom' : 'right'
+                }
+            ];
+
+            const step = steps[currentTutorialStep];
+            titleEl.innerText = step.title;
+            textEl.innerText = step.text;
+            nextBtn.innerText = currentTutorialStep === 2 ? "Let's Go!" : "Next";
+            
+            const target = document.getElementById(step.targetId);
+            if (!target) return;
+            
+            const rect = target.getBoundingClientRect();
+            arrow.className = 'absolute w-5 h-5 bg-white transform rotate-45 pointer-events-none';
+            
+            let top = 0;
+            let left = 0;
+            const tWidth = 280;
+            const tHeight = 160; 
+            
+            if (step.placement === 'left') {
+                left = rect.left - tWidth - 20;
+                top = rect.top + (rect.height / 2) - (tHeight / 2);
+                arrow.classList.add('top-1/2', '-mt-2.5', '-right-2.5', 'border-t-4', 'border-r-4');
+            } else if (step.placement === 'right') {
+                left = rect.right + 20;
+                top = rect.top + (rect.height / 2) - (tHeight / 2);
+                arrow.classList.add('top-1/2', '-mt-2.5', '-left-2.5', 'border-b-4', 'border-l-4');
+            } else if (step.placement === 'top') {
+                left = rect.left + (rect.width / 2) - (tWidth / 2);
+                top = rect.top - tHeight - 20;
+                arrow.classList.add('-bottom-2.5', 'left-1/2', '-ml-2.5', 'border-b-4', 'border-r-4');
+            } else if (step.placement === 'bottom') {
+                left = rect.left + (rect.width / 2) - (tWidth / 2);
+                top = rect.bottom + 20;
+                arrow.classList.add('-top-2.5', 'left-1/2', '-ml-2.5', 'border-t-4', 'border-l-4');
+            }
+            
+            // Keep on screen
+            if (left < 10) left = 10;
+            if (left + tWidth > window.innerWidth - 10) left = window.innerWidth - tWidth - 10;
+            if (top < 10) top = 10;
+            
+            tooltip.style.left = left + 'px';
+            tooltip.style.top = top + 'px';
+        }
+
         window.addEventListener('resize', () => {
             if(cameraBtn && rendererBtn) {
                 const cBtn = document.getElementById('three-button-container');
@@ -808,6 +927,11 @@
             initThreeSwitch();
             initMachine();
             animate();
+
+            // Check if user has seen tutorial, if not, show it
+            if (!localStorage.getItem('milfMachineTutorialActive')) {
+                setTimeout(startTutorial, 500);
+            }
         };
     </script>
 </body>
