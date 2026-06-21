@@ -831,16 +831,16 @@
             
             const steps = [
                 {
-                    title: "1. The Lever",
-                    text: "Push the big lever (or tap Spin on mobile) to randomly generate your character!",
+                    title: "1. Generate Character",
+                    text: "Push the big button or tap the Spin button to generate a completely random character.",
                     targetId: isMobile ? 'mobile-spin-btn' : 'three-button-container',
                     placement: isMobile ? 'top' : 'left'
                 },
                 {
-                    title: "2. Precision Rerolls",
-                    text: "Don't like an outfit or hobby? Click any individual slot to quickly reroll just that specific trait!",
-                    targetId: 'reel-4', // Middle bottom reel
-                    placement: 'bottom'
+                    title: "2. Reroll Traits",
+                    text: "Not quite right? Click on any individual slot to quickly reroll that specific trait!",
+                    targetId: 'reel-1',
+                    placement: isMobile ? 'bottom' : 'bottom'
                 },
                 {
                     title: "3. Swap Modes",
@@ -852,15 +852,18 @@
 
             const step = steps[currentTutorialStep];
             titleEl.innerText = step.title;
-            textEl.innerText = step.text;
-            nextBtn.innerText = currentTutorialStep === 2 ? "Let's Go!" : "Next";
+            textEl.innerText = step.text; // Update the description text
             
-            const target = document.getElementById(step.targetId);
-            if (!target) return;
-            
-            const rect = target.getBoundingClientRect();
-            arrow.className = 'absolute w-5 h-5 bg-white transform rotate-45 pointer-events-none';
-            
+            // Get the screen coordinates of the target element
+            let targetEl = document.getElementById(step.targetId);
+            // Fix: Target the static outer column instead of the scrolling inner strip
+            if (targetEl && targetEl.classList.contains('reel-inner')) {
+                targetEl = targetEl.parentElement;
+            }
+            const rect = targetEl ? targetEl.getBoundingClientRect() : { left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0 };
+
+            arrow.className = 'absolute w-5 h-5 bg-white transform rotate-45 pointer-events-none border-slate-800';
+        
             let top = 0;
             let left = 0;
             const tWidth = 280;
