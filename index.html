@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>The Milf Machine</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
         body {
@@ -15,6 +16,10 @@
             overflow: hidden; /* Strictly locks page */
             color: #f8fafc;
             touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none; /* Prevents accidental blue text selection on rapid taps */
+            -webkit-user-select: none;
+            height: 100dvh; /* Modern mobile sizing */
         }
 
         .title-font {
@@ -85,11 +90,11 @@
             word-break: break-word;
         }
 
-        /* 2D CSS Rocker Switch (Replaces Lever) */
+        /* 2D CSS Rocker Switch */
         .css-rocker-case {
             width: 50px;
             height: 100px;
-            background: #020617; /* Deep dark cavity */
+            background: #020617; 
             border-radius: 6px;
             border: 2px solid #334155;
             box-shadow: inset 0 10px 15px rgba(0,0,0,0.9), 0 2px 2px rgba(255,255,255,0.1);
@@ -98,7 +103,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            perspective: 300px; /* Gives the 3D tilt effect */
+            perspective: 300px; 
         }
 
         .css-rocker-switch {
@@ -174,11 +179,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: rgba(255,255,255,0.8);
-            font-family: 'Bebas Neue', cursive;
-            font-size: 1.2rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-            padding-bottom: 4px;
         }
 
         .css-btn-pillar:active .css-btn-cap {
@@ -186,21 +186,36 @@
             box-shadow: inset -2px -2px 8px rgba(0,0,0,0.5), inset 1px 1px 5px rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.6);
         }
 
-        /* Glass Output Box */
+        /* Glass Output Box & Scrolling fix */
         .output-box {
             background-color: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: opacity 0.5s ease;
             height: 180px;
+            position: relative;
+            overflow: hidden; /* Fixes the accent bar from scrolling */
+            display: flex;
+        }
+
+        .scroll-wrapper {
+            flex-grow: 1;
             overflow-y: auto;
+            height: 100%;
+            display: flex;
+            align-items: center;
             scrollbar-width: thin;
             scrollbar-color: rgba(255,255,255,0.2) transparent;
         }
 
-        .output-box::-webkit-scrollbar { width: 6px; }
-        .output-box::-webkit-scrollbar-track { background: transparent; }
-        .output-box::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.2); border-radius: 10px; }
+        .scroll-wrapper::-webkit-scrollbar { width: 6px; }
+        .scroll-wrapper::-webkit-scrollbar-track { background: transparent; }
+        .scroll-wrapper::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.2); border-radius: 10px; }
+        
+        .allow-select {
+            user-select: text; /* Allow user to copy output text */
+            -webkit-user-select: text;
+        }
 
         /* Metal Shutter */
         .metal-shutter {
@@ -217,20 +232,6 @@
         }
 
         .shutter-open { transform: translateY(-100%); }
-
-        /* Tutorial Overlay */
-        #tutorial-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.85);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
-        .hidden-tutorial { opacity: 0 !important; pointer-events: none; }
 
         /* Particle Burst Animation */
         .burst-line {
@@ -265,7 +266,7 @@
             z-index: 10001 !important;
             box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.6), 0 0 25px rgba(59, 130, 246, 0.8) !important;
             border-radius: 12px;
-            pointer-events: auto !important;
+            /* Removed pointer-events: auto to prevent accidental state-breaking clicks during tutorial */
             background-color: inherit;
         }
         .tutorial-highlight:not(.absolute) {
@@ -304,7 +305,7 @@
         }
     </style>
 </head>
-<body class="h-screen flex flex-col items-center justify-center p-2 sm:p-4 relative">
+<body class="flex flex-col items-center justify-center p-2 sm:p-4 relative">
 
     <!-- Journal Slide-out Panel -->
     <div id="journal-panel" class="fixed top-0 right-0 h-full w-full max-w-sm sm:max-w-md bg-slate-900/95 backdrop-blur-xl border-l border-slate-700 z-[10000] transform translate-x-full transition-transform duration-400 ease-in-out flex flex-col shadow-2xl">
@@ -317,7 +318,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
         </div>
-        <div id="journal-list" class="flex-grow overflow-y-auto p-4 space-y-4 pb-20">
+        <div id="journal-list" class="flex-grow overflow-y-auto p-4 space-y-4 pb-20 allow-select">
             <!-- Items injected by JS -->
         </div>
     </div>
@@ -410,7 +411,7 @@
                     </div>
 
                     <!-- Mobile Spin Button -->
-                    <button id="mobile-spin-btn" class="md:hidden w-full mt-4 bg-gradient-to-b from-red-500 to-red-700 text-white font-bold text-xl py-3 rounded-xl border-b-4 border-red-900 active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg">
+                    <button id="mobile-spin-btn" class="md:hidden w-full mt-4 bg-gradient-to-b from-red-500 to-red-700 text-white font-bold text-xl py-3 rounded-xl border-b-4 border-red-900 active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg relative z-40">
                         Push To Spin!
                     </button>
                 </div>
@@ -420,7 +421,10 @@
             <div class="hidden md:flex w-24 justify-center">
                 <div class="css-btn-pillar" id="desktop-btn" onmousedown="triggerSpin(event)" onmouseup="releaseSpin()" onmouseleave="releaseSpin()">
                     <div class="css-btn-collar">
-                        <div class="css-btn-cap" id="btn-cap" style="background: radial-gradient(circle at 30% 30%, #f87171, #dc2626);">PRESS</div>
+                        <div class="css-btn-cap" id="btn-cap" style="background: radial-gradient(circle at 30% 30%, #f87171, #dc2626);">
+                            <!-- Clean Phosphor Hand Pointer Icon -->
+                            <i class="ph-fill ph-hand-pointing text-[40px] text-white/95 drop-shadow-md"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -428,14 +432,17 @@
 
         <!-- Character Output Box -->
         <div class="w-full max-w-3xl mt-2 relative flex flex-col items-center">
-            <div class="output-box p-4 md:p-6 rounded-xl shadow-2xl relative flex items-center justify-center w-full" id="output-container">
-                <div id="output-accent" class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-red-400 to-red-600 transition-colors duration-500 rounded-l-xl"></div>
-                <div id="output-sentence" class="text-base md:text-lg w-full px-4 sm:px-6 font-medium leading-relaxed">
-                    <p class="opacity-50 italic text-center text-slate-300">Push the button to generate your character...</p>
+            <!-- Modified for fixed left accent and scrollable text -->
+            <div class="output-box rounded-xl shadow-2xl relative flex w-full" id="output-container">
+                <div id="output-accent" class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-red-400 to-red-600 transition-colors duration-500 rounded-l-xl z-10 pointer-events-none"></div>
+                <div class="scroll-wrapper pl-6 pr-4 sm:pl-8 sm:pr-6 allow-select" id="scroll-wrapper">
+                    <div id="output-sentence" class="text-base md:text-lg w-full font-medium leading-relaxed my-auto">
+                        <p class="opacity-50 italic text-center text-slate-300">Push the button to generate your character...</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Action Buttons (Moved beneath the box) -->
+            <!-- Action Buttons (Beneath the box) -->
             <div id="action-buttons" class="w-full flex justify-end gap-3 mt-3 opacity-0 pointer-events-none transition-all duration-300 z-30 px-2 sm:px-0">
                 <!-- Save Button -->
                 <button id="save-btn" onclick="saveToJournal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-yellow-400 px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-md flex items-center gap-2 group">
@@ -469,7 +476,7 @@
                     // 3: Clothing
                     ["yoga pants and an oversized tee", "a sharply tailored blazer and pencil skirt", "a vintage floral dress", "high-waisted mom jeans and a cozy sweater", "Lululemon leggings and a fitted tank", "a breezy linen sundress", "a matching velour tracksuit", "a leather jacket and ripped jeans", "a silk slip dress", "cargo pants and a crop top", "a boho-chic maxi skirt and peasant blouse", "a tactical turtleneck", "a sleek midi dress", "sweatpants and an oversized college hoodie"],
                     // 4: Accessories
-                    ["fluffy slippers and short, neatly painted nails", "sensible heels and a pearl necklace", "scuffed combat boots and a heavy silver septum ring", "pristine white sneakers and long manicured acrylics", "strappy sandals and a dainty ankle bracelet", "chunky platform sneakers and multiple cartilage piercings", "a loaded diaper bag and a matte nude lip", "huge designer sunglasses and a bold crimson lip", "cozy Uggs and tinted berry chapstick", "diamond stud earrings and an expensive smart watch", "broad, unpainted nails and a tote bag full of snacks", "short, practical nails and a massive iced coffee", "a dainty ankle bracelet and neat toes", "thick, broad fingernails painted with clear polish"],
+                    ["fluffy slippers and short, neatly painted nails", "sensible heels and a pearl necklace", "scuffed combat boots and a heavy silver septum ring", "pristine white sneakers and broad, manicured acrylics", "strappy sandals and a dainty ankle bracelet", "chunky platform sneakers and multiple cartilage piercings", "a loaded diaper bag and a matte nude lip", "huge designer sunglasses and a bold crimson lip", "cozy Uggs and tinted berry chapstick", "diamond stud earrings and an expensive smart watch", "broad, unpainted nails and a tote bag full of snacks", "short, practical nails and a massive iced coffee", "a dainty ankle bracelet and neat toes", "thick, broad fingernails painted with clear polish"],
                     // 5: Hobbies
                     ["intimidating the local PTA", "drinking expensive wine at 3 PM", "collecting massive houseplants", "reorganizing the pantry out of spite", "running half-marathons", "baking aggressive amounts of sourdough", "doing pilates while judging you", "scrolling TikTok until 2 AM", "managing three different family calendars", "restoring vintage furniture", "watching true crime documentaries", "attending pottery classes", "organizing the pantry by color", "arguing with the homeowners association", "reading spicy fantasy novels", "aggressively meal-prepping on Sundays"]
                 ]
@@ -533,7 +540,7 @@
             // Text & Accents
             titleEl.textContent = data.title;
             titleEl.className = `title-font text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-lg transition-all duration-500 z-40 relative`;
-            outputAccent.className = `absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} transition-colors duration-500 rounded-l-xl`;
+            outputAccent.className = `absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} transition-colors duration-500 rounded-l-xl z-10 pointer-events-none`;
             
             // Shutter
             shutter.classList.remove('shutter-open');
@@ -592,20 +599,20 @@
 
         // --- Interaction Logic ---
         function toggleMode() {
-            if(isSpinning) return;
+            if(isSpinning || !document.getElementById('tutorial-overlay').classList.contains('hidden-tutorial')) return;
             currentMode = currentMode === 'MILF' ? 'DILF' : 'MILF';
             initMachine();
         }
 
         function toggleMobileMode() { toggleMode(); }
         function forceMobileToggle(mode) {
-            if(isSpinning || currentMode === mode) return;
+            if(isSpinning || currentMode === mode || !document.getElementById('tutorial-overlay').classList.contains('hidden-tutorial')) return;
             currentMode = mode;
             initMachine();
         }
 
         function triggerSpin(e) {
-            if(isSpinning) return;
+            if(isSpinning || !document.getElementById('tutorial-overlay').classList.contains('hidden-tutorial')) return;
             if(e) showBurst(e.clientX, e.clientY);
             handleSpin();
         }
@@ -642,12 +649,33 @@
             const data = gameData[currentMode];
             let completedReels = 0;
 
+            // --- EXTREMELY RARE EASTER EGG (1 in 2000 chance) ---
+            let isTorielEgg = false;
+            if (currentMode === 'MILF' && Math.random() < 0.0005) { 
+                isTorielEgg = true;
+            }
+            const torielTraits = [
+                "ageless era",
+                "cuddly bipedal boss monster",
+                "warm, loving, and fiercely protective",
+                "a purple robe with a white crest",
+                "short, neat fingernails and soft paws",
+                "baking aggressive amounts of butterscotch-cinnamon pie"
+            ];
+            // ---------------------------------------------------
+
             reelContainers.forEach((container, i) => {
                 const itemsCount = data.reels[i].length;
                 const targetFinalIndex = Math.floor(Math.random() * itemsCount);
                 const totalItemsInDOM = container.children.length;
                 const stopIndex = totalItemsInDOM - itemsCount + targetFinalIndex;
                 const duration = 1.5 + (i * 0.4); 
+
+                // If Toriel egg triggered, forcefully inject her exact traits into the landing slot
+                if (isTorielEgg) {
+                    container.children[stopIndex].dataset.text = torielTraits[i];
+                    container.children[stopIndex].textContent = torielTraits[i];
+                }
 
                 container.style.transition = `transform ${duration}s cubic-bezier(0.25, 0.1, 0.1, 1)`;
                 container.style.transform = `translateY(-${stopIndex * itemHeight}px)`;
@@ -664,7 +692,7 @@
         }
 
         function handleSingleSpin(reelIndex) {
-            if(isSpinning || !shutter.classList.contains('shutter-open')) return;
+            if(isSpinning || !shutter.classList.contains('shutter-open') || !document.getElementById('tutorial-overlay').classList.contains('hidden-tutorial')) return;
             isSpinning = true;
             document.getElementById('output-container').style.opacity = '0.3';
             
@@ -745,10 +773,14 @@
             document.body.removeChild(textArea);
         }
 
-        // Feature: Favorites Journal
-        let savedFavorites = JSON.parse(localStorage.getItem('milfMachineFavorites')) || [];
+        // Feature: Favorites Journal & Error Handling
+        let savedFavorites = [];
+        try {
+            savedFavorites = JSON.parse(localStorage.getItem('milfMachineFavorites')) || [];
+        } catch(e) { console.warn("Storage empty or corrupted", e); }
 
         function toggleJournal() {
+            if (!document.getElementById('tutorial-overlay').classList.contains('hidden-tutorial')) return;
             const panel = document.getElementById('journal-panel');
             panel.classList.toggle('translate-x-full');
             if (!panel.classList.contains('translate-x-full')) {
@@ -778,7 +810,15 @@
             };
 
             savedFavorites.unshift(newEntry); // Add to top of list
-            localStorage.setItem('milfMachineFavorites', JSON.stringify(savedFavorites));
+            
+            // Bulletproof: Prevent storage quota crashes
+            try {
+                localStorage.setItem('milfMachineFavorites', JSON.stringify(savedFavorites));
+            } catch (e) {
+                console.warn("Storage full! Evicting oldest entry.");
+                savedFavorites.pop(); // Remove oldest
+                localStorage.setItem('milfMachineFavorites', JSON.stringify(savedFavorites));
+            }
             
             // Visual feedback
             saveText.innerText = "Saved!";
@@ -796,7 +836,9 @@
 
         function deleteFavorite(id) {
             savedFavorites = savedFavorites.filter(f => f.id !== id);
-            localStorage.setItem('milfMachineFavorites', JSON.stringify(savedFavorites));
+            try {
+                localStorage.setItem('milfMachineFavorites', JSON.stringify(savedFavorites));
+            } catch(e) {}
             renderJournal();
         }
 
@@ -834,7 +876,7 @@
                             <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-md border ${tagColor}">${fav.mode}</span>
                             <span class="text-xs text-slate-500">${fav.date}</span>
                         </div>
-                        <p class="text-sm text-slate-200 leading-relaxed font-medium mb-4 pr-2">
+                        <p class="text-sm text-slate-200 leading-relaxed font-medium mb-4 pr-2 allow-select">
                             ${fav.text}
                         </p>
                         <div class="flex justify-end gap-2 border-t border-slate-700/50 pt-3 mt-2">
@@ -938,7 +980,7 @@
                 currentHighlightEl.classList.remove('tutorial-highlight');
                 currentHighlightEl = null;
             }
-            localStorage.setItem('milfMachineTutorial', 'seen');
+            try { localStorage.setItem('milfMachineTutorial', 'seen'); } catch(e){}
         }
 
         function renderTutStep() {
@@ -953,6 +995,10 @@
                 targetEl.classList.add('tutorial-highlight');
                 currentHighlightEl = targetEl;
                 positionTooltip(targetEl, step.placement);
+            } else {
+                // Failsafe if target doesn't exist
+                endTutorial();
+                return;
             }
 
             document.getElementById('tut-title').textContent = step.title;
@@ -1028,13 +1074,16 @@
             if (isHidden) tooltip.style.opacity = '';
         }
 
+        // Failsafe tutorial resizing
         window.addEventListener('resize', () => {
             if (document.getElementById('tut-tooltip').classList.contains('visible')) {
-                renderTutStep();
+                // Safely dismiss tutorial if screen is resized significantly to prevent placement bugs
+                endTutorial();
             }
         });
 
         mobileSpinBtn.addEventListener('click', (e) => {
+            if(!document.getElementById('tutorial-overlay').classList.contains('hidden-tutorial')) return;
             const rect = mobileSpinBtn.getBoundingClientRect();
             showBurst(e.clientX || rect.left + rect.width / 2, e.clientY || rect.top + rect.height / 2);
             handleSpin();
@@ -1042,7 +1091,10 @@
 
         window.onload = () => {
             initMachine();
-            if (localStorage.getItem('milfMachineTutorial') !== 'seen') {
+            let seenTutorial = false;
+            try { seenTutorial = localStorage.getItem('milfMachineTutorial') === 'seen'; } catch(e){}
+            
+            if (!seenTutorial) {
                 setTimeout(() => startTutorial(), 500);
             } else {
                 document.getElementById('tutorial-overlay').classList.add('hidden-tutorial');
