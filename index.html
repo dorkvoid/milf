@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>The Milf Machine</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Bebas+Neue&display=swap" rel="stylesheet">
     <style>
         body {
@@ -13,10 +12,9 @@
             background-color: #0f172a;
             background-image: radial-gradient(circle at top, #1e293b 0%, #020617 100%);
             margin: 0;
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
+            overflow: hidden; /* Strictly locks page */
             color: #f8fafc;
+            touch-action: manipulation;
         }
 
         .title-font {
@@ -24,6 +22,7 @@
             letter-spacing: 3px;
         }
 
+        /* Machine Aesthetics */
         .machine-body {
             background: linear-gradient(145deg, #cbd5e1, #94a3b8);
             box-shadow: 
@@ -59,11 +58,11 @@
             height: 80px;
             flex: 1;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s;
         }
-
+        
         .reel-column:hover {
-            background-color: rgba(0, 0, 0, 0.05);
+            background-color: rgba(241, 245, 249, 0.5);
         }
 
         .reel-inner {
@@ -81,235 +80,501 @@
             font-weight: 800;
             font-size: 0.75rem;
             color: #1e293b;
-            padding: 0 0.5rem;
+            padding: 0 0.25rem;
             text-transform: uppercase;
             word-break: break-word;
-            line-height: 1.1;
         }
 
-        .glass-output {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        /* 2D CSS Rocker Switch (Replaces Lever) */
+        .css-rocker-case {
+            width: 50px;
+            height: 100px;
+            background: #020617; /* Deep dark cavity */
+            border-radius: 6px;
+            border: 2px solid #334155;
+            box-shadow: inset 0 10px 15px rgba(0,0,0,0.9), 0 2px 2px rgba(255,255,255,0.1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            perspective: 300px; /* Gives the 3D tilt effect */
+        }
+
+        .css-rocker-switch {
+            width: 40px;
+            height: 90px;
+            background: linear-gradient(to bottom, #475569, #1e293b);
+            border-radius: 4px;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            transform-style: preserve-3d;
+            padding: 10px 0;
+        }
+
+        .rocker-milf {
+            transform: rotateX(25deg);
+            box-shadow: 0 10px 10px -5px rgba(0,0,0,0.8), inset 0 -2px 5px rgba(255,255,255,0.2);
+            border-bottom: 2px solid #94a3b8;
+            border-top: 2px solid #000;
+        }
+
+        .rocker-dilf {
+            transform: rotateX(-25deg);
+            box-shadow: 0 -10px 10px -5px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.2);
+            border-top: 2px solid #94a3b8;
+            border-bottom: 2px solid #000;
+        }
+
+        .rocker-ridge {
+            width: 60%;
+            height: 3px;
+            background: #0f172a;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-radius: 1px;
+        }
+
+        /* 2D CSS Arcade Button */
+        .css-btn-pillar {
+            width: 100px;
             height: 180px;
+            background: linear-gradient(to right, #1e293b, #0f172a);
+            border-left: 2px solid #334155;
+            border-right: 2px solid #020617;
+            border-bottom: 8px solid #020617;
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 10px 10px 20px rgba(0,0,0,0.8);
+            cursor: pointer;
+        }
+
+        .css-btn-collar {
+            width: 80px;
+            height: 80px;
+            background: #020617;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.9), 0 2px 2px rgba(255,255,255,0.1);
+        }
+
+        .css-btn-cap {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.3), inset 2px 2px 10px rgba(255,255,255,0.5), 0 5px 15px rgba(0,0,0,0.6);
+            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.1s, background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.8);
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            padding-bottom: 4px;
+        }
+
+        .css-btn-pillar:active .css-btn-cap {
+            transform: scale(0.95) translateY(4px);
+            box-shadow: inset -2px -2px 8px rgba(0,0,0,0.5), inset 1px 1px 5px rgba(255,255,255,0.3), 0 1px 2px rgba(0,0,0,0.6);
+        }
+
+        /* Glass Output Box */
+        .output-box {
+            background-color: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             transition: opacity 0.5s ease;
-            overflow: hidden;
+            height: 180px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.2) transparent;
         }
 
-        #three-switch-container {
+        .output-box::-webkit-scrollbar { width: 6px; }
+        .output-box::-webkit-scrollbar-track { background: transparent; }
+        .output-box::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        /* Metal Shutter */
+        .metal-shutter {
             position: absolute;
-            left: -120px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 100px; 
-            height: 220px; 
-            z-index: 20;
-            cursor: pointer;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, #475569 0%, #334155 50%, #1e293b 100%);
+            border-bottom: 4px solid #0f172a;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.6s cubic-bezier(0.5, 0, 0.2, 1);
+            box-shadow: inset 0 -5px 15px rgba(0,0,0,0.5);
         }
 
-        #three-button-container {
+        .shutter-open { transform: translateY(-100%); }
+
+        /* Tutorial Overlay */
+        #tutorial-overlay {
             position: absolute;
-            right: -420px;
-            top: -400px;
-            bottom: -500px;
-            width: 420px; 
-            z-index: 20;
-            cursor: pointer;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.3s ease;
         }
-
-        #three-button-container:active, #three-switch-container:active {
-            cursor: grabbing;
-        }
-
-        @media (max-width: 1024px) {
-            #three-switch-container { left: -90px; transform: translateY(-50%) scale(0.8); }
-            #three-button-container { right: -300px; top: -300px; bottom: -400px; transform: scale(0.8); transform-origin: top right; }
-        }
-        @media (max-width: 850px) {
-            #three-switch-container { left: -60px; transform: translateY(-50%) scale(0.7); }
-            #three-button-container { right: -200px; top: -250px; bottom: -310px; transform: scale(0.7); transform-origin: top right; }
-            .reel-item { font-size: 0.75rem; }
-        }
-        @media (max-width: 768px) {
-            #three-switch-container { display: none !important; }
-            #three-button-container { display: none !important; }
-            .glass-output { height: 160px; padding: 1rem; margin-top: 1rem; }
-            .machine-body { padding: 0.75rem; }
-            #main-title { font-size: 3.2rem; line-height: 1; margin-bottom: 0.5rem; }
-            .reel-item { font-size: 0.65rem; padding: 0 0.15rem; }
-        }
-        @media (max-width: 640px) {
-            #main-title { font-size: 2.6rem; }
-            .reel-item { font-size: 0.55rem; padding: 0 0.1rem; }
-        }
+        .hidden-tutorial { opacity: 0 !important; pointer-events: none; }
 
         /* Particle Burst Animation */
         .burst-line {
             position: absolute;
             width: 4px;
             height: 16px;
-            background-color: #ffffff;
+            background-color: white;
             border-radius: 2px;
             transform-origin: center bottom;
             animation: burstOut 0.4s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
             box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
-            left: -2px; /* Center perfectly on click */
-            bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
         }
 
         @keyframes burstOut {
             0% { opacity: 1; transform: rotate(var(--rot)) translateY(-15px) scaleY(0.5); }
-            100% { opacity: 0; transform: rotate(var(--rot)) translateY(-60px) scaleY(1.2); }
+            100% { opacity: 0; transform: rotate(var(--rot)) translateY(-50px) scaleY(1.2); }
+        }
+
+        /* Interactive Tutorial Styles */
+        #tutorial-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+        .hidden-tutorial { opacity: 0 !important; pointer-events: none !important; }
+        
+        .tutorial-highlight {
+            position: relative !important;
+            z-index: 10001 !important;
+            box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.6), 0 0 25px rgba(59, 130, 246, 0.8) !important;
+            border-radius: 12px;
+            pointer-events: auto !important;
+            background-color: inherit;
+        }
+        
+        #tut-tooltip {
+            position: absolute;
+            background: #1e293b;
+            border: 2px solid #3b82f6;
+            padding: 1.2rem;
+            border-radius: 0.75rem;
+            width: 280px;
+            z-index: 10002;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+        }
+        #tut-tooltip.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .tutorial-arrow {
+            position: absolute;
+            width: 0; height: 0;
+            border-style: solid;
+        }
+        .arrow-top { border-width: 0 12px 12px 12px; border-color: transparent transparent #3b82f6 transparent; top: -14px; left: 50%; transform: translateX(-50%); }
+        .arrow-bottom { border-width: 12px 12px 0 12px; border-color: #3b82f6 transparent transparent transparent; bottom: -14px; left: 50%; transform: translateX(-50%); }
+
+        @media (max-width: 768px) {
+            .reel-item { font-size: 0.65rem; }
         }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col items-center justify-center p-2 md:p-4 box-border overflow-hidden">
+<body class="h-screen flex flex-col items-center justify-center p-2 sm:p-4 relative">
 
-    <!-- Help Button -->
-    <button id="help-btn" onclick="startTutorial()" class="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-slate-800 border-2 border-slate-600 text-white font-bold text-xl flex items-center justify-center hover:bg-slate-700 shadow-lg cursor-pointer transition-colors" title="How to play">
-        ?
-    </button>
+    <!-- Tutorial Overlay Background -->
+    <div id="tutorial-overlay" class="hidden-tutorial pointer-events-auto"></div>
 
-    <!-- Tutorial Overlay -->
-    <div id="tutorial-overlay" class="fixed inset-0 z-[100] bg-slate-900/40 hidden opacity-0 transition-opacity duration-300 pointer-events-none">
-        <div id="tutorial-tooltip" class="absolute bg-white text-slate-900 p-5 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] w-[280px] border-4 border-slate-800 transition-all duration-300 pointer-events-auto">
-            <h3 class="font-black text-lg mb-1 uppercase tracking-wider text-slate-800" id="tutorial-title">Step 1</h3>
-            <p id="tutorial-text" class="text-sm font-semibold mb-4 text-slate-600 leading-tight"></p>
-            <div class="flex justify-between items-center mt-2">
-                <button id="tutorial-skip" onclick="endTutorial()" class="text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-wider">Skip</button>
-                <button id="tutorial-next" onclick="nextTutorialStep()" class="bg-red-500 hover:bg-red-600 text-white text-sm font-bold py-2 px-5 rounded-lg transition-colors uppercase tracking-wider border-b-4 border-red-700 active:border-b-0 active:translate-y-1">Next</button>
-            </div>
-            <!-- Pointer Arrow -->
-            <div id="tutorial-arrow" class="absolute w-5 h-5 bg-white border-slate-800 transform rotate-45 pointer-events-none"></div>
+    <!-- Dynamic Tutorial Tooltip -->
+    <div id="tut-tooltip">
+        <div id="tut-arrow" class="tutorial-arrow"></div>
+        <h3 id="tut-title" class="title-font text-2xl mb-1 text-blue-400 tracking-wide">Step 1</h3>
+        <p id="tut-text" class="text-sm text-slate-300 mb-4 leading-relaxed font-semibold">Explanation text goes here.</p>
+        <div class="flex justify-between items-center">
+            <button id="tut-prev" class="text-slate-400 hover:text-white text-sm px-3 py-1.5 hidden bg-slate-700 hover:bg-slate-600 rounded-md transition-colors" onclick="prevTutStep()">Back</button>
+            <div class="flex-grow text-center text-xs text-slate-400 font-bold tracking-widest" id="tut-progress">1/3</div>
+            <button id="tut-next" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-bold py-1.5 px-6 rounded-full transition-colors shadow-lg shadow-blue-500/30" onclick="nextTutStep()">Next</button>
         </div>
     </div>
 
-    <div class="w-full max-w-4xl flex flex-col items-center gap-2 md:gap-4 relative h-full max-h-[900px] justify-center">
+    <!-- Help Button -->
+    <button onclick="startTutorial()" class="absolute top-4 right-4 w-10 h-10 bg-slate-800 border border-slate-600 rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition-colors z-50 shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+    </button>
+
+    <div class="w-full max-w-5xl flex flex-col items-center gap-2 h-full justify-center">
         
         <!-- Header -->
-        <div class="flex flex-col items-center gap-1 text-center w-full">
+        <div class="flex flex-col items-center gap-1 text-center w-full z-40">
             <h1 id="main-title" class="title-font text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600 drop-shadow-lg transition-all duration-500">
                 THE MILF MACHINE
             </h1>
-            <p class="text-sm md:text-base text-slate-300 italic tracking-wide mt-1 md:mt-0 mb-1 drop-shadow-sm">The randomized character generator for making the perfect parent!</p>
+            <p class="text-sm md:text-base text-slate-400 italic mb-2">The randomized character generator for making the perfect parent!</p>
 
-            <!-- Mobile Only Mode Toggle -->
-            <div id="mobile-mode-toggle" class="md:hidden flex items-center justify-center gap-3 mt-1 bg-gray-900/80 px-5 py-2 rounded-full border border-gray-700 shadow-inner cursor-pointer" onclick="toggleModeMobile()">
-                <span id="mobile-label-milf" class="font-bold text-sm tracking-widest text-red-400 transition-colors duration-300">MILF</span>
-                <div class="relative w-12 h-6 bg-gray-800 rounded-full shadow-inner border border-gray-600">
-                    <div id="mobile-toggle-knob" class="absolute left-1 top-1 w-4 h-4 bg-red-500 rounded-full transition-transform duration-300"></div>
+            <!-- Mobile Toggle (Hidden on Desktop) -->
+            <div id="mobile-switch-container" class="md:hidden flex items-center justify-center gap-4 bg-gray-900/80 px-6 py-2 rounded-full border border-gray-700/50 shadow-inner">
+                <span id="mobile-label-milf" class="font-bold text-lg tracking-widest text-red-400 cursor-pointer" onclick="forceMobileToggle('MILF')">MILF</span>
+                <div class="relative w-14 h-7 bg-gray-700 rounded-full cursor-pointer shadow-inner" onclick="toggleMobileMode()">
+                    <div id="mobile-toggle-knob" class="absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 shadow-md transform translate-x-0"></div>
                 </div>
-                <span id="mobile-label-dilf" class="font-bold text-sm tracking-widest text-gray-500 transition-colors duration-300">DILF</span>
+                <span id="mobile-label-dilf" class="font-bold text-lg tracking-widest text-gray-500 cursor-pointer" onclick="forceMobileToggle('DILF')">DILF</span>
             </div>
         </div>
 
-        <!-- Slot Machine Wrapper -->
-        <div class="relative w-full max-w-3xl mt-1 md:mt-2">
-            <!-- Machine Body -->
-            <div class="machine-body rounded-3xl p-3 md:p-6 border-4 border-gray-500 relative">
-                
-                <!-- Reel Screen -->
-                <div class="machine-screen rounded-xl border-8 border-gray-800 flex flex-col relative overflow-hidden bg-white">
-                    
-                    <!-- Metal Shutter -->
-                    <div id="reel-shutter" class="absolute inset-0 bg-slate-800 z-30 flex items-center justify-center transition-transform duration-700 ease-in-out origin-top border-b-8 border-slate-900 shadow-[inset_0_-10px_20px_rgba(0,0,0,0.8)]">
-                        <div class="w-full h-full absolute inset-0 bg-[linear-gradient(to_bottom,transparent_50%,rgba(0,0,0,0.2)_50%)] bg-[length:100%_4px] opacity-30 pointer-events-none"></div>
-                        <span id="shutter-text" class="title-font text-3xl md:text-4xl tracking-widest animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600">
-                            AWAITING PUSH
-                        </span>
-                    </div>
-
-                    <!-- Top Row of Reels -->
-                    <div class="reel-row flex relative border-b-4 border-gray-800">
-                        <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-0"></div></div>
-                        <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-1"></div></div>
-                        <div class="reel-column"><div class="reel-inner" id="reel-2"></div></div>
-                    </div>
-
-                    <!-- Bottom Row of Reels -->
-                    <div class="reel-row flex relative">
-                        <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-3"></div></div>
-                        <div class="reel-column border-r-2 border-gray-200"><div class="reel-inner" id="reel-4"></div></div>
-                        <div class="reel-column"><div class="reel-inner" id="reel-5"></div></div>
+        <!-- Main Machine Layout -->
+        <div class="flex flex-row items-center justify-center gap-4 w-full">
+            
+            <!-- 2D CSS Rocker Switch (Desktop Only) -->
+            <div class="hidden md:flex flex-col items-center gap-2 w-20">
+                <span id="desk-label-milf" class="font-bold tracking-widest text-red-400 transition-colors">MILF</span>
+                <div id="desktop-rocker-case" class="css-rocker-case" onclick="toggleMode()">
+                    <div class="css-rocker-switch rocker-milf" id="desktop-rocker">
+                        <div id="rocker-led" class="w-1/2 h-1.5 rounded-full mb-1 bg-red-500 shadow-[0_0_8px_#ef4444] transition-colors duration-300"></div>
+                        <div class="rocker-ridge"></div>
+                        <div class="rocker-ridge"></div>
+                        <div class="rocker-ridge"></div>
+                        <div class="rocker-ridge"></div>
                     </div>
                 </div>
-
-                <button id="mobile-spin-btn" class="md:hidden w-full mt-6 bg-gradient-to-b from-red-500 to-red-700 text-white font-bold text-xl py-4 rounded-xl border-b-4 border-red-900 active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg">
-                    Push To Spin!
-                </button>
+                <span id="desk-label-dilf" class="font-bold tracking-widest text-gray-500 transition-colors">DILF</span>
             </div>
 
-            <!-- Glassy Output Container -->
-            <div id="output-container" class="glass-output mt-4 md:mt-6 w-full rounded-xl p-4 md:p-6 relative flex flex-col items-center justify-start md:justify-center">
-                <div id="output-accent" class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-red-400 to-red-600 transition-colors duration-500"></div>
-                <div id="output-sentence" class="text-lg md:text-xl text-gray-100 font-semibold leading-relaxed pl-4 w-full h-full flex flex-col justify-center">
-                    <p class="opacity-50 italic text-center font-normal">Push the button to generate your character...</p>
+            <!-- The Slot Machine -->
+            <div class="relative w-full max-w-2xl flex-grow">
+                <div class="machine-body rounded-2xl p-2 md:p-4 border-4 border-gray-500">
+                    <div id="machine-screen-tut" class="machine-screen rounded-xl border-8 border-gray-800 flex flex-col relative overflow-hidden bg-white">
+                        
+                        <!-- The Metal Shutter -->
+                        <div id="metal-shutter" class="metal-shutter">
+                            <span id="shutter-text" class="title-font text-3xl tracking-widest text-red-400 animate-pulse drop-shadow-md">AWAITING PUSH</span>
+                        </div>
+
+                        <!-- Top Row -->
+                        <div class="reel-row flex relative border-b-4 border-gray-800">
+                            <div class="reel-column border-r-2 border-gray-200" onclick="handleSingleSpin(0)"><div class="reel-inner" id="reel-0"></div></div>
+                            <div class="reel-column border-r-2 border-gray-200" onclick="handleSingleSpin(1)"><div class="reel-inner" id="reel-1"></div></div>
+                            <div class="reel-column" onclick="handleSingleSpin(2)"><div class="reel-inner" id="reel-2"></div></div>
+                        </div>
+
+                        <!-- Bottom Row -->
+                        <div class="reel-row flex relative">
+                            <div class="reel-column border-r-2 border-gray-200" onclick="handleSingleSpin(3)"><div class="reel-inner" id="reel-3"></div></div>
+                            <div class="reel-column border-r-2 border-gray-200" onclick="handleSingleSpin(4)"><div class="reel-inner" id="reel-4"></div></div>
+                            <div class="reel-column" onclick="handleSingleSpin(5)"><div class="reel-inner" id="reel-5"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Spin Button -->
+                    <button id="mobile-spin-btn" class="md:hidden w-full mt-4 bg-gradient-to-b from-red-500 to-red-700 text-white font-bold text-xl py-3 rounded-xl border-b-4 border-red-900 active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg">
+                        Push To Spin!
+                    </button>
                 </div>
             </div>
 
-            <!-- 3D Switch Container (Left) -->
-            <div id="three-switch-container" class="flex flex-col items-center justify-center">
-                <span id="switch-label-milf" class="font-bold text-2xl tracking-widest text-red-400 transition-colors duration-300 absolute -top-8 z-10 drop-shadow-md">MILF</span>
-                <span id="switch-label-dilf" class="font-bold text-2xl tracking-widest text-gray-500 transition-colors duration-300 absolute -bottom-8 z-10 drop-shadow-md">DILF</span>
+            <!-- 2D CSS Arcade Button (Desktop Only) -->
+            <div class="hidden md:flex w-24 justify-center">
+                <div class="css-btn-pillar" id="desktop-btn" onmousedown="triggerSpin(event)" onmouseup="releaseSpin()" onmouseleave="releaseSpin()">
+                    <div class="css-btn-collar">
+                        <div class="css-btn-cap" id="btn-cap" style="background: radial-gradient(circle at 30% 30%, #f87171, #dc2626);">PRESS</div>
+                    </div>
+                </div>
             </div>
-
-            <!-- 3D Button Container (Right) -->
-            <div id="three-button-container"></div>
         </div>
+
+        <!-- Character Output Box -->
+        <div class="w-full max-w-3xl mt-2">
+            <div class="output-box p-4 md:p-6 rounded-xl shadow-2xl relative flex items-center justify-center" id="output-container">
+                <div id="output-accent" class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-red-400 to-red-600 transition-colors duration-500 rounded-l-xl"></div>
+                <div id="output-sentence" class="text-base md:text-lg w-full px-2 font-medium leading-relaxed">
+                    <p class="opacity-50 italic text-center text-slate-300">Push the button to generate your character...</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        const milfSizes = ["giant emu", "petite powerhouse", "tall queen", "cozy bear", "statuesque goddess", "tiny terror", "curvy icon", "slender sprite", "voluptuous vixen", "majestic swan", "gym rat", "Amazonian warrior", "pocket-sized powerhouse", "thicc queen", "muscle mommy", "curvy matron", "willowy nymph", "towering titan", "diminutive dynamo", "brickhouse", "lean machine", "literal goddess", "absolute unit", "graceful gazelle", "ferocious lioness", "cuddly panda", "sleek panther", "sturdy oak", "delicate flower", "unmovable mountain", "soft and squishy", "broad-shouldered matriarch", "athletic dynamo", "plump goddess", "slight and spry", "bottom-heavy queen", "imposing monarch", "willowy dancer", "sturdy farm-girl", "buxom beauty", "LITERAL BIBLICALLY ACCURATE ANGEL", "A SENTIENT MARBLE STATUE"];
-        const milfAges = ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "90s", "early 30s", "late 40s", "prime 50s", "timeless era", "eternal 29", "ageless era", "post-menopausal prime", "roaring 20s", "flirty 40s", "sensational 60s", "golden years", "quarter-life crisis", "mid-life renaissance", "fabulous 50s", "spicy 60s", "elegant 70s", "centennial era", "immortal phase", "newly-divorced 40s", "thriving 30s", "early 20s", "mid 30s", "late 50s", "newly-empty-nest 50s", "thriving 40s", "radiant 60s", "silver-fox 70s", "ageless vampire era", "immortal witch phase", "A THOUSAND YEAR OLD DEITY"];
-        const milfPersonalities = ["messy, anxious, and apathetic", "warm, loving, and fiercely protective", "chaotic, fun, and extremely loud", "stoic, quiet, and highly observant", "sweet, caring, and surprisingly gentle", "bold, brash, and unapologetic", "organized, uptight, and highly driven", "relaxed, chill, and wonderfully breezy", "unhinged, chaotic, and always right", "rich, bored, and highly judgmental", "tired, caffeinated, and holding it together", "intimidating, fierce, and fiercely loyal", "bubbly, bright, and endlessly optimistic", "sarcastic, witty, and deeply cynical", "overbearing, intense, and aggressively helpful", "mysterious, dark, and secretly wealthy", "pragmatic, blunt, and completely unfiltered", "neurotic, frantic, and always late", "zen, grounded, and slightly magical", "petty, vindictive, and holding a grudge", "warm, loving, and wearing a bold red lip", "ferociously protective with a matte nude lip", "scatterbrained but always smelling like vanilla", "exhausted, caffeinated, and wearing too much lip gloss", "sweet, motherly, and rocking a sharp winged eyeliner", "strict, demanding, and constantly reapplying crimson lipstick", "chill, earthy, and wearing tinted berry chapstick", "bubbly, bright, and sporting glossy pink lips", "A CHAOTIC ENTITY OF PURE DESTRUCTION"];
-        const milfClothing = ["a sports bra and a long skirt", "a tailored pantsuit", "yoga pants and an oversized tee", "a vintage floral dress", "high-waisted mom jeans and a cozy sweater", "a breezy yellow sundress", "a matching velour tracksuit", "a leather jacket and ripped jeans", "Lululemon leggings and a giant Stanley cup", "a massive messy bun and an exhausted expression", "a silk slip dress", "cargo pants and a crop top", "a sparkly evening gown", "an oversized college hoodie and sweatpants", "a sharply tailored blazer and pencil skirt", "a boho-chic maxi skirt and peasant blouse", "a tactical turtleneck", "a brightly colored retro windbreaker", "a gothic lace corset and skirt", "a completely denim tuxedo", "a tailored pantsuit with sensible flats", "yoga pants, an oversized tee, and cozy Uggs", "a vintage floral dress with scuffed combat boots", "a velvet tracksuit and chunky white sneakers", "a sharply tailored blazer, pencil skirt, and killer pumps", "a breezy linen set and strappy sandals", "mom jeans, a tucked-in graphic tee, and pristine Keds", "a sleek midi dress and ankle boots", "sweatpants, a messy bun, and fuzzy house slippers", "AN ENTIRE SUIT OF MEDIEVAL PLATE ARMOR"];
-        const milfAccessories = ["fluffy slippers", "sensible heels", "bedazzled crocs", "combat boots", "pristine white sneakers", "strappy sandals", "chunky platform sneakers", "motorcycle boots", "a pearl necklace", "huge designer sunglasses", "a Birkin bag", "a loaded diaper bag", "a massive sun hat", "a bluetooth headset", "several large iced coffees", "a clipboard holding everyone's schedules", "a slightly intimidating riding crop", "a tote bag full of organic snacks", "an expensive smart watch", "a pair of reading glasses on a gold chain", "short, neatly painted red fingernails", "broad, unpainted nails and a heavy silver septum ring", "chunky gold hoop earrings", "a pearl necklace and short, dark-painted nails", "a loaded diaper bag and a sparkly nose stud", "multiple cartilage piercings and sensible heels", "thick, broad fingernails painted with clear polish", "a massive iced coffee and short, practical nails", "diamond stud earrings and a designer handbag", "a dainty ankle bracelet and neat, broad toenails", "a heavy silver choker and dark lipstick", "THE ONE RING TO RULE THEM ALL"];
-        const milfHobbies = ["intimidating the local PTA", "drinking expensive wine at 3 PM", "collecting massive houseplants", "reorganizing the pantry out of spite", "running half-marathons for fun", "gossiping at brunch", "baking aggressive amounts of sourdough", "doing pilates while judging you", "scrolling TikTok until 2 AM", "managing three different family calendars", "secretly funding a local rebellion", "restoring vintage furniture", "watching true crime documentaries to take notes", "attending pottery classes to smash the clay", "day-trading crypto in the carpool lane", "writing highly explicit fanfiction", "getting banned from the neighborhood Facebook group", "crushing watermelons with her thighs", "organizing the pantry by color", "arguing with the homeowners association", "reading spicy fantasy novels in the school pickup line", "doing goat yoga on the weekends", "aggressively meal-prepping on Sundays", "listening to true crime podcasts while gardening", "renovating her kitchen for the third time", "training for an ironman triathlon", "HUNTING VAMPIRES ON WEEKENDS"];
-        const milfAcronyms = ["Love to Finance!", "Listen to Forever!", "Live For!", "Look For!", "Love Fiercely!", "Leave Flowers for!", "Lend Funds to!", "Learn From!", "Launch Fireworks for!", "Locate First!", "Lend Favors to!", "Laugh with Forever!", "Leave a Fortune to!", "Love to Feed!", "Listen to Facts from!", "Learn to Forgive!", "Leave Feedback for!", "Look at Fondly!", "Loan my Ferrari to!", "Lose Focus over!", "Line up For!", "Live Fabulously with!", "Learn French for!", "Listen to Fleetwood Mac with!", "Lament Failures with!", "Look Flawless for!", "Lobby For!", "Linger Forever with!", "Leap Fences for!", "Lose my Fortune over!", "Leave my Family for!"];
-
-        const dilfSizes = ["silver fox", "papa bear", "lumberjack", "tech bro", "gym bro", "couch potato", "grill master", "handyman", "scholar", "silverback", "gentle giant", "tiny king", "average joe", "big kahuna", "dad-bod supreme", "lean marathoner", "barrel-chested brute", "compact king", "grizzled veteran", "mountain of a man", "lanky beanpole", "absolute unit", "stout bulldog", "majestic stallion", "tired golden retriever", "lone wolf", "ferocious grizzly", "sturdy brick wall", "stocky king", "slender scholar", "broad-shouldered titan", "dense muscle block", "soft dad-bod", "wiry mechanic", "hulking giant", "compact dynamo", "tall drink of water", "LITERAL GREEK GOD STATUE COME TO LIFE", "A WALKING BRICK OUTHOUSE"];
-        const dilfAges = ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "90s", "distinguished 60s", "rugged 40s", "newly-divorced 30s", "timeless era", "absolute prime", "silver-haired 50s", "grizzled 70s", "youthful 40s", "stately 80s", "mid-life crisis", "early retirement", "golden years", "prime 30s", "experienced 50s", "ancient era", "immortal phase", "ageless wonder", "early 30s", "mid 40s", "late 50s", "newly-empty-nest 60s", "thriving 50s", "distinguished 70s", "silver-fox 40s", "A MILLENNIA-OLD VAMPIRE LORD"];
-        const dilfPersonalities = ["stoic, quiet, and highly observant", "warm, loving, and fiercely protective", "goofy, silly, and always cracking dad jokes", "grumpy, tired, and running on black coffee", "handy, helpful, and always fixing things", "bold, brash, and unapologetic", "organized, uptight, and highly driven", "grumpy, quiet, and hyper-competent", "corny, loud, and completely immune to embarrassment", "stoic, protective, and secretly soft", "obsessed with the thermostat and lawn care", "intense, focused, and slightly intimidating", "relaxed, chill, and wonderfully breezy", "clueless, sweet, and trying his absolute best", "hyper-competitive, loud, and a sore loser", "intellectual, pretentious, and smoking a pipe", "paranoid, prepared, and ready for the apocalypse", "nostalgic, emotional, and crying at car commercials", "slick, charming, and slightly untrustworthy", "stoic, quiet, and constantly applying Burt's Bees", "warm, loving, and smelling of cedarwood", "grumpy, tired, and aggressively using cherry chapstick", "goofy, silly, and smelling of Old Spice", "intellectual, observant, and using unscented lip balm", "loud, boisterous, and smelling of barbecue smoke", "gentle, patient, and smelling of motor oil", "A SENTIENT AI PROGRAMMED ONLY TO GRILL"];
-        const dilfClothing = ["cargo shorts and a tucked-in polo", "a sharp three-piece suit", "flannel and faded jeans", "a tucked-in golf shirt and slacks", "baggy sweatpants and a stained hoodie", "a loud Hawaiian shirt and board shorts", "a Patagonia vest over a plaid shirt", "an old band tee and perfectly worn jeans", "a slightly stained 'Kiss The Cook' grilling apron", "a matching velour tracksuit", "a leather jacket and dark denim", "a crisp button-down and khakis", "a multi-pocket fishing vest", "a full cycling spandex kit", "a massive winter parka regardless of the weather", "a tweed professor jacket with elbow patches", "a perfectly tailored tuxedo", "a vintage football jersey", "a grease-stained mechanic's jumpsuit", "cargo shorts, a tucked-in polo, and white New Balances", "a sharp three-piece suit and polished oxfords", "flannel, faded jeans, and scuffed work boots", "baggy sweatpants, a stained hoodie, and crocs", "a loud Hawaiian shirt, board shorts, and flip-flops", "a Patagonia vest, a plaid shirt, and loafers", "a tailored tuxedo and a bowtie", "a grease-stained mechanic's jumpsuit and heavy boots", "a vintage football jersey, jeans, and sneakers", "A FULL 18TH CENTURY PIRATE CAPTAIN OUTFIT"];
-        const dilfAccessories = ["crisp white New Balances", "polished oxfords", "scuffed steel-toed boots", "grass-stained cleats", "fuzzy socks with sandals", "leather flip-flops", "chunky orthopedic sneakers", "heavy motorcycle boots", "a massive, complicated smartwatch", "a bluetooth earpiece from 2008", "aviator sunglasses", "a heavily loaded toolbelt", "a personalized golf glove", "a bulky money clip", "a perfectly seasoned cast iron skillet", "a set of jumper cables", "a ridiculously bright tactical flashlight", "a pair of binoculars", "a high-end meat thermometer", "big, broad fingernails and a simple silver wedding band", "a thick gold chain and a subtle earlobe piercing", "a heavily loaded toolbelt and short, blunt nails", "a massive smartwatch and a brow piercing", "calloused hands with broad, thick nails", "a classic aviator watch and neat, short fingernails", "a silver hoop earring and a fresh haircut", "a pair of reading glasses and thick, strong hands", "a heavy tungsten ring and broad, clipped nails", "AN ACTUAL OLYMPIC GOLD MEDAL"];
-        const dilfHobbies = ["explaining World War 2 history to strangers", "smoking various meats for 14 hours", "fixing things that aren't actually broken", "falling asleep in his favorite recliner", "brewing overly-hoppy craft beer in the garage", "mowing the lawn with terrifying geometric precision", "giving unsolicited driving directions", "tinkering with a classic car", "coaching Little League far too aggressively", "watching golf with his eyes closed", "building an unnecessary deck", "investing in extremely volatile crypto", "collecting rare and expensive bourbons", "cleaning the gutters every single weekend", "arguing with the GPS", "buying tools he will only use once", "guarding the thermostat with his life", "building a deck he doesn't need", "arguing with the GPS", "cleaning the gutters every single weekend", "buying tools he will only use once", "guarding the thermostat with his life", "polishing his pristine classic car", "brewing terrible IPAs in the garage", "watching documentaries about ancient Rome", "FIGHTING BEARS BAREHANDED", "SECRETLY SAVING THE WORLD FROM ALIENS"];
-        const dilfAcronyms = ["Love to Finance!", "Listen to Forever!", "Live For!", "Look For!", "Love Fiercely!", "Leave Flowers for!", "Lend Funds to!", "Learn From!", "Launch Fireworks for!", "Locate First!", "Lend Favors to!", "Laugh with Forever!", "Leave a Fortune to!", "Let Fix things!", "Listen to Facts from!", "Learn to Forgive!", "Look at Fondly!", "Loan my Ferrari to!", "Lose Focus over!", "Line up For!", "Let Fix the sink!", "Look Forward to!", "Learn Finance from!", "Leave the Foundation to!", "Light Fires with!", "Load Freight with!", "Lift Furniture with!", "Lend my Fishing rod to!", "Learn Farming from!", "Leave the Finances to!", "Let Flip the burgers!", "Lay Flooring with!"];
-
         const gameData = {
             MILF: {
                 title: "THE MILF MACHINE",
                 noun: "mother",
-                colors: ["from-red-400", "to-red-600", "rgba(239, 68, 68, 0.6)", "border-red-900"],
-                paylineClass: "bg-red-500/60 shadow-[0_0_8px_rgba(239,68,68,0.8)]",
-                reels: [milfAges, milfSizes, milfPersonalities, milfClothing, milfAccessories, milfHobbies],
-                acronyms: milfAcronyms
+                colors: ["from-red-400", "to-red-600", "text-red-400", "border-red-900"],
+                ballGradient: "radial-gradient(circle at 30% 30%, #f87171, #dc2626)",
+                reels: [
+                    // 0: Age
+                    ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "early 30s", "late 40s", "prime 50s", "sensational 60s", "elegant 70s", "thriving 30s", "mid 40s", "newly-empty-nest 50s", "radiant 60s", "silver-haired 50s", "late 20s", "mid 30s", "fabulous 40s"],
+                    // 1: Size/Noun
+                    ["petite powerhouse", "tall queen", "curvy icon", "willowy dancer", "sturdy matriarch", "gym rat", "buxom beauty", "slender sprite", "athletic dynamo", "broad-shouldered matriarch", "plump goddess", "slight and spry", "bottom-heavy queen", "imposing monarch", "lean machine", "graceful gazelle", "ferocious lioness", "delicate flower", "soft and squishy"],
+                    // 2: Personality
+                    ["messy, anxious, and apathetic", "warm, loving, and fiercely protective", "organized, uptight, and highly driven", "sweet, caring, and surprisingly gentle", "bold, brash, and unapologetic", "sarcastic, witty, and deeply cynical", "relaxed, chill, and wonderfully breezy", "intimidating, fierce, and fiercely loyal", "bubbly, bright, and endlessly optimistic", "pragmatic, blunt, and completely unfiltered", "neurotic, frantic, and always late", "zen, grounded, and slightly magical", "petty, vindictive, and holding a grudge"],
+                    // 3: Clothing
+                    ["yoga pants and an oversized tee", "a sharply tailored blazer and pencil skirt", "a vintage floral dress", "high-waisted mom jeans and a cozy sweater", "Lululemon leggings and a fitted tank", "a breezy linen sundress", "a matching velour tracksuit", "a leather jacket and ripped jeans", "a silk slip dress", "cargo pants and a crop top", "a boho-chic maxi skirt and peasant blouse", "a tactical turtleneck", "a sleek midi dress", "sweatpants and an oversized college hoodie"],
+                    // 4: Accessories
+                    ["fluffy slippers and short, neatly painted nails", "sensible heels and a pearl necklace", "scuffed combat boots and a heavy silver septum ring", "pristine white sneakers and long manicured acrylics", "strappy sandals and a dainty ankle bracelet", "chunky platform sneakers and multiple cartilage piercings", "a loaded diaper bag and a matte nude lip", "huge designer sunglasses and a bold crimson lip", "cozy Uggs and tinted berry chapstick", "diamond stud earrings and an expensive smart watch", "broad, unpainted nails and a tote bag full of snacks", "short, practical nails and a massive iced coffee", "a dainty ankle bracelet and neat toes", "thick, broad fingernails painted with clear polish"],
+                    // 5: Hobbies
+                    ["intimidating the local PTA", "drinking expensive wine at 3 PM", "collecting massive houseplants", "reorganizing the pantry out of spite", "running half-marathons", "baking aggressive amounts of sourdough", "doing pilates while judging you", "scrolling TikTok until 2 AM", "managing three different family calendars", "restoring vintage furniture", "watching true crime documentaries", "attending pottery classes", "organizing the pantry by color", "arguing with the homeowners association", "reading spicy fantasy novels", "aggressively meal-prepping on Sundays"]
+                ]
             },
             DILF: {
                 title: "THE DILF DEVICE",
                 noun: "father",
-                colors: ["from-blue-400", "to-blue-600", "rgba(59, 130, 246, 0.6)", "border-blue-900"],
-                paylineClass: "bg-blue-500/60 shadow-[0_0_8px_rgba(59,130,246,0.8)]",
-                reels: [dilfAges, dilfSizes, dilfPersonalities, dilfClothing, dilfAccessories, dilfHobbies],
-                acronyms: dilfAcronyms
+                colors: ["from-blue-400", "to-blue-600", "text-blue-400", "border-blue-900"],
+                ballGradient: "radial-gradient(circle at 30% 30%, #60a5fa, #2563eb)",
+                reels: [
+                    // 0: Age
+                    ["20s", "30s", "40s", "50s", "60s", "70s", "80s", "newly-divorced 30s", "rugged 40s", "distinguished 50s", "silver-haired 60s", "stately 70s", "prime 30s", "mid-life crisis 40s", "early retirement 50s", "golden years", "late 50s", "thriving 50s"],
+                    // 1: Size/Noun
+                    ["silver fox", "papa bear", "lumberjack", "tech bro", "gym bro", "couch potato", "grill master", "gentle giant", "barrel-chested brute", "lean marathoner", "stout bulldog", "tall drink of water", "compact king", "grizzled veteran", "mountain of a man", "lanky beanpole", "stocky king", "slender scholar", "dense muscle block", "soft dad-bod", "wiry mechanic"],
+                    // 2: Personality
+                    ["stoic, quiet, and highly observant", "goofy, silly, and always cracking dad jokes", "grumpy, tired, and running on black coffee", "handy, helpful, and always fixing things", "intense, focused, and slightly intimidating", "relaxed, chill, and wonderfully breezy", "organized, uptight, and highly driven", "corny, loud, and immune to embarrassment", "obsessed with the thermostat and lawn care", "clueless, sweet, and trying his absolute best", "hyper-competitive, loud, and a sore loser", "intellectual, pretentious, and smoking a pipe", "paranoid, prepared, and ready for the apocalypse", "nostalgic, emotional, and crying at car commercials"],
+                    // 3: Clothing
+                    ["cargo shorts and a tucked-in polo", "a sharp three-piece suit", "flannel and faded jeans", "baggy sweatpants and a stained hoodie", "a loud Hawaiian shirt and board shorts", "a Patagonia vest over a plaid shirt", "an old band tee and perfectly worn jeans", "a grease-stained mechanic's jumpsuit", "a crisp button-down and khakis", "a multi-pocket fishing vest", "a full cycling spandex kit", "a tweed professor jacket with elbow patches", "a vintage football jersey", "a tailored tuxedo and a bowtie"],
+                    // 4: Accessories
+                    ["crisp white New Balances and neat, clipped nails", "polished oxfords and a classic aviator watch", "scuffed steel-toed boots and calloused hands", "grass-stained cleats and a thick gold chain", "fuzzy socks with sandals and a simple silver wedding band", "heavy motorcycle boots and a subtle earlobe piercing", "a heavily loaded toolbelt and broad, thick fingernails", "a high-end meat thermometer and cherry chapstick", "a massive, complicated smartwatch and unscented lip balm", "leather flip-flops and a brow piercing", "aviator sunglasses and a fresh haircut", "a pair of reading glasses and thick, strong hands", "a heavy tungsten ring and broad, clipped nails"],
+                    // 5: Hobbies
+                    ["explaining World War 2 history to strangers", "smoking various meats for 14 hours", "fixing things that aren't actually broken", "falling asleep in his favorite recliner", "mowing the lawn with terrifying geometric precision", "coaching Little League far too aggressively", "cleaning the gutters every single weekend", "brewing overly-hoppy craft beer", "giving unsolicited driving directions", "tinkering with a classic car", "watching golf with his eyes closed", "building an unnecessary deck", "investing in extremely volatile crypto", "collecting rare and expensive bourbons", "arguing with the GPS", "polishing his pristine classic car"]
+                ]
             }
         };
 
         let currentMode = 'MILF';
         let isSpinning = false;
-        let hasSpun = false; // Tracks if the initial spin has occurred
-        let currentResults = ["", "", "", "", "", ""]; // Tracks the exact current traits
         const itemHeight = 80; 
-        const spinMultiplier = 3; 
+        const spinMultiplier = 3;
 
+        // DOM Elements
         const titleEl = document.getElementById('main-title');
-        const mobileSpinBtn = document.getElementById('mobile-spin-btn');
         const outputSentence = document.getElementById('output-sentence');
         const outputAccent = document.getElementById('output-accent');
-        const shutterEl = document.getElementById('reel-shutter');
+        const shutter = document.getElementById('metal-shutter');
         const shutterText = document.getElementById('shutter-text');
         
+        // 2D Controls
+        const desktopRocker = document.getElementById('desktop-rocker');
+        const rockerLed = document.getElementById('rocker-led');
+        const btnCap = document.getElementById('btn-cap');
+        const deskLabelMilf = document.getElementById('desk-label-milf');
+        const deskLabelDilf = document.getElementById('desk-label-dilf');
+        const mobLabelMilf = document.getElementById('mobile-label-milf');
+        const mobLabelDilf = document.getElementById('mobile-label-dilf');
+        const mobToggleKnob = document.getElementById('mobile-toggle-knob');
+        const mobileSpinBtn = document.getElementById('mobile-spin-btn');
+
+        const reelContainers = [
+            document.getElementById('reel-0'), document.getElementById('reel-1'), document.getElementById('reel-2'),
+            document.getElementById('reel-3'), document.getElementById('reel-4'), document.getElementById('reel-5')
+        ];
+
+        // Store current generated results
+        let currentResults = ["", "", "", "", "", ""];
+
+        function initMachine() {
+            const data = gameData[currentMode];
+            
+            // Text & Accents
+            titleEl.textContent = data.title;
+            titleEl.className = `title-font text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-lg transition-all duration-500 z-40 relative`;
+            outputAccent.className = `absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} transition-colors duration-500 rounded-l-xl`;
+            
+            // Shutter
+            shutter.classList.remove('shutter-open');
+            shutterText.className = `title-font text-3xl tracking-widest animate-pulse drop-shadow-md ${data.colors[2]}`;
+            
+            // 2D Controls Colors
+            btnCap.style.background = data.ballGradient;
+            mobileSpinBtn.className = `md:hidden w-full mt-4 bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} text-white font-bold text-xl py-3 rounded-xl border-b-4 ${data.colors[3]} active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg relative z-40`;
+
+            if (currentMode === 'MILF') {
+                if(desktopRocker) {
+                    desktopRocker.classList.remove('rocker-dilf');
+                    desktopRocker.classList.add('rocker-milf');
+                    rockerLed.className = 'w-1/2 h-1.5 rounded-full mb-1 bg-red-500 shadow-[0_0_8px_#ef4444] transition-all duration-300';
+                }
+                mobToggleKnob.style.transform = 'translateX(0)';
+                deskLabelMilf.classList.replace('text-gray-500', 'text-red-400');
+                deskLabelDilf.classList.replace('text-blue-400', 'text-gray-500');
+                mobLabelMilf.classList.replace('text-gray-500', 'text-red-400');
+                mobLabelDilf.classList.replace('text-blue-400', 'text-gray-500');
+            } else {
+                if(desktopRocker) {
+                    desktopRocker.classList.remove('rocker-milf');
+                    desktopRocker.classList.add('rocker-dilf');
+                    rockerLed.className = 'w-1/2 h-1.5 rounded-full mb-1 bg-blue-500 shadow-[0_0_8px_#3b82f6] transition-all duration-300';
+                }
+                mobToggleKnob.style.transform = 'translateX(28px)';
+                deskLabelMilf.classList.replace('text-red-400', 'text-gray-500');
+                deskLabelDilf.classList.replace('text-gray-500', 'text-blue-400');
+                mobLabelMilf.classList.replace('text-red-400', 'text-gray-500');
+                mobLabelDilf.classList.replace('text-gray-500', 'text-blue-400');
+            }
+
+            // Reset Reels
+            reelContainers.forEach((container, index) => {
+                container.innerHTML = '';
+                container.style.transition = 'none';
+                container.style.transform = `translateY(0px)`;
+                
+                const items = data.reels[index];
+                const startIndex = Math.floor(Math.random() * items.length);
+                let html = '';
+                
+                const fullList = [];
+                for(let i=0; i<spinMultiplier; i++) { fullList.push(...shuffleArray([...items])); }
+                fullList.push(...shuffleArray([...items]));
+
+                fullList.forEach(text => { html += `<div class="reel-item" data-text="${text.replace(/"/g, '&quot;')}">${text}</div>`; });
+                container.innerHTML = html;
+                container.style.transform = `translateY(-${startIndex * itemHeight}px)`;
+            });
+
+            document.getElementById('output-container').style.opacity = '1';
+            outputSentence.innerHTML = '<p class="opacity-50 italic text-center text-slate-300">Push the button to generate your character...</p>';
+        }
+
+        // --- Interaction Logic ---
+        function toggleMode() {
+            if(isSpinning) return;
+            currentMode = currentMode === 'MILF' ? 'DILF' : 'MILF';
+            initMachine();
+        }
+
+        function toggleMobileMode() { toggleMode(); }
+        function forceMobileToggle(mode) {
+            if(isSpinning || currentMode === mode) return;
+            currentMode = mode;
+            initMachine();
+        }
+
+        function triggerSpin(e) {
+            if(isSpinning) return;
+            if(e) showBurst(e.clientX, e.clientY);
+            handleSpin();
+        }
+        function releaseSpin() { /* Button CSS handles visual release */ }
+
+        // Particle Burst
         function showBurst(x, y) {
             const burstContainer = document.createElement('div');
             burstContainer.style.position = 'fixed';
@@ -319,82 +584,113 @@
             burstContainer.style.pointerEvents = 'none';
             document.body.appendChild(burstContainer);
 
-            // Create 8 outward shooting lines
             for(let i=0; i<8; i++) {
                 const line = document.createElement('div');
                 line.className = 'burst-line';
                 line.style.setProperty('--rot', `${i * 45}deg`);
                 burstContainer.appendChild(line);
             }
-
-            // Clean up elements after animation finishes
             setTimeout(() => burstContainer.remove(), 500);
         }
 
-        function toggleModeMobile() {
+        function handleSpin() {
             if (isSpinning) return;
-            currentMode = currentMode === 'MILF' ? 'DILF' : 'MILF';
-            initMachine();
+            isSpinning = true;
+            shutter.classList.add('shutter-open');
+            executeSpin();
         }
 
-        const reelContainers = [
-            document.getElementById('reel-0'), document.getElementById('reel-1'), 
-            document.getElementById('reel-2'), document.getElementById('reel-3'), 
-            document.getElementById('reel-4'), document.getElementById('reel-5')
-        ];
-
-        function initMachine() {
+        function executeSpin() {
+            document.getElementById('output-container').style.opacity = '0.3';
             const data = gameData[currentMode];
-            
-            // Update Title & Theme Colors
-            titleEl.textContent = data.title;
-            titleEl.className = `title-font text-5xl md:text-7xl text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-lg transition-all duration-500`;
-            if (mobileSpinBtn) {
-                mobileSpinBtn.className = `md:hidden w-full mt-6 bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} text-white font-bold text-xl py-4 rounded-xl border-b-4 ${data.colors[3]} active:border-b-0 active:translate-y-1 transition-all uppercase tracking-widest title-font shadow-lg`;
-            }
-            outputAccent.className = `absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${data.colors[0]} ${data.colors[1]} transition-colors duration-500`;
-            
-            // Reset and theme the metal shutter
-            shutterText.className = `title-font text-3xl md:text-4xl tracking-widest animate-pulse text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]}`;
-            shutterEl.style.transform = 'translateY(0%)';
+            let completedReels = 0;
 
-            const switchLabelMilf = document.getElementById('switch-label-milf');
-            const switchLabelDilf = document.getElementById('switch-label-dilf');
+            reelContainers.forEach((container, i) => {
+                const itemsCount = data.reels[i].length;
+                const targetFinalIndex = Math.floor(Math.random() * itemsCount);
+                const totalItemsInDOM = container.children.length;
+                const stopIndex = totalItemsInDOM - itemsCount + targetFinalIndex;
+                const duration = 1.5 + (i * 0.4); 
 
-            if (currentMode === 'MILF') {
-                if (switchLabelMilf) switchLabelMilf.className = 'font-bold text-2xl tracking-widest text-red-400 transition-colors duration-300 absolute -top-8 z-10 drop-shadow-md';
-                if (switchLabelDilf) switchLabelDilf.className = 'font-bold text-2xl tracking-widest text-gray-500 transition-colors duration-300 absolute -bottom-8 z-10 drop-shadow-md';
-            } else {
-                if (switchLabelMilf) switchLabelMilf.className = 'font-bold text-2xl tracking-widest text-gray-500 transition-colors duration-300 absolute -top-8 z-10 drop-shadow-md';
-                if (switchLabelDilf) switchLabelDilf.className = 'font-bold text-2xl tracking-widest text-blue-400 transition-colors duration-300 absolute -bottom-8 z-10 drop-shadow-md';
-            }
+                container.style.transition = `transform ${duration}s cubic-bezier(0.25, 0.1, 0.1, 1)`;
+                container.style.transform = `translateY(-${stopIndex * itemHeight}px)`;
 
-            // Update 3D Button Color and Switch Rotation
-            if (typeof spinButtonMesh !== 'undefined' && spinButtonMesh) spinButtonMesh.material.color.setHex(currentMode === 'MILF' ? 0xef4444 : 0x3b82f6);
-            if (typeof switchBallMesh !== 'undefined' && switchBallMesh) switchBallMesh.material.color.setHex(currentMode === 'MILF' ? 0xef4444 : 0x3b82f6);
-            if (typeof switchToggleGroup !== 'undefined' && switchToggleGroup) targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
-
-            hasSpun = false;
-
-            reelContainers.forEach((container, index) => {
-                if(!container) return;
-                
-                // Add click listener to the parent column for single rerolls
-                container.parentElement.onclick = () => spinSingleReel(index);
-                container.parentElement.title = "Click to reroll this trait";
-
-                const items = data.reels[index];
-                const startIndex = Math.floor(Math.random() * items.length);
-                const initialText = items[startIndex];
-                currentResults[index] = initialText; // Pre-fill results
-                
-                container.innerHTML = `<div class="reel-item" data-text="${initialText.replace(/"/g, '&quot;')}">${initialText}</div>`;
-                container.style.transition = 'none';
-                container.style.transform = `translateY(0px)`;
+                setTimeout(() => {
+                    currentResults[i] = container.children[stopIndex].dataset.text;
+                    completedReels++;
+                    if (completedReels === reelContainers.length) {
+                        finishSpin();
+                        resetReelsForNextSpin(); // Allows infinite spins
+                    }
+                }, duration * 1000);
             });
+        }
 
-            outputSentence.innerHTML = '<p class="opacity-50 italic text-center font-normal">Push the button to generate your character...</p>';
+        function handleSingleSpin(reelIndex) {
+            if(isSpinning || !shutter.classList.contains('shutter-open')) return;
+            isSpinning = true;
+            document.getElementById('output-container').style.opacity = '0.3';
+            
+            const container = reelContainers[reelIndex];
+            const data = gameData[currentMode];
+            const itemsCount = data.reels[reelIndex].length;
+            const targetFinalIndex = Math.floor(Math.random() * itemsCount);
+            const totalItemsInDOM = container.children.length;
+            const stopIndex = totalItemsInDOM - itemsCount + targetFinalIndex;
+            const duration = 1.0; 
+
+            container.style.transition = `transform ${duration}s cubic-bezier(0.25, 0.1, 0.1, 1)`;
+            container.style.transform = `translateY(-${stopIndex * itemHeight}px)`;
+
+            setTimeout(() => {
+                currentResults[reelIndex] = container.children[stopIndex].dataset.text;
+                finishSpin();
+                resetReelsForNextSpin();
+            }, duration * 1000);
+        }
+
+        function finishSpin() {
+            isSpinning = false;
+            const data = gameData[currentMode];
+            const tClass = `font-bold text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]}`;
+            
+            const sentenceHtml = `
+                <p class="mb-4 text-slate-200">This ${data.noun} is a <span class="${tClass}">${currentResults[1]}</span> in their <span class="${tClass}">${currentResults[0]}</span>.</p>
+                <p class="mb-4 text-slate-200">They're known for being <span class="${tClass}">${currentResults[2]}</span>.</p>
+                <p class="text-slate-200">You can usually find them wearing <span class="${tClass}">${currentResults[3]}</span> paired with <span class="${tClass}">${currentResults[4]}</span> while <span class="${tClass}">${currentResults[5]}</span>.</p>
+            `;
+
+            outputSentence.innerHTML = sentenceHtml;
             document.getElementById('output-container').style.opacity = '1';
+        }
+
+        function resetReelsForNextSpin() {
+            // Secretly resets the transform without animation so you never run out of items
+            const data = gameData[currentMode];
+            reelContainers.forEach((container, index) => {
+                const currentText = currentResults[index];
+                container.style.transition = 'none';
+                
+                const items = data.reels[index];
+                let html = '';
+                const fullList = [];
+                for(let i=0; i<spinMultiplier; i++) { fullList.push(...shuffleArray([...items])); }
+                
+                // Ensure current item is at the start
+                const shuffledEnds = shuffleArray([...items]);
+                shuffledEnds[0] = currentText; 
+                fullList.push(...shuffledEnds);
+
+                fullList.forEach(text => { html += `<div class="reel-item" data-text="${text.replace(/"/g, '&quot;')}">${text}</div>`; });
+                container.innerHTML = html;
+                
+                // Point it to the first item (which is our current result)
+                const targetIndex = fullList.length - items.length;
+                container.style.transform = `translateY(-${targetIndex * itemHeight}px)`;
+                
+                // Force reflow
+                container.offsetHeight; 
+            });
         }
 
         function shuffleArray(array) {
@@ -405,535 +701,155 @@
             return array;
         }
 
-        function handleSpin() {
-            if (isSpinning) return;
-            isSpinning = true;
-
-            // Target the 3D button depression animation
-            targetButtonY = BUTTON_PRESSED_Y;
-            
-            setTimeout(() => {
-                targetButtonY = BUTTON_RESTING_Y; 
-                executeSpin();
-            }, 150);
-        }
-
-        function executeSpin() {
-            // Failsafe in case executeSpin is called directly
-            isSpinning = true; 
-            hasSpun = true;
-            
-            document.getElementById('output-container').style.opacity = '0.3';
-            shutterEl.style.transform = 'translateY(-100%)';
-            
-            const data = gameData[currentMode];
-            let completedReels = 0;
-
-            reelContainers.forEach((container, i) => {
-                if(!container) return;
-                
-                const currentText = currentResults[i] || data.reels[i][0];
-                const items = data.reels[i];
-                
-                // Build a fresh runway so the slots can be spun infinitely
-                let html = `<div class="reel-item" data-text="${currentText.replace(/"/g, '&quot;')}">${currentText}</div>`;
-                const fullList = [];
-                for(let j=0; j<spinMultiplier; j++) {
-                    fullList.push(...shuffleArray([...items]));
-                }
-                
-                fullList.forEach(text => {
-                    html += `<div class="reel-item" data-text="${text.replace(/"/g, '&quot;')}">${text}</div>`;
-                });
-
-                container.style.transition = 'none';
-                container.style.transform = `translateY(0px)`;
-                container.innerHTML = html;
-
-                // Force CSS reflow
-                void container.offsetWidth;
-
-                const duration = 1.5 + (i * 0.4); 
-                const targetFinalIndex = Math.floor(Math.random() * items.length);
-                const stopIndex = fullList.length - items.length + targetFinalIndex + 1;
-                
-                container.style.transition = `transform ${duration}s cubic-bezier(0.25, 0.1, 0.1, 1)`;
-                container.style.transform = `translateY(-${stopIndex * itemHeight}px)`;
-
-                setTimeout(() => {
-                    if(container.children[stopIndex]) {
-                        currentResults[i] = container.children[stopIndex].dataset.text;
-                    }
-                    completedReels++;
-
-                    if (completedReels === reelContainers.length) {
-                        finishSpin(currentResults);
-                    }
-                }, duration * 1000);
-            });
-        }
-
-        function finishSpin(results) {
-            isSpinning = false;
-            const data = gameData[currentMode];
-            
-            const hl = `font-bold text-transparent bg-clip-text bg-gradient-to-r ${data.colors[0]} ${data.colors[1]} drop-shadow-sm`;
-
-            // Cleanly formatted, non-scrolling full sentence paragraph with proper spacing
-            const sentenceHtml = `
-                <div class="text-left w-full h-full flex flex-col justify-center gap-1.5 md:gap-2 text-xs sm:text-sm md:text-base leading-tight md:leading-snug">
-                    <p>This ${data.noun} is a <span class="${hl}">${results[1]}</span> in their <span class="${hl}">${results[0]}</span>.</p>
-                    <p>They're known for being <span class="${hl}">${results[2]}</span>.</p>
-                    <p>You can usually find them wearing <span class="${hl}">${results[3]}</span> paired with <span class="${hl}">${results[4]}</span> while <span class="${hl}">${results[5]}</span>.</p>
-                </div>
-            `;
-
-            outputSentence.innerHTML = sentenceHtml;
-            document.getElementById('output-container').style.opacity = '1';
-        }
-
-        function spinSingleReel(i) {
-            if (isSpinning || !hasSpun) return; // Prevent clicking before the shutter is open
-            isSpinning = true;
-            
-            document.getElementById('output-container').style.opacity = '0.3';
-            
-            const data = gameData[currentMode];
-            const container = reelContainers[i];
-            
-            const currentText = currentResults[i];
-            const items = data.reels[i];
-            
-            // Build a short runway for a fast, snappy single spin
-            let html = `<div class="reel-item" data-text="${currentText.replace(/"/g, '&quot;')}">${currentText}</div>`;
-            const fullList = [];
-            for(let j=0; j<2; j++) {
-                fullList.push(...shuffleArray([...items]));
+        const tutorialSteps = [
+            {
+                deskTarget: 'desktop-rocker-case',
+                mobTarget: 'mobile-switch-container',
+                title: 'Choose Mode',
+                text: 'Toggle the switch to change between generating a MILF or DILF.',
+                placement: 'bottom'
+            },
+            {
+                deskTarget: 'desktop-btn',
+                mobTarget: 'mobile-spin-btn',
+                title: 'Spin The Machine!',
+                text: 'Hit the big button to generate your random character.',
+                placement: 'top'
+            },
+            {
+                deskTarget: 'machine-screen-tut',
+                mobTarget: 'machine-screen-tut',
+                title: 'Reroll Traits',
+                text: 'Once generated, you can click on any individual slot to quickly reroll that specific trait!',
+                placement: 'bottom'
             }
-            
-            fullList.forEach(text => {
-                html += `<div class="reel-item" data-text="${text.replace(/"/g, '&quot;')}">${text}</div>`;
-            });
+        ];
 
-            container.style.transition = 'none';
-            container.style.transform = `translateY(0px)`;
-            container.innerHTML = html;
+        let currentTutStep = 0;
+        let currentHighlightEl = null;
 
-            void container.offsetWidth; // Force CSS reflow
-
-            const duration = 0.8; // Fast duration
-            const targetFinalIndex = Math.floor(Math.random() * items.length);
-            const stopIndex = fullList.length - items.length + targetFinalIndex + 1;
-            
-            container.style.transition = `transform ${duration}s cubic-bezier(0.25, 0.1, 0.1, 1)`;
-            container.style.transform = `translateY(-${stopIndex * itemHeight}px)`;
-
-            setTimeout(() => {
-                if(container.children[stopIndex]) {
-                    currentResults[i] = container.children[stopIndex].dataset.text;
-                }
-                finishSpin(currentResults); // Update sentence with the newly rerolled trait
-            }, duration * 1000);
-        }
-
-        let rendererBtn, sceneBtn, cameraBtn;
-        let buttonGroup, spinButtonMesh;
-        const BUTTON_RESTING_Y = 3.8;
-        const BUTTON_PRESSED_Y = 1.2;
-        let targetButtonY = BUTTON_RESTING_Y;
-        let buttonVelocity = 0;
-        let isHolding = false;
-
-        function initThreeButton() {
-            try {
-                const container = document.getElementById('three-button-container');
-                if(!container) return;
-                
-                // Fallbacks to prevent NaN errors
-                const width = container.clientWidth || 420;
-                const height = container.clientHeight || 500;
-
-                sceneBtn = new THREE.Scene();
-                cameraBtn = new THREE.PerspectiveCamera(35, width / height, 0.1, 1000);
-                cameraBtn.position.set(0, 24, 75); 
-                cameraBtn.lookAt(0, 4, 0);
-
-                rendererBtn = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                rendererBtn.setSize(width, height);
-                container.appendChild(rendererBtn.domElement);
-
-                const ambient = new THREE.AmbientLight(0xffffff, 0.5);
-                sceneBtn.add(ambient);
-                
-                const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
-                dirLight.position.set(5, 10, 8);
-                sceneBtn.add(dirLight);
-                
-                const spotLight = new THREE.SpotLight(0xffffff, 1.2); 
-                spotLight.position.set(-5, 15, 10);
-                spotLight.lookAt(new THREE.Vector3(0, 3, 0));
-                spotLight.angle = Math.PI / 5;
-                spotLight.penumbra = 0.6;
-                sceneBtn.add(spotLight);
-
-                buttonGroup = new THREE.Group();
-                sceneBtn.add(buttonGroup);
-
-                const baseGeo = new THREE.BoxGeometry(11.0, 400.0, 11.0);
-                const baseMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8, metalness: 0.4 });
-                const base = new THREE.Mesh(baseGeo, baseMat);
-                base.position.y = -198.0; 
-                buttonGroup.add(base);
-
-                const ringGeo = new THREE.TorusGeometry(4.2, 1.0, 32, 64);
-                const ringMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.1, metalness: 0.8 });
-                const ring = new THREE.Mesh(ringGeo, ringMat);
-                ring.rotation.x = Math.PI / 2;
-                ring.position.y = 2.0;
-                buttonGroup.add(ring);
-
-                const btnGeo = new THREE.CylinderGeometry(3.0, 3.0, 4.0, 64);
-                const initialColor = currentMode === 'MILF' ? 0xef4444 : 0x3b82f6;
-                
-                const buttonMat = new THREE.MeshPhysicalMaterial({ 
-                    color: initialColor, 
-                    metalness: 0.1, 
-                    roughness: 0.15, 
-                    clearcoat: 0.6, 
-                    clearcoatRoughness: 0.1,
-                    reflectivity: 0.5
-                });
-                
-                spinButtonMesh = new THREE.Mesh(btnGeo, buttonMat);
-                spinButtonMesh.position.y = BUTTON_RESTING_Y; 
-                buttonGroup.add(spinButtonMesh);
-
-                const raycaster = new THREE.Raycaster();
-                const mouse = new THREE.Vector2();
-                
-                rendererBtn.domElement.addEventListener('pointerdown', (e) => {
-                    if(isSpinning) return;
-                    const rect = rendererBtn.domElement.getBoundingClientRect();
-                    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-                    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-                    raycaster.setFromCamera(mouse, cameraBtn);
-                    
-                    const intersects = raycaster.intersectObject(buttonGroup, true);
-                    if (intersects.length > 0) {
-                        isHolding = true;
-                        targetButtonY = BUTTON_PRESSED_Y;
-                        showBurst(e.clientX, e.clientY);
-                    }
-                });
-
-                const releaseButton = () => {
-                    if (isHolding) {
-                        isHolding = false;
-                        targetButtonY = BUTTON_RESTING_Y;
-                        if (!isSpinning) {
-                            executeSpin();
-                        }
-                    }
-                };
-                
-                rendererBtn.domElement.addEventListener('pointerup', releaseButton);
-                rendererBtn.domElement.addEventListener('pointerleave', releaseButton);
-            } catch (err) {
-                console.error("ThreeJS Button Initialization Error: ", err);
-            }
-        }
-
-        let rendererSw, sceneSw, cameraSw;
-        let switchGroup, switchToggleGroup, switchBallMesh;
-        const SWITCH_MILF_ROT = -0.55; 
-        const SWITCH_DILF_ROT = 0.55;  
-        let targetSwitchRot = SWITCH_MILF_ROT;
-
-        function initThreeSwitch() {
-            try {
-                const container = document.getElementById('three-switch-container');
-                if(!container) return;
-                
-                const containerWidth = container.clientWidth || 100;
-                const containerHeight = container.clientHeight || 220;
-
-                sceneSw = new THREE.Scene();
-                cameraSw = new THREE.PerspectiveCamera(40, containerWidth / containerHeight, 0.1, 100);
-                cameraSw.position.set(0, 0, 8); 
-                cameraSw.lookAt(0, 0, 0);
-
-                rendererSw = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-                rendererSw.setSize(containerWidth, containerHeight);
-                container.appendChild(rendererSw.domElement);
-
-                const ambient = new THREE.AmbientLight(0xffffff, 0.4);
-                sceneSw.add(ambient);
-                const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-                dirLight.position.set(2, 5, 8);
-                sceneSw.add(dirLight);
-
-                switchGroup = new THREE.Group();
-                sceneSw.add(switchGroup);
-
-                // Replace flat BoxGeometry with a custom shape to simulate a bevel
-                const shape = new THREE.Shape();
-                const pWidth = 2.4, pHeight = 4.2, radius = 0.2;
-                
-                // Draw rounded rectangle
-                shape.moveTo(-pWidth/2 + radius, pHeight/2);
-                shape.lineTo(pWidth/2 - radius, pHeight/2);
-                shape.quadraticCurveTo(pWidth/2, pHeight/2, pWidth/2, pHeight/2 - radius);
-                shape.lineTo(pWidth/2, -pHeight/2 + radius);
-                shape.quadraticCurveTo(pWidth/2, -pHeight/2, pWidth/2 - radius, -pHeight/2);
-                shape.lineTo(-pWidth/2 + radius, -pHeight/2);
-                shape.quadraticCurveTo(-pWidth/2, -pHeight/2, -pWidth/2, -pHeight/2 + radius);
-                shape.lineTo(-pWidth/2, pHeight/2 - radius);
-                shape.quadraticCurveTo(-pWidth/2, pHeight/2, -pWidth/2 + radius, pHeight/2);
-
-                const extrudeSettings = {
-                    steps: 1,
-                    depth: 0.2,
-                    bevelEnabled: true,
-                    bevelThickness: 0.1,
-                    bevelSize: 0.1,
-                    bevelOffset: 0,
-                    bevelSegments: 3
-                };
-
-                const plateGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-                // Adjust position since ExtrudeGeometry builds from the bottom left by default if not centered carefully, 
-                // but our shape uses center coordinates.
-                const plateMat = new THREE.MeshStandardMaterial({ color: 0x5c6b7d, roughness: 0.8, metalness: 0.2 });
-                const plate = new THREE.Mesh(plateGeo, plateMat);
-                switchGroup.add(plate);
-
-                // Screws
-                const screwGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.1, 16);
-                screwGeo.rotateX(Math.PI / 2);
-                const screwMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9, metalness: 0.5 });
-                const topScrew = new THREE.Mesh(screwGeo, screwMat);
-                topScrew.position.set(0, 1.4, 0.25);
-                switchGroup.add(topScrew);
-                const bottomScrew = new THREE.Mesh(screwGeo, screwMat);
-                bottomScrew.position.set(0, -1.4, 0.25);
-                switchGroup.add(bottomScrew);
-
-                // Pronounced Collar (Large dark circle base matching the photo)
-                const collarGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.15, 32);
-                collarGeo.rotateX(Math.PI / 2);
-                const collarMat = new THREE.MeshStandardMaterial({ color: 0x1a1d20, roughness: 0.9, metalness: 0.2 });
-                const collar = new THREE.Mesh(collarGeo, collarMat);
-                collar.position.z = 0.25;
-                switchGroup.add(collar);
-
-                // Switch Toggle Group
-                switchToggleGroup = new THREE.Group();
-                switchToggleGroup.position.z = 0.2;
-                switchGroup.add(switchToggleGroup);
-
-                // Rod (Thin black stick)
-                const rodGeo = new THREE.CylinderGeometry(0.1, 0.1, 1.5, 16);
-                rodGeo.rotateX(Math.PI / 2);
-                const rodMat = new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.8, roughness: 0.3 });
-                const rod = new THREE.Mesh(rodGeo, rodMat);
-                rod.position.z = 0.75;
-                switchToggleGroup.add(rod);
-
-                // Ball (Glossy red/blue)
-                const ballGeo = new THREE.SphereGeometry(0.35, 32, 32);
-                const initialBallColor = currentMode === 'MILF' ? 0xef4444 : 0x3b82f6;
-                const ballMat = new THREE.MeshPhysicalMaterial({ 
-                    color: initialBallColor, 
-                    metalness: 0.1, 
-                    roughness: 0.1, 
-                    clearcoat: 0.8, 
-                    clearcoatRoughness: 0.1,
-                    reflectivity: 0.5
-                });
-                switchBallMesh = new THREE.Mesh(ballGeo, ballMat);
-                switchBallMesh.position.z = 1.5;
-                switchToggleGroup.add(switchBallMesh);
-
-                targetSwitchRot = currentMode === 'MILF' ? SWITCH_MILF_ROT : SWITCH_DILF_ROT;
-
-                const raycaster = new THREE.Raycaster();
-                const mouse = new THREE.Vector2();
-                
-                rendererSw.domElement.addEventListener('pointerdown', (e) => {
-                    if(isSpinning) return;
-                    const rect = rendererSw.domElement.getBoundingClientRect();
-                    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-                    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-                    raycaster.setFromCamera(mouse, cameraSw);
-                    const intersects = raycaster.intersectObject(switchGroup, true);
-                    if (intersects.length > 0) {
-                        currentMode = currentMode === 'MILF' ? 'DILF' : 'MILF';
-                        initMachine();
-                    }
-                });
-            } catch (err) {
-                console.error("ThreeJS Switch Initialization Error: ", err);
-            }
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-
-            if (spinButtonMesh && rendererBtn) {
-                const displacement = targetButtonY - spinButtonMesh.position.y;
-                buttonVelocity += displacement * 0.4;
-                buttonVelocity *= 0.7;
-                spinButtonMesh.position.y += buttonVelocity;
-                rendererBtn.render(sceneBtn, cameraBtn);
-            }
-
-            if (switchToggleGroup && rendererSw) {
-                switchToggleGroup.rotation.x += (targetSwitchRot - switchToggleGroup.rotation.x) * 0.2;
-                rendererSw.render(sceneSw, cameraSw);
-            }
-        }
-
-        // --- TUTORIAL LOGIC ---
-        let currentTutorialStep = 0;
-        
         function startTutorial() {
-            currentTutorialStep = 0;
-            const overlay = document.getElementById('tutorial-overlay');
-            overlay.classList.remove('hidden');
-            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-            showTutorialStep();
+            document.getElementById('tutorial-overlay').classList.remove('hidden-tutorial');
+            document.getElementById('tut-tooltip').classList.add('visible');
+            currentTutStep = 0;
+            renderTutStep();
         }
 
         function endTutorial() {
-            const overlay = document.getElementById('tutorial-overlay');
-            overlay.classList.add('opacity-0');
-            setTimeout(() => overlay.classList.add('hidden'), 300);
-            localStorage.setItem('milfMachineTutorialActive', 'seen');
+            document.getElementById('tutorial-overlay').classList.add('hidden-tutorial');
+            document.getElementById('tut-tooltip').classList.remove('visible');
+            if (currentHighlightEl) {
+                currentHighlightEl.classList.remove('tutorial-highlight');
+                currentHighlightEl = null;
+            }
+            localStorage.setItem('milfMachineTutorial', 'seen');
         }
 
-        function nextTutorialStep() {
-            currentTutorialStep++;
-            if (currentTutorialStep >= 3) {
-                endTutorial();
+        function renderTutStep() {
+            const step = tutorialSteps[currentTutStep];
+            const isMobile = window.innerWidth < 768;
+            const targetId = isMobile ? step.mobTarget : step.deskTarget;
+            const targetEl = document.getElementById(targetId);
+
+            if (currentHighlightEl) currentHighlightEl.classList.remove('tutorial-highlight');
+            
+            if (targetEl) {
+                targetEl.classList.add('tutorial-highlight');
+                currentHighlightEl = targetEl;
+                positionTooltip(targetEl, step.placement);
+            }
+
+            document.getElementById('tut-title').textContent = step.title;
+            document.getElementById('tut-text').textContent = step.text;
+            document.getElementById('tut-progress').textContent = `${currentTutStep + 1} / ${tutorialSteps.length}`;
+            
+            const prevBtn = document.getElementById('tut-prev');
+            const nextBtn = document.getElementById('tut-next');
+            
+            prevBtn.style.display = currentTutStep > 0 ? 'block' : 'none';
+            
+            if (currentTutStep === tutorialSteps.length - 1) {
+                nextBtn.textContent = 'Got it!';
+                nextBtn.classList.replace('bg-blue-500', 'bg-green-500');
+                nextBtn.classList.replace('hover:bg-blue-600', 'hover:bg-green-600');
             } else {
-                showTutorialStep();
+                nextBtn.textContent = 'Next';
+                nextBtn.classList.replace('bg-green-500', 'bg-blue-500');
+                nextBtn.classList.replace('hover:bg-green-600', 'hover:bg-blue-600');
             }
         }
 
-        function showTutorialStep() {
-            const tooltip = document.getElementById('tutorial-tooltip');
-            const arrow = document.getElementById('tutorial-arrow');
-            const titleEl = document.getElementById('tutorial-title');
-            const textEl = document.getElementById('tutorial-text');
-            const nextBtn = document.getElementById('tutorial-next');
-            
-            const isMobile = window.innerWidth <= 768;
-            
-            const steps = [
-                {
-                    title: "1. Generate Character",
-                    text: "Push the big button or tap the Spin button to generate a completely random character.",
-                    targetId: isMobile ? 'mobile-spin-btn' : 'three-button-container',
-                    placement: isMobile ? 'top' : 'left'
-                },
-                {
-                    title: "2. Reroll Traits",
-                    text: "Not quite right? Click on any individual slot to quickly reroll that specific trait!",
-                    targetId: 'reel-1',
-                    placement: isMobile ? 'bottom' : 'bottom'
-                },
-                {
-                    title: "3. Swap Modes",
-                    text: "Flick the switch to swap between creating Mother or Father characters!",
-                    targetId: isMobile ? 'mobile-mode-toggle' : 'three-switch-container',
-                    placement: isMobile ? 'bottom' : 'right'
-                }
-            ];
-
-            const step = steps[currentTutorialStep];
-            titleEl.innerText = step.title;
-            textEl.innerText = step.text; // Update the description text
-            
-            // Get the screen coordinates of the target element
-            let targetEl = document.getElementById(step.targetId);
-            // Fix: Target the static outer column instead of the scrolling inner strip
-            if (targetEl && targetEl.classList.contains('reel-inner')) {
-                targetEl = targetEl.parentElement;
+        function nextTutStep() {
+            if (currentTutStep < tutorialSteps.length - 1) {
+                currentTutStep++;
+                renderTutStep();
+            } else {
+                endTutorial();
             }
-            const rect = targetEl ? targetEl.getBoundingClientRect() : { left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0 };
+        }
 
-            arrow.className = 'absolute w-5 h-5 bg-white transform rotate-45 pointer-events-none border-slate-800';
-        
-            let top = 0;
-            let left = 0;
-            const tWidth = 280;
-            const tHeight = 160; 
-            
-            if (step.placement === 'left') {
-                left = rect.left - tWidth - 20;
-                top = rect.top + (rect.height / 2) - (tHeight / 2);
-                arrow.classList.add('top-1/2', '-mt-2.5', '-right-2.5', 'border-t-4', 'border-r-4');
-            } else if (step.placement === 'right') {
-                left = rect.right + 20;
-                top = rect.top + (rect.height / 2) - (tHeight / 2);
-                arrow.classList.add('top-1/2', '-mt-2.5', '-left-2.5', 'border-b-4', 'border-l-4');
-            } else if (step.placement === 'top') {
-                left = rect.left + (rect.width / 2) - (tWidth / 2);
-                top = rect.top - tHeight - 20;
-                arrow.classList.add('-bottom-2.5', 'left-1/2', '-ml-2.5', 'border-b-4', 'border-r-4');
-            } else if (step.placement === 'bottom') {
-                left = rect.left + (rect.width / 2) - (tWidth / 2);
-                top = rect.bottom + 20;
-                arrow.classList.add('-top-2.5', 'left-1/2', '-ml-2.5', 'border-t-4', 'border-l-4');
+        function prevTutStep() {
+            if (currentTutStep > 0) {
+                currentTutStep--;
+                renderTutStep();
             }
+        }
+
+        function positionTooltip(targetEl, placement) {
+            const rect = targetEl.getBoundingClientRect();
+            const tooltip = document.getElementById('tut-tooltip');
+            const arrow = document.getElementById('tut-arrow');
             
-            // Keep on screen
-            if (left < 10) left = 10;
-            if (left + tWidth > window.innerWidth - 10) left = window.innerWidth - tWidth - 10;
-            if (top < 10) top = 10;
+            arrow.className = 'tutorial-arrow';
             
-            tooltip.style.left = left + 'px';
-            tooltip.style.top = top + 'px';
+            const isHidden = !tooltip.classList.contains('visible');
+            if (isHidden) tooltip.style.opacity = '0';
+            
+            const ttWidth = 280; 
+            const ttHeight = tooltip.offsetHeight || 130; 
+
+            let top = 0, left = 0;
+            const scrollY = window.scrollY;
+            const scrollX = window.scrollX;
+
+            if (placement === 'bottom') {
+                top = rect.bottom + scrollY + 18;
+                left = rect.left + scrollX + (rect.width / 2) - (ttWidth / 2);
+                arrow.classList.add('arrow-top');
+            } else if (placement === 'top') {
+                top = rect.top + scrollY - ttHeight - 18;
+                left = rect.left + scrollX + (rect.width / 2) - (ttWidth / 2);
+                arrow.classList.add('arrow-bottom');
+            }
+
+            const margin = 10;
+            if (left < margin) left = margin;
+            if (left + ttWidth > window.innerWidth - margin) left = window.innerWidth - ttWidth - margin;
+
+            tooltip.style.top = `${top}px`;
+            tooltip.style.left = `${left}px`;
+            
+            if (isHidden) tooltip.style.opacity = '';
         }
 
         window.addEventListener('resize', () => {
-            if(cameraBtn && rendererBtn) {
-                const cBtn = document.getElementById('three-button-container');
-                if(cBtn && cBtn.clientHeight > 0) {
-                    cameraBtn.aspect = cBtn.clientWidth / cBtn.clientHeight;
-                    cameraBtn.updateProjectionMatrix();
-                    rendererBtn.setSize(cBtn.clientWidth, cBtn.clientHeight);
-                }
-            }
-            if(cameraSw && rendererSw) {
-                const cSw = document.getElementById('three-switch-container');
-                if(cSw && cSw.clientHeight > 0) {
-                    cameraSw.aspect = cSw.clientWidth / cSw.clientHeight;
-                    cameraSw.updateProjectionMatrix();
-                    rendererSw.setSize(cSw.clientWidth, cSw.clientHeight);
-                }
+            if (document.getElementById('tut-tooltip').classList.contains('visible')) {
+                renderTutStep();
             }
         });
 
-        // Ensure mobile button click utilizes strict handleSpin logic
-        if (mobileSpinBtn) {
-            mobileSpinBtn.addEventListener('click', (e) => {
-                if (!isSpinning) {
-                    showBurst(e.clientX, e.clientY);
-                }
-                handleSpin();
-            });
-        }
+        mobileSpinBtn.addEventListener('click', (e) => {
+            const rect = mobileSpinBtn.getBoundingClientRect();
+            showBurst(e.clientX || rect.left + rect.width / 2, e.clientY || rect.top + rect.height / 2);
+            handleSpin();
+        });
 
         window.onload = () => {
-            initThreeButton();
-            initThreeSwitch();
             initMachine();
-            animate();
-
-            // Check if user has seen tutorial, if not, show it
-            if (!localStorage.getItem('milfMachineTutorialActive')) {
-                setTimeout(startTutorial, 500);
+            if (localStorage.getItem('milfMachineTutorial') !== 'seen') {
+                setTimeout(() => startTutorial(), 500);
+            } else {
+                document.getElementById('tutorial-overlay').classList.add('hidden-tutorial');
             }
         };
     </script>
