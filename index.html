@@ -595,6 +595,28 @@
 
             document.getElementById('output-container').style.opacity = '1';
             outputSentence.innerHTML = '<p class="opacity-50 italic text-center text-slate-300">Push the button to generate your character...</p>';
+
+            // Fix: Hide action buttons whenever the machine is reset or mode is switched
+            const actionBtns = document.getElementById('action-buttons');
+            if(actionBtns) {
+                actionBtns.classList.add('opacity-0', 'pointer-events-none');
+                actionBtns.classList.remove('opacity-100', 'pointer-events-auto');
+                
+                // Reset text and colors so they never get stuck on "Saved!" or "Copied!"
+                const copyBtn = document.getElementById('copy-btn');
+                if (copyBtn) {
+                    document.getElementById('copy-text').innerText = "Copy";
+                    copyBtn.classList.remove('text-green-400', 'border-green-500', 'border-slate-500');
+                    copyBtn.classList.add('text-slate-200', 'border-slate-600');
+                }
+                
+                const saveBtn = document.getElementById('save-btn');
+                if (saveBtn) {
+                    document.getElementById('save-text').innerText = "Save";
+                    saveBtn.classList.remove('text-yellow-400', 'border-yellow-500', 'border-slate-500');
+                    saveBtn.classList.add('text-slate-200', 'border-slate-600');
+                }
+            }
         }
 
         // --- Interaction Logic ---
