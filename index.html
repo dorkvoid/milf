@@ -262,12 +262,14 @@
         .hidden-tutorial { opacity: 0 !important; pointer-events: none !important; }
         
         .tutorial-highlight {
-            position: relative !important;
             z-index: 10001 !important;
             box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.6), 0 0 25px rgba(59, 130, 246, 0.8) !important;
             border-radius: 12px;
             pointer-events: auto !important;
             background-color: inherit;
+        }
+        .tutorial-highlight:not(.absolute) {
+            position: relative !important;
         }
         
         #tut-tooltip {
@@ -303,6 +305,27 @@
     </style>
 </head>
 <body class="h-screen flex flex-col items-center justify-center p-2 sm:p-4 relative">
+
+    <!-- Journal Slide-out Panel -->
+    <div id="journal-panel" class="fixed top-0 right-0 h-full w-full max-w-sm sm:max-w-md bg-slate-900/95 backdrop-blur-xl border-l border-slate-700 z-[10000] transform translate-x-full transition-transform duration-400 ease-in-out flex flex-col shadow-2xl">
+        <div class="p-5 border-b border-slate-700 flex justify-between items-center bg-slate-800/80">
+            <h2 class="title-font text-2xl text-slate-100 tracking-wider flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                Favorites Journal
+            </h2>
+            <button onclick="toggleJournal()" class="text-slate-400 hover:text-white transition-colors p-2 rounded-full hover:bg-slate-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <div id="journal-list" class="flex-grow overflow-y-auto p-4 space-y-4 pb-20">
+            <!-- Items injected by JS -->
+        </div>
+    </div>
+
+    <!-- Journal Open Button -->
+    <button id="journal-btn" onclick="toggleJournal()" class="absolute top-4 left-4 w-10 h-10 bg-slate-800 border border-slate-600 rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:bg-slate-700 transition-colors z-50 shadow-lg" title="Open Favorites">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" /></svg>
+    </button>
 
     <!-- Tutorial Overlay Background -->
     <div id="tutorial-overlay" class="hidden-tutorial pointer-events-auto"></div>
@@ -404,12 +427,26 @@
         </div>
 
         <!-- Character Output Box -->
-        <div class="w-full max-w-3xl mt-2">
-            <div class="output-box p-4 md:p-6 rounded-xl shadow-2xl relative flex items-center justify-center" id="output-container">
+        <div class="w-full max-w-3xl mt-2 relative flex flex-col items-center">
+            <div class="output-box p-4 md:p-6 rounded-xl shadow-2xl relative flex items-center justify-center w-full" id="output-container">
                 <div id="output-accent" class="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-red-400 to-red-600 transition-colors duration-500 rounded-l-xl"></div>
-                <div id="output-sentence" class="text-base md:text-lg w-full px-2 font-medium leading-relaxed">
+                <div id="output-sentence" class="text-base md:text-lg w-full px-4 sm:px-6 font-medium leading-relaxed">
                     <p class="opacity-50 italic text-center text-slate-300">Push the button to generate your character...</p>
                 </div>
+            </div>
+
+            <!-- Action Buttons (Moved beneath the box) -->
+            <div id="action-buttons" class="w-full flex justify-end gap-3 mt-3 opacity-0 pointer-events-none transition-all duration-300 z-30 px-2 sm:px-0">
+                <!-- Save Button -->
+                <button id="save-btn" onclick="saveToJournal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-yellow-400 px-4 py-2 rounded-lg transition-colors border border-slate-600 shadow-md flex items-center gap-2 group">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" /></svg>
+                    <span id="save-text" class="text-sm font-bold uppercase tracking-wider">Save</span>
+                </button>
+                <!-- Copy Button -->
+                <button id="copy-btn" onclick="copyCharacter()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 border border-slate-600 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                    <span id="copy-text" class="text-sm font-bold uppercase tracking-wider">Copy</span>
+                </button>
             </div>
         </div>
 
@@ -662,6 +699,158 @@
 
             outputSentence.innerHTML = sentenceHtml;
             document.getElementById('output-container').style.opacity = '1';
+
+            // Show action buttons
+            const actionBtns = document.getElementById('action-buttons');
+            if(actionBtns) {
+                actionBtns.classList.remove('opacity-0', 'pointer-events-none');
+                actionBtns.classList.add('opacity-100', 'pointer-events-auto');
+            }
+        }
+
+        // Feature: Copy Character Text
+        function copyCharacter() {
+            if(!outputSentence || outputSentence.innerText.includes("Push the button")) return;
+            
+            // Clean up the text for copying
+            const cleanText = outputSentence.innerText;
+            
+            // Create a temporary text area to copy from (ensures cross-device compatibility)
+            const textArea = document.createElement("textarea");
+            textArea.value = cleanText;
+            textArea.style.position = "fixed"; 
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                const copyText = document.getElementById('copy-text');
+                const copyBtn = document.getElementById('copy-btn');
+                
+                // Visual feedback
+                copyText.innerText = "Copied!";
+                copyBtn.classList.replace('text-slate-200', 'text-green-400');
+                copyBtn.classList.replace('border-slate-500', 'border-green-500');
+                
+                setTimeout(() => {
+                    copyText.innerText = "Copy";
+                    copyBtn.classList.replace('text-green-400', 'text-slate-200');
+                    copyBtn.classList.replace('border-green-500', 'border-slate-500');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text', err);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        // Feature: Favorites Journal
+        let savedFavorites = JSON.parse(localStorage.getItem('milfMachineFavorites')) || [];
+
+        function toggleJournal() {
+            const panel = document.getElementById('journal-panel');
+            panel.classList.toggle('translate-x-full');
+            if (!panel.classList.contains('translate-x-full')) {
+                renderJournal();
+            }
+        }
+
+        function saveToJournal() {
+            if(!outputSentence || outputSentence.innerText.includes("Push the button")) return;
+            
+            const cleanText = outputSentence.innerText;
+            const saveBtn = document.getElementById('save-btn');
+            const saveText = document.getElementById('save-text');
+
+            // Prevent duplicate saves
+            if (savedFavorites.some(f => f.text === cleanText)) {
+                saveText.innerText = "Saved!";
+                setTimeout(() => saveText.innerText = "Save", 2000);
+                return;
+            }
+
+            const newEntry = {
+                id: Date.now().toString(),
+                mode: currentMode,
+                text: cleanText,
+                date: new Date().toLocaleDateString()
+            };
+
+            savedFavorites.unshift(newEntry); // Add to top of list
+            localStorage.setItem('milfMachineFavorites', JSON.stringify(savedFavorites));
+            
+            // Visual feedback
+            saveText.innerText = "Saved!";
+            saveBtn.classList.replace('text-slate-200', 'text-yellow-400');
+            saveBtn.classList.replace('border-slate-500', 'border-yellow-500');
+            
+            setTimeout(() => {
+                saveText.innerText = "Save";
+                saveBtn.classList.replace('text-yellow-400', 'text-slate-200');
+                saveBtn.classList.replace('border-yellow-500', 'border-slate-500');
+            }, 2000);
+
+            renderJournal();
+        }
+
+        function deleteFavorite(id) {
+            savedFavorites = savedFavorites.filter(f => f.id !== id);
+            localStorage.setItem('milfMachineFavorites', JSON.stringify(savedFavorites));
+            renderJournal();
+        }
+
+        function copyFromJournal(btn, text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed"; 
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<span class="text-green-400 font-bold text-xs uppercase tracking-wider">Copied!</span>`;
+                setTimeout(() => btn.innerHTML = originalHtml, 2000);
+            } catch (err) {}
+            document.body.removeChild(textArea);
+        }
+
+        function renderJournal() {
+            const listEl = document.getElementById('journal-list');
+            if (savedFavorites.length === 0) {
+                listEl.innerHTML = `<div class="text-slate-400 text-center italic mt-10">Your journal is empty.<br>Save a character to see them here!</div>`;
+                return;
+            }
+
+            let html = '';
+            savedFavorites.forEach(fav => {
+                const tagColor = fav.mode === 'MILF' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+                
+                html += `
+                    <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 shadow-lg relative group">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded-md border ${tagColor}">${fav.mode}</span>
+                            <span class="text-xs text-slate-500">${fav.date}</span>
+                        </div>
+                        <p class="text-sm text-slate-200 leading-relaxed font-medium mb-4 pr-2">
+                            ${fav.text}
+                        </p>
+                        <div class="flex justify-end gap-2 border-t border-slate-700/50 pt-3 mt-2">
+                            <button onclick="copyFromJournal(this, \`${fav.text.replace(/`/g, '\\`')}\`)" class="flex items-center gap-1 text-xs text-slate-300 hover:text-white px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                Copy
+                            </button>
+                            <button onclick="deleteFavorite('${fav.id}')" class="flex items-center gap-1 text-xs text-slate-400 hover:text-red-400 px-2 py-1 rounded hover:bg-slate-700 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            listEl.innerHTML = html;
         }
 
         function resetReelsForNextSpin() {
@@ -721,6 +910,13 @@
                 mobTarget: 'machine-screen-tut',
                 title: 'Reroll Traits',
                 text: 'Once generated, you can click on any individual slot to quickly reroll that specific trait!',
+                placement: 'bottom'
+            },
+            {
+                deskTarget: 'journal-btn',
+                mobTarget: 'journal-btn',
+                title: 'Favorites Journal',
+                text: 'Save your best generations and view them later by opening your Favorites Journal!',
                 placement: 'bottom'
             }
         ];
